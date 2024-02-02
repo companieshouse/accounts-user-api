@@ -2,13 +2,14 @@ package uk.gov.companieshouse.accounts.user.models;
 
 import java.io.Serial;
 import java.io.Serializable;
-import org.springframework.data.annotation.CreatedDate;
+import java.util.Set;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDateTime;
+import uk.gov.companieshouse.api.accounts.user.model.Role;
 
 @Document(collection = "users")
 public class Users implements Serializable {
@@ -34,6 +35,8 @@ public class Users implements Serializable {
     @Field("email")
     private String email;
 
+    @Field("roles")
+    private Set<Role> roles;
 
     @Field("created")
     private LocalDateTime created;
@@ -43,13 +46,14 @@ public class Users implements Serializable {
     private LocalDateTime updated;
 
     public Users(String locale, String forename, String surname, String displayName, String email,
-            LocalDateTime created) {
+            LocalDateTime created, Set<Role> roles ) {
         this.locale = locale;
         this.forename = forename;
         this.surname = surname;
         this.displayName = displayName;
         this.email = email;
         this.created = created;
+        this.roles = roles;
     }
 
     public Users() {
@@ -119,6 +123,15 @@ public class Users implements Serializable {
         this.updated = updated;
     }
 
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
     @Override
     public String toString() {
         return "Users{" +
@@ -130,6 +143,7 @@ public class Users implements Serializable {
                 ", email='" + email + '\'' +
                 ", created=" + created +
                 ", updated=" + updated +
+                ", roles=" + roles +
                 '}';
     }
 
