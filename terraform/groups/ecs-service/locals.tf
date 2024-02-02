@@ -7,7 +7,7 @@ locals {
   container_port             = "8080" # default Java port to match start script
   docker_repo                = "accounts-user-api"
   lb_listener_rule_priority  = 19
-  lb_listener_paths          = ["accounts/associations/*"]
+  lb_listener_paths          = ["users/*"]
   healthcheck_path           = "/healthcheck" #healthcheck path for accounts association service
   healthcheck_matcher        = "200"
   application_subnet_ids     = data.aws_subnets.application.ids
