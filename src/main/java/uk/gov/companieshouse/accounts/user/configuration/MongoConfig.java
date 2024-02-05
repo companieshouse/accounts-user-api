@@ -31,7 +31,7 @@ public class MongoConfig {
 
     @Bean
     public MongoCustomConversions mongoCustomConversions() {
-        return new MongoCustomConversions(List.of(new MongoRoleConverter()));
+        return new MongoCustomConversions(List.of(new MongoRoleReadingConverter(), new MongoRoleWritingConverter()));
     }
 
 }

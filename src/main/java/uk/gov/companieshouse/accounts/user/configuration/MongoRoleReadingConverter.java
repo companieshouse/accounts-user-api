@@ -5,7 +5,7 @@ import org.springframework.data.convert.ReadingConverter;
 import uk.gov.companieshouse.api.accounts.user.model.Role;
 
 @ReadingConverter
-public class MongoRoleConverter implements Converter<String, Role> {
+public class MongoRoleReadingConverter implements Converter<String, Role> {
 
     @Override
     public Role convert( String role ) {
