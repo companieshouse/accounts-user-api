@@ -1,0 +1,6 @@
+app_name: accounts-user-api
+group: api
+
+weight: 100
+routes:
+  1: ^/users/*
