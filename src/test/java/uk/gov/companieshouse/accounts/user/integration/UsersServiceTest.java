@@ -30,7 +30,7 @@ public class UsersServiceTest {
 
     @Container
     @ServiceConnection
-    static MongoDBContainer container = new MongoDBContainer("mongo:4.4.22");
+    static MongoDBContainer container = new MongoDBContainer("mongo:5");
 
     @Autowired
     MongoTemplate mongoTemplate;

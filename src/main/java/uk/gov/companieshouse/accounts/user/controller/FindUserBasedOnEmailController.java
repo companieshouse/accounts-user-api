@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.accounts.user.controller;
 
 import java.util.List;
+import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,8 +27,7 @@ public class FindUserBasedOnEmailController implements FindUserBasedOnEmailInter
     @Override
     public ResponseEntity<List<User>> searchUserDetails( final String xRequestId, List<String> emails ) {
 
-        if ( emails == null )
-            emails = List.of();
+        emails = Optional.ofNullable( emails ).orElse( List.of() );
 
         LOG.debug( String.format( "%s: Attempting to search for the details of these users: %s", xRequestId, String.join(", ", emails) ) );
 
