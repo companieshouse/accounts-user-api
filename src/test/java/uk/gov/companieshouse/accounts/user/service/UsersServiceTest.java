@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -144,5 +145,25 @@ public class UsersServiceTest {
                 .toList()
                 .containsAll(List.of("The Rock", "Eminem") ) );
     }
+
+
+    @Test
+    void fetchUserWithMalformedInputOrNonexistentUserIdReturnsEmptyOptional(){
+        Mockito.doReturn( Optional.empty() ).when( usersRepository ).findUsersById( any() );
+
+        Assertions.assertFalse( usersService.fetchUser( null ).isPresent() );
+        Assertions.assertFalse( usersService.fetchUser( "" ).isPresent() );
+        Assertions.assertFalse( usersService.fetchUser( "$" ).isPresent() );
+        Assertions.assertFalse( usersService.fetchUser( "999" ).isPresent() );
+    }
+
+    @Test
+    void fetchUserFetchesUser(){
+        Mockito.doReturn( Optional.of( usersHarleyQuinn ) ).when( usersRepository ).findUsersById( any() );
+        Mockito.doReturn( userHarleyQuinn ).when( usersDtoDaoMapper ).daoToDto( eq( usersHarleyQuinn ) );
+
+        Assertions.assertEquals( "Harley Quinn", usersService.fetchUser( "333" ).get().getDisplayName() );
+    }
+
 
 }

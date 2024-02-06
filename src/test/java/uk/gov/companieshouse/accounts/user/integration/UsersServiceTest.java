@@ -111,6 +111,19 @@ public class UsersServiceTest {
                                             .containsAll(List.of("The Rock", "Eminem") ) );
     }
 
+    @Test
+    void fetchUserWithMalformedInputOrNonexistentUserIdReturnsEmptyOptional(){
+        Assertions.assertFalse( usersService.fetchUser( null ).isPresent() );
+        Assertions.assertFalse( usersService.fetchUser( "" ).isPresent() );
+        Assertions.assertFalse( usersService.fetchUser( "$" ).isPresent() );
+        Assertions.assertFalse( usersService.fetchUser( "999" ).isPresent() );
+    }
+
+    @Test
+    void fetchUserFetchesUser(){
+        Assertions.assertEquals( "Harley Quinn", usersService.fetchUser( "333" ).get().getDisplayName() );
+    }
+
     @AfterEach
     public void after() {
         mongoTemplate.dropCollection( Users.class );

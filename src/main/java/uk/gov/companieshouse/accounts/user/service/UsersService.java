@@ -1,7 +1,6 @@
 package uk.gov.companieshouse.accounts.user.service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +26,13 @@ public class UsersService {
                               .stream()
                               .map(usersDtoDaoMapper::daoToDto)
                               .toList();
+    }
+
+    public Optional<User> fetchUser( final String userId ){
+        return usersRepository.findUsersById( userId )
+                .stream()
+                .map( usersDtoDaoMapper::daoToDto )
+                .findFirst();
     }
 
 }
