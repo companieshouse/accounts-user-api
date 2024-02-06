@@ -106,6 +106,19 @@ public class UsersRepositoryTest {
                                             .containsAll(List.of("The Rock", "Eminem") ) );
     }
 
+    @Test
+    void findUsersByIdWithMalformedInputOrNonexistentUserIdReturnsEmptyOptional(){
+        Assertions.assertFalse( usersRepository.findUsersById( null ).isPresent() );
+        Assertions.assertFalse( usersRepository.findUsersById( "" ).isPresent() );
+        Assertions.assertFalse( usersRepository.findUsersById( "$" ).isPresent() );
+        Assertions.assertFalse( usersRepository.findUsersById( "999" ).isPresent() );
+    }
+
+    @Test
+    void findUsersByIdFetchesUser(){
+        Assertions.assertEquals( "Harley Quinn", usersRepository.findUsersById( "333" ).get().getDisplayName() );
+    }
+
     @AfterEach
     public void after() {
         mongoTemplate.dropCollection( Users.class );
