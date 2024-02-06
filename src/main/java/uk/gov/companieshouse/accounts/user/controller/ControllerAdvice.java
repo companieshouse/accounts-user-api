@@ -15,7 +15,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import uk.gov.companieshouse.accounts.user.AccountsUserServiceApplication;
 import uk.gov.companieshouse.accounts.user.exceptions.BadRequestRuntimeException;
 import uk.gov.companieshouse.accounts.user.exceptions.NotFoundRuntimeException;
-import uk.gov.companieshouse.accounts.user.utils.CamelCaseSnakeCase;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 import uk.gov.companieshouse.service.rest.err.Err;
@@ -69,7 +68,7 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
         LOG.errorContext(requestId, e.getMessage(), null, contextMap);
 
         Errors errors = new Errors();
-        errors.addError(Err.invalidBodyBuilderWithLocation("accounts_association_api").withError(e.getMessage()).build());
+        errors.addError(Err.invalidBodyBuilderWithLocation("accounts_user_api").withError(e.getMessage()).build());
         return errors;
     }
 
@@ -80,9 +79,8 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
 
         Errors errors = new Errors();
         for (ConstraintViolation<?> constraintViolation : exception.getConstraintViolations()) {
-            final var location = CamelCaseSnakeCase.toSnakeCase(constraintViolation.getPropertyPath().toString());
-            var errorMessage = getConstraintViolationExceptionErrorMessage( location );
-            errors.addError(Err.invalidBodyBuilderWithLocation(location).withError(errorMessage).build());
+            var errorMessage = "Please check the request and try again";
+            errors.addError(Err.invalidBodyBuilderWithLocation("accounts_user_api").withError(errorMessage).build());
         }
 
         String requestId = request.getHeader(X_REQUEST_ID);
@@ -90,12 +88,6 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
         LOG.errorContext(requestId, String.format("Validation Failed with [%s]", errorsJsonString), exception, null );
 
         return errors;
-    }
-
-    private String getConstraintViolationExceptionErrorMessage(String location) {
-        return switch (location) {
-            default -> "One of the inputs is incorrectly formatted";
-        };
     }
 
     @ExceptionHandler(Exception.class)
