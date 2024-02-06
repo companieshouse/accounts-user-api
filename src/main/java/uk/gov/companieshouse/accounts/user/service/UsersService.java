@@ -1,6 +1,10 @@
 package uk.gov.companieshouse.accounts.user.service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.accounts.user.mapper.UsersDtoDaoMapper;
 import uk.gov.companieshouse.accounts.user.repositories.UsersRepository;
@@ -17,8 +21,9 @@ public class UsersService {
         this.usersDtoDaoMapper = usersDtoDaoMapper;
     }
 
-    public List<User> fetchUsers( List<String> emails ) {
-        return usersRepository.fetchUsers(emails)
+    public List<User> fetchUsers( final List<String> emails ) {
+        return Optional.ofNullable(usersRepository.fetchUsers(emails))
+                .orElse(new ArrayList<>())
                               .stream()
                               .map(usersDtoDaoMapper::daoToDto)
                               .toList();

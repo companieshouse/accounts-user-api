@@ -25,6 +25,7 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(AccountsUserServiceApplication.applicationNameSpace);
     public static final String X_REQUEST_ID = "X-Request-Id";
+    public static final String ACCOUNTS_USER_API = "accounts_user_api";
 
     private String getJsonStringFromErrors(String requestId, Errors errors) {
 
@@ -68,7 +69,7 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
         LOG.errorContext(requestId, e.getMessage(), null, contextMap);
 
         Errors errors = new Errors();
-        errors.addError(Err.invalidBodyBuilderWithLocation("accounts_user_api").withError(e.getMessage()).build());
+        errors.addError(Err.invalidBodyBuilderWithLocation(ACCOUNTS_USER_API).withError(e.getMessage()).build());
         return errors;
     }
 
@@ -80,7 +81,7 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
         Errors errors = new Errors();
         for (ConstraintViolation<?> constraintViolation : exception.getConstraintViolations()) {
             var errorMessage = "Please check the request and try again";
-            errors.addError(Err.invalidBodyBuilderWithLocation("accounts_user_api").withError(errorMessage).build());
+            errors.addError(Err.invalidBodyBuilderWithLocation(ACCOUNTS_USER_API).withError(errorMessage).build());
         }
 
         String requestId = request.getHeader(X_REQUEST_ID);
