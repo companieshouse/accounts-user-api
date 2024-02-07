@@ -30,9 +30,7 @@ public class UsersService {
 
     public Optional<User> fetchUser( final String userId ){
         return usersRepository.findUsersById( userId )
-                .stream()
-                .map( usersDtoDaoMapper::daoToDto )
-                .findFirst();
+                              .map( usersDtoDaoMapper::daoToDto );
     }
 
 }
