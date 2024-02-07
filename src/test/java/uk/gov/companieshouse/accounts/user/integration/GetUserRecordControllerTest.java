@@ -1,7 +1,9 @@
-package uk.gov.companieshouse.accounts.user.repositories;
+package uk.gov.companieshouse.accounts.user.integration;
 
+import static org.mockito.ArgumentMatchers.any;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
@@ -9,22 +11,31 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.springframework.data.mongodb.UncategorizedMongoDbException;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import uk.gov.companieshouse.accounts.user.configuration.InterceptorConfig;
 import uk.gov.companieshouse.accounts.user.models.Users;
+import uk.gov.companieshouse.accounts.user.repositories.UsersRepository;
 import uk.gov.companieshouse.api.accounts.user.model.Role;
+import uk.gov.companieshouse.api.accounts.user.model.User;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@AutoConfigureMockMvc
 @SpringBootTest
-@Testcontainers(parallel = true)
+@Testcontainers
 @Tag("integration-test")
-public class UsersRepositoryTest {
+public class GetUserRecordControllerTest {
 
     @Container
     @ServiceConnection
@@ -34,11 +45,16 @@ public class UsersRepositoryTest {
     MongoTemplate mongoTemplate;
 
     @Autowired
+    public MockMvc mockMvc;
+
+    @Autowired
     UsersRepository usersRepository;
 
-    @BeforeEach
-    void setup(){
+    @MockBean
+    InterceptorConfig interceptorConfig;
 
+    @BeforeEach
+    public void setup() {
         final var eminem = new Users();
         eminem.setId( "111" );
         eminem.setLocale( "GB_en" );
@@ -73,50 +89,38 @@ public class UsersRepositoryTest {
         harleyQuinn.setUpdated( LocalDateTime.now().minusDays( 5 ) );
 
         usersRepository.insert( List.of( eminem, theRock, harleyQuinn ) );
+
+        Mockito.doNothing().when(interceptorConfig).addInterceptors( any() );
     }
 
     @Test
-    void fetchUsersWithNullInputThrowsUncategorizedMongoDbException(){
-        Assertions.assertThrows( UncategorizedMongoDbException.class, () -> usersRepository.fetchUsers( null ) );
+    void getUserDetailsWithoutPathVariableReturnsNotFound() throws Exception {
+        mockMvc.perform( get( "/users/" ).header( "X-Request-Id", "theId" ) ).andExpect( status().isNotFound() );
     }
 
     @Test
-    void fetchUsersWithEmptyListOrListWithMalformedEmailsOrListWithNonexistentUserReturnsEmptyList(){
-        final var listWithNull = new ArrayList<String>();
-        listWithNull.add( null );
-
-        Assertions.assertEquals( List.of(), usersRepository.fetchUsers( List.of() ) );
-        Assertions.assertEquals( List.of(), usersRepository.fetchUsers( listWithNull ) );
-        Assertions.assertEquals( List.of(), usersRepository.fetchUsers( List.of( "xxx" ) ) );
-        Assertions.assertEquals( List.of(), usersRepository.fetchUsers( List.of( "rebecca.addlington@olympics.com" ) ) );
+    void getUserDetailsWithMalformedInputReturnsBadRequest() throws Exception {
+        mockMvc.perform( get( "/users/{user_id}", "$" ).header( "X-Request-Id", "theId" ) ).andExpect( status().isBadRequest() );
     }
 
     @Test
-    void fetchUsersReturnsSpecifiedUsers(){
-        final var oneUser = usersRepository.fetchUsers( List.of( "harley.quinn@gotham.city" ) );
-        final var multipleUsers = usersRepository.fetchUsers( List.of( "eminem@rap.com", "the.rock@wrestling.com" ) );
-
-        Assertions.assertEquals( 1, oneUser.size() );
-        Assertions.assertEquals( "Harley Quinn", oneUser.get( 0 ).getDisplayName() );
-
-        Assertions.assertEquals( 2, multipleUsers.size() );
-        Assertions.assertTrue( multipleUsers.stream()
-                                            .map(Users::getDisplayName)
-                                            .toList()
-                                            .containsAll(List.of("The Rock", "Eminem") ) );
+    void getUserDetailsWithNonexistentUserIdReturnsNoContent() throws Exception {
+        mockMvc.perform( get( "/users/{user_id}", "999" ).header( "X-Request-Id", "theId" ) ).andExpect( status().isNoContent() );
     }
 
     @Test
-    void findUsersByIdWithMalformedInputOrNonexistentUserIdReturnsEmptyOptional(){
-        Assertions.assertFalse( usersRepository.findUsersById( null ).isPresent() );
-        Assertions.assertFalse( usersRepository.findUsersById( "" ).isPresent() );
-        Assertions.assertFalse( usersRepository.findUsersById( "$" ).isPresent() );
-        Assertions.assertFalse( usersRepository.findUsersById( "999" ).isPresent() );
-    }
+    void getUserDetailsFetchesUserDetails() throws Exception {
+        final var responseBody =
+        mockMvc.perform( get( "/users/{user_id}", "333" ).header( "X-Request-Id", "theId" ) )
+                .andExpect( status().isOk() )
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
 
-    @Test
-    void findUsersByIdFetchesUser(){
-        Assertions.assertEquals( "Harley Quinn", usersRepository.findUsersById( "333" ).get().getDisplayName() );
+        final var objectMapper = new ObjectMapper();
+        final var user = objectMapper.readValue( responseBody, User.class );
+
+        Assertions.assertEquals( "Harley Quinn", user.getDisplayName() );
     }
 
     @AfterEach
