@@ -1,0 +1,10 @@
+/Users/suvarnathekkoot/Repo/accounts-user-api/src/test/java/uk/gov/companieshouse/accounts/user/repositories/UsersRepositoryTest.java
+/Users/suvarnathekkoot/Repo/accounts-user-api/src/test/java/uk/gov/companieshouse/accounts/user/controller/ControllerAdviceTest.java
+/Users/suvarnathekkoot/Repo/accounts-user-api/src/test/java/uk/gov/companieshouse/accounts/user/integration/FindRolesBasedOnUserIDControllerTest.java
+/Users/suvarnathekkoot/Repo/accounts-user-api/src/test/java/uk/gov/companieshouse/accounts/user/integration/FindUserBasedOnEmailControllerTest.java
+/Users/suvarnathekkoot/Repo/accounts-user-api/src/test/java/uk/gov/companieshouse/accounts/user/mapper/UsersDtoDaoMapperTest.java
+/Users/suvarnathekkoot/Repo/accounts-user-api/src/test/java/uk/gov/companieshouse/accounts/user/utils/CamelCaseSnakeCaseTest.java
+/Users/suvarnathekkoot/Repo/accounts-user-api/src/test/java/uk/gov/companieshouse/accounts/user/controller/FindUserBasedOnEmailControllerTest.java
+/Users/suvarnathekkoot/Repo/accounts-user-api/src/test/java/uk/gov/companieshouse/accounts/user/integration/UsersServiceTest.java
+/Users/suvarnathekkoot/Repo/accounts-user-api/src/test/java/uk/gov/companieshouse/accounts/user/service/UsersServiceTest.java
+/Users/suvarnathekkoot/Repo/accounts-user-api/src/test/java/uk/gov/companieshouse/accounts/user/controller/FindRolesBasedOnUserIDControllerTest.java

@@ -1,0 +1,16 @@
+/Users/suvarnathekkoot/Repo/accounts-user-api/src/main/java/uk/gov/companieshouse/accounts/user/controller/FindRolesBasedOnUserIDController.java
+/Users/suvarnathekkoot/Repo/accounts-user-api/src/main/java/uk/gov/companieshouse/accounts/user/exceptions/NotFoundRuntimeException.java
+/Users/suvarnathekkoot/Repo/accounts-user-api/src/main/java/uk/gov/companieshouse/accounts/user/configuration/MongoConfig.java
+/Users/suvarnathekkoot/Repo/accounts-user-api/src/main/java/uk/gov/companieshouse/accounts/user/interceptor/LoggingInterceptor.java
+/Users/suvarnathekkoot/Repo/accounts-user-api/src/main/java/uk/gov/companieshouse/accounts/user/repositories/UsersRepository.java
+/Users/suvarnathekkoot/Repo/accounts-user-api/src/main/java/uk/gov/companieshouse/accounts/user/controller/FindUserBasedOnEmailController.java
+/Users/suvarnathekkoot/Repo/accounts-user-api/src/main/java/uk/gov/companieshouse/accounts/user/configuration/MongoRoleReadingConverter.java
+/Users/suvarnathekkoot/Repo/accounts-user-api/src/main/java/uk/gov/companieshouse/accounts/user/models/Users.java
+/Users/suvarnathekkoot/Repo/accounts-user-api/src/main/java/uk/gov/companieshouse/accounts/user/utils/CamelCaseSnakeCase.java
+/Users/suvarnathekkoot/Repo/accounts-user-api/src/main/java/uk/gov/companieshouse/accounts/user/mapper/UsersDtoDaoMapper.java
+/Users/suvarnathekkoot/Repo/accounts-user-api/src/main/java/uk/gov/companieshouse/accounts/user/configuration/MongoRoleWritingConverter.java
+/Users/suvarnathekkoot/Repo/accounts-user-api/src/main/java/uk/gov/companieshouse/accounts/user/service/UsersService.java
+/Users/suvarnathekkoot/Repo/accounts-user-api/src/main/java/uk/gov/companieshouse/accounts/user/configuration/InterceptorConfig.java
+/Users/suvarnathekkoot/Repo/accounts-user-api/src/main/java/uk/gov/companieshouse/accounts/user/exceptions/BadRequestRuntimeException.java
+/Users/suvarnathekkoot/Repo/accounts-user-api/src/main/java/uk/gov/companieshouse/accounts/user/controller/ControllerAdvice.java
+/Users/suvarnathekkoot/Repo/accounts-user-api/src/main/java/uk/gov/companieshouse/accounts/user/AccountsUserServiceApplication.java
