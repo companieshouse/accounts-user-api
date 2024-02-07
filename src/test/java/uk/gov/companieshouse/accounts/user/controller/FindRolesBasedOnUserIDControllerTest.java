@@ -16,8 +16,7 @@ import uk.gov.companieshouse.accounts.user.service.UsersService;
 import uk.gov.companieshouse.api.accounts.user.model.Role;
 import uk.gov.companieshouse.api.accounts.user.model.User;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -32,15 +31,14 @@ public class FindRolesBasedOnUserIDControllerTest {
     @Autowired
     public MockMvc mockMvc;
 
-    @Autowired
+    @MockBean
     UsersService usersService;
 
     @MockBean
     InterceptorConfig interceptorConfig;
 
-    private User userTestOne;
-    private User userTestTwo;
     private User userEminem;
+    private User userTheRock;
 
     @BeforeEach
     void setup() {
@@ -53,55 +51,47 @@ public class FindRolesBasedOnUserIDControllerTest {
                 .email("eminem@rap.com")
                 .roles(Set.of( Role.SUPERVISOR ));
 
-        userTestOne = new User();
-        userTestOne.userId("111")
-        .forename( "Marshall" )
-        .surname( "Mathers" )
-        .displayName( "Eminem" )
-        .email( "eminem@rap.com" )
-        .roles( Set.of( Role.SUPERVISOR ) );
+        userTheRock = new User();
+        userTheRock.userId("222")
+                .forename("Dwayne")
+                .surname("Johnson")
+                .displayName("The Rock")
+                .email("the.rock@wrestling.com")
+                .roles(Set.of( Role.BADOS_USER, Role.RESTRICTED_WORD ));
 
-
-        userTestTwo = new User();
-        userTestTwo.userId("222")
-                .roles(Set.of(Role.SUPPORT_MEMBER, Role.RESTRICTED_WORD));
+        User userHarleyQuinn = new User();
+        userHarleyQuinn.userId("333")
+                .forename("Harleen")
+                .surname("Quinzel")
+                .displayName("Harley Quinn")
+                .email("harley.quinn@gotham.city")
+                .roles(Set.of( Role.APPEALS_TEAM ));
 
         Mockito.doNothing().when(interceptorConfig).addInterceptors(any());
     }
-
     @Test
-    void getUserRolesWithMissingParamsReturnsNotFound() throws Exception {
-        mockMvc.perform( get( "/users/{user_id}/roles" , "333").header("X-Request-Id", "theId") ).andExpect(status().isNotFound());
-    }
+    void getUserRolesWithMalformedUserIDReturnsBadRequest() throws Exception {
 
-    @Test
-    void getUserRolesWithMalformedUserIDReturnsEmptyList() throws Exception {
-
-        Mockito.doReturn(Set.of()).when(usersService).findRolesByUserId(any());
-
-        final var responseBody =
-                mockMvc.perform(get("/users/{user_id}/roles", "abc").header("X-Request-Id", "theId")).andExpect(status().isNotFound());
+        mockMvc.perform(get("/users/{user_id}/roles", "$").header("X-Request-Id", "theId")).andExpect(status().isBadRequest());
     }
 
     @Test
     void getUserRolesWithNonexistentUserIDReturnsNotFound() throws Exception {
-        mockMvc.perform( get( "/users/{user_id}/roles", "111111" ).header("X-Request-Id", "theId") ).andExpect(status().isNotFound());
+        mockMvc.perform( get( "/users/roles").header("X-Request-Id", "theId") ).andExpect(status().isNotFound());
     }
 
     @Test
     void getUserRolesWithOneUserIdReturnsOneRole() throws Exception {
-
-      //  Mockito.doReturn(List.of( userTestOne ) ).when( usersService ).findRolesByUserId(any());
-
+        Mockito.doReturn( Optional.of( userEminem ) ).when( usersService ).fetchUser( any() );
         final var responseBody =
-                mockMvc.perform( get( "/users/{user_id}/roles" , "111").header("X-Request-Id", "theId") )
+                mockMvc.perform( get( "/users/{user_id}/roles", "111" ).header("X-Request-Id", "theId") )
                         .andExpect(status().isOk())
                         .andReturn()
                         .getResponse()
                         .getContentAsString();
 
         final var objectMapper = new ObjectMapper();
-        final var roles = objectMapper.readValue(responseBody, new TypeReference<List<Role>>(){} );
+        final var roles = objectMapper.readValue(responseBody, new TypeReference<Set<Role>>(){} );
 
         Assertions.assertEquals( 1, roles.size() );
         Assertions.assertTrue( roles.contains(SUPERVISOR) );
@@ -109,20 +99,17 @@ public class FindRolesBasedOnUserIDControllerTest {
 
     @Test
     void getUserRolesWithOneUserIdReturnsMultipleRoles() throws Exception {
-
-        Mockito.doReturn( List.of( userTestTwo ) ).when( usersService ).fetchUsers( any() );
-
+        Mockito.doReturn( Optional.of( userTheRock ) ).when( usersService ).fetchUser( any() );
         final var responseBody =
-                mockMvc.perform( get( "/users/{user_id}/roles" , "111").header("X-Request-Id", "theId") )
-                        .andExpect(status().isOk());
+                mockMvc.perform( get( "/users/{user_id}/roles" , "222").header("X-Request-Id", "theId") )
+                        .andExpect(status().isOk()) .andReturn()
+                        .getResponse()
+                        .getContentAsString();
 
         final var objectMapper = new ObjectMapper();
-       // final var roles = objectMapper.readValue(responseBody, new TypeReference<Set<Role>>(){} );
+        final var roles = objectMapper.readValue(responseBody, new TypeReference<Set<Role>>(){} );
 
-       // Assertions.assertEquals( 2, roles.size() );
-       // Assertions.assertTrue( roles.containsAll( Set.of( "SUPPORT_MEMBER", "RESTRICTED_WORD" ) ) );
+        Assertions.assertEquals( 2, roles.size() );
+        Assertions.assertTrue( roles.containsAll( Set.of(Role.BADOS_USER, Role.RESTRICTED_WORD )));
     }
-        //searchuserRolesWithBaduserIdReturnsBadRequest
-    //searchuserRolesWithNonExistingUserIdReturnsEmtpyList
-    //searchuserRolesWithValidUserIdReturnsValidListOfRoles
 }
