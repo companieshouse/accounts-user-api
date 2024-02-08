@@ -3,6 +3,7 @@ package uk.gov.companieshouse.accounts.user.integration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -77,7 +78,17 @@ public class UsersServiceTest {
         harleyQuinn.setCreated( LocalDateTime.now().minusDays( 10 ) );
         harleyQuinn.setUpdated( LocalDateTime.now().minusDays( 5 ) );
 
-        usersRepository.insert( List.of( eminem, theRock, harleyQuinn ) );
+        final var harryPotter = new Users();
+        harryPotter.setId( "444" );
+        harryPotter.setLocale( "GB_en" );
+        harryPotter.setForename( "Daniel" );
+        harryPotter.setSurname( "Radcliff" );
+        harryPotter.setDisplayName( "Harry Potter" );
+        harryPotter.setEmail( "harry.potter@under-the-stairs.com" );
+        harryPotter.setCreated( LocalDateTime.now().minusDays( 10 ) );
+        harryPotter.setUpdated( LocalDateTime.now().minusDays( 5 ) );
+
+        usersRepository.insert( List.of( eminem, theRock, harleyQuinn, harryPotter ) );
     }
 
     @Test
@@ -128,4 +139,50 @@ public class UsersServiceTest {
     public void after() {
         mongoTemplate.dropCollection( Users.class );
     }
+
+    @Test
+    void setRolesWithNullOrMalformedOrNonexistentUserIdUserDoesNothing(){
+        usersService.setRoles( null, List.of( Role.SUPPORT_MEMBER ) );
+        usersService.setRoles( "", List.of( Role.SUPPORT_MEMBER ) );
+        usersService.setRoles( "$", List.of( Role.SUPPORT_MEMBER ) );
+        usersService.setRoles( "999", List.of( Role.SUPPORT_MEMBER ) );
+
+        final var users = usersRepository.findAll();
+        Assertions.assertEquals( users.size(), 4 );
+        for ( Users user: users ){
+            final var roles = user.getRoles();
+            Assertions.assertTrue( Objects.isNull( roles ) || !roles.contains( Role.SUPPORT_MEMBER ) );
+        }
+    }
+
+    @Test
+    void setRolesInsertsRolesFieldIfNotPresent(){
+        usersService.setRoles( "444", List.of( Role.SUPPORT_MEMBER ) );
+        Assertions.assertEquals( Set.of( Role.SUPPORT_MEMBER ), usersRepository.findUsersById( "444" ).get().getRoles() );
+    }
+
+    @Test
+    void setRolesWithNullRolesThrowsNullPointerException(){
+        Assertions.assertThrows( NullPointerException.class, () -> usersService.setRoles( "333", null ) );
+    }
+
+    @Test
+    void setRolesUpdatesRoles(){
+
+        usersService.setRoles( "333", List.of() );
+        Assertions.assertEquals( Set.of(), usersRepository.findUsersById("333").get().getRoles() );
+
+        usersService.setRoles( "333", List.of( Role.SUPPORT_MEMBER ) );
+        Assertions.assertEquals( Set.of( Role.SUPPORT_MEMBER ), usersRepository.findUsersById("333").get().getRoles() );
+
+        usersService.setRoles( "333", List.of( Role.SUPPORT_MEMBER, Role.CSI_SUPPORT ) );
+        Assertions.assertEquals( Set.of( Role.SUPPORT_MEMBER, Role.CSI_SUPPORT ), usersRepository.findUsersById("333").get().getRoles() );
+    }
+
+    @Test
+    void setRolesEliminatesDuplicates(){
+        usersService.setRoles( "444", List.of( Role.SUPPORT_MEMBER, Role.SUPPORT_MEMBER ) );
+        Assertions.assertEquals( Set.of( Role.SUPPORT_MEMBER ) , usersService.fetchUser( "444" ).get().getRoles() );
+    }
+
 }
