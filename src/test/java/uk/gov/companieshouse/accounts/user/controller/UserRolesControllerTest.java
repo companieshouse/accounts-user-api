@@ -192,4 +192,22 @@ public class UserRolesControllerTest {
         Mockito.verify( usersService ).setRoles( eq( "444" ), eq( List.of( Role.SUPPORT_MEMBER ) ) );
     }
 
+
+    @Test
+    void setUserRolesReturnsInternalServerErrorWhenDatabaseFailsToUpdate() throws Exception {
+        Mockito.doReturn( Optional.of( harryPotter ) ).when(usersService ).fetchUser( any() );
+        Mockito.doThrow( RuntimeException.class ).when( usersService ).setRoles( any(), any() );
+
+        final var objectMapper = new ObjectMapper();
+        final var roles = objectMapper.writeValueAsString( List.of("support-member") );
+
+        mockMvc.perform( put( "/users/{user_id}/roles", "444" )
+                        .header( "X-Request-Id", "theId" )
+                        .contentType( "application/json" )
+                        .content( roles ) )
+                .andExpect( status().isInternalServerError() );
+
+        Mockito.verify( usersService ).setRoles( eq( "444" ), eq( List.of( Role.SUPPORT_MEMBER ) ) );
+    }
+
 }

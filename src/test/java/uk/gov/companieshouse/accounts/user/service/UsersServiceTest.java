@@ -191,21 +191,25 @@ public class UsersServiceTest {
 
     @Test
     void setRolesWithNullOrMalformedOrNonexistentUserIdUserRunsQuery(){
-        usersService.setRoles( null, List.of( Role.SUPPORT_MEMBER ) );
+        Mockito.doReturn( 0 ).when( usersRepository ).updateUser( any(), any() );
+
+        Assertions.assertThrows( RuntimeException.class, () -> usersService.setRoles( null, List.of( Role.SUPPORT_MEMBER ) ) );
         Mockito.verify( usersRepository ).updateUser( isNull(), argThat(setRolesUpdateParameterMatches( Set.of( Role.SUPPORT_MEMBER ) ) ) );
 
-        usersService.setRoles( "", List.of( Role.SUPPORT_MEMBER ) );
+        Assertions.assertThrows( RuntimeException.class, () -> usersService.setRoles( "", List.of( Role.SUPPORT_MEMBER ) ) );
         Mockito.verify( usersRepository ).updateUser( eq(""), argThat(setRolesUpdateParameterMatches( Set.of( Role.SUPPORT_MEMBER ) ) ) );
 
-        usersService.setRoles( "$", List.of( Role.SUPPORT_MEMBER ) );
+        Assertions.assertThrows( RuntimeException.class, () -> usersService.setRoles( "$", List.of( Role.SUPPORT_MEMBER ) ) );
         Mockito.verify( usersRepository ).updateUser( eq("$"), argThat(setRolesUpdateParameterMatches( Set.of( Role.SUPPORT_MEMBER ) ) ) );
 
-        usersService.setRoles( "999", List.of( Role.SUPPORT_MEMBER ) );
+        Assertions.assertThrows( RuntimeException.class, () -> usersService.setRoles( "999", List.of( Role.SUPPORT_MEMBER ) ) );
         Mockito.verify( usersRepository ).updateUser( eq("999"), argThat(setRolesUpdateParameterMatches( Set.of( Role.SUPPORT_MEMBER ) ) ) );
     }
 
     @Test
     void setRolesInsertsRolesFieldIfNotPresentRunsQuery(){
+        Mockito.doReturn( 1 ).when( usersRepository ).updateUser( any(), any() );
+
         usersService.setRoles( "444", List.of( Role.SUPPORT_MEMBER ) );
         Mockito.verify( usersRepository ).updateUser( eq("444"), argThat(setRolesUpdateParameterMatches( Set.of( Role.SUPPORT_MEMBER ) ) ) );
     }
@@ -217,6 +221,8 @@ public class UsersServiceTest {
 
     @Test
     void setRolesUpdatesRolesRunsQuery(){
+        Mockito.doReturn( 1 ).when( usersRepository ).updateUser( any(), any() );
+
         usersService.setRoles( "333", List.of() );
         Mockito.verify( usersRepository ).updateUser( eq("333"), argThat(setRolesUpdateParameterMatches( Set.of(  ) ) ) );
 
@@ -229,6 +235,8 @@ public class UsersServiceTest {
 
     @Test
     void setRolesEliminatesDuplicates(){
+        Mockito.doReturn( 1 ).when( usersRepository ).updateUser( any(), any() );
+
         usersService.setRoles( "444", List.of( Role.SUPPORT_MEMBER, Role.SUPPORT_MEMBER ) );
         Mockito.verify( usersRepository ).updateUser( eq("444"), argThat(setRolesUpdateParameterMatches( Set.of( Role.SUPPORT_MEMBER ) ) ) );
     }

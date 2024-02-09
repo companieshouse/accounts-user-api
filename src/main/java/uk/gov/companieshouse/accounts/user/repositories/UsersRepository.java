@@ -17,7 +17,7 @@ public interface UsersRepository extends MongoRepository<Users, String> {
     Optional<Users> findUsersById( String userId );
 
     @Query( "{ 'id': ?0 }" )
-    void updateUser( String userId, Update update );
+    int updateUser( String userId, Update update );
 
 }
 
