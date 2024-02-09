@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import uk.gov.companieshouse.accounts.user.AccountsUserServiceApplication;
 import uk.gov.companieshouse.accounts.user.exceptions.BadRequestRuntimeException;
+import uk.gov.companieshouse.accounts.user.exceptions.InternalServerErrorRuntimeException;
 import uk.gov.companieshouse.accounts.user.exceptions.NotFoundRuntimeException;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
@@ -60,6 +61,23 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public Errors onBadRequestRuntimeException(BadRequestRuntimeException e, HttpServletRequest request) {
+        String requestId = request.getHeader(X_REQUEST_ID);
+
+        Map<String, Object> contextMap = new HashMap<>();
+        contextMap.put("url", request.getRequestURL().toString());
+        contextMap.put("query-parameters", request.getQueryString() != null ? "?" + request.getQueryString() : "");
+
+        LOG.errorContext(requestId, e.getMessage(), null, contextMap);
+
+        Errors errors = new Errors();
+        errors.addError(Err.invalidBodyBuilderWithLocation(ACCOUNTS_USER_API).withError(e.getMessage()).build());
+        return errors;
+    }
+
+    @ExceptionHandler(InternalServerErrorRuntimeException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    public Errors onInternalServerErrorRuntimeException(InternalServerErrorRuntimeException e, HttpServletRequest request) {
         String requestId = request.getHeader(X_REQUEST_ID);
 
         Map<String, Object> contextMap = new HashMap<>();
