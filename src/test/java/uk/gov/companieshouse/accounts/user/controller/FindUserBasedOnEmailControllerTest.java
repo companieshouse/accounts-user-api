@@ -71,15 +71,15 @@ public class FindUserBasedOnEmailControllerTest {
 
     @Test
     void searchUserDetailsWithoutQueryParamsReturnsBadRequest() throws Exception {
-        mockMvc.perform( get( "/users/search" ).header("X-Request-Id", "theId") ).andExpect(status().isBadRequest());
+        mockMvc.perform( get( "/users/search" ).header("X-Request-Id", "theId123") ).andExpect(status().isBadRequest());
     }
 
     @Test
     void searchUserDetailsWithMalformedEmailReturnsBadRequest() throws Exception {
-        mockMvc.perform( get( "/users/search?user_email=null" ).header("X-Request-Id", "theId") ).andExpect(status().isBadRequest());
-        mockMvc.perform( get( "/users/search?user_email=" ).header("X-Request-Id", "theId") ).andExpect(status().isBadRequest());
-        mockMvc.perform( get( "/users/search?user_email=\"\"" ).header("X-Request-Id", "theId") ).andExpect(status().isBadRequest());
-        mockMvc.perform( get( "/users/search?user_email=xyz" ).header("X-Request-Id", "theId") ).andExpect(status().isBadRequest());
+        mockMvc.perform( get( "/users/search?user_email=null" ).header("X-Request-Id", "theId123") ).andExpect(status().isBadRequest());
+        mockMvc.perform( get( "/users/search?user_email=" ).header("X-Request-Id", "theId123") ).andExpect(status().isBadRequest());
+        mockMvc.perform( get( "/users/search?user_email=\"\"" ).header("X-Request-Id", "theId123") ).andExpect(status().isBadRequest());
+        mockMvc.perform( get( "/users/search?user_email=xyz" ).header("X-Request-Id", "theId123") ).andExpect(status().isBadRequest());
     }
 
     @Test
@@ -88,7 +88,7 @@ public class FindUserBasedOnEmailControllerTest {
         Mockito.doReturn( List.of() ).when( usersService ).fetchUsers( any() );
 
         final var responseBody =
-                mockMvc.perform( get( "/users/search?user_email=back.street.boys@the90s.city" ).header("X-Request-Id", "theId") )
+                mockMvc.perform( get( "/users/search?user_email=back.street.boys@the90s.city" ).header("X-Request-Id", "theId123") )
                         .andExpect(status().isNoContent())
                         .andReturn()
                         .getResponse()
@@ -106,7 +106,7 @@ public class FindUserBasedOnEmailControllerTest {
         Mockito.doReturn( List.of( userHarleyQuinn ) ).when( usersService ).fetchUsers( any() );
 
         final var responseBody =
-                mockMvc.perform( get( "/users/search?user_email=harley.quinn@gotham.city" ).header("X-Request-Id", "theId") )
+                mockMvc.perform( get( "/users/search?user_email=harley.quinn@gotham.city" ).header("X-Request-Id", "theId123") )
                         .andExpect(status().isOk())
                         .andReturn()
                         .getResponse()
@@ -125,7 +125,7 @@ public class FindUserBasedOnEmailControllerTest {
         Mockito.doReturn( List.of( userEminem, userTheRock ) ).when( usersService ).fetchUsers( any() );
 
         final var responseBody =
-                mockMvc.perform( get( "/users/search?user_email=eminem@rap.com&user_email=the.rock@wrestling.com" ).header("X-Request-Id", "theId") )
+                mockMvc.perform( get( "/users/search?user_email=eminem@rap.com&user_email=the.rock@wrestling.com" ).header("X-Request-Id", "theId123") )
                         .andExpect(status().isOk())
                         .andReturn()
                         .getResponse()

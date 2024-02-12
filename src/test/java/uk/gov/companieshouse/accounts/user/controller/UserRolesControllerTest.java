@@ -88,7 +88,7 @@ public class UserRolesControllerTest {
         final var roles = objectMapper.writeValueAsString( List.of("supervisor") );
 
         mockMvc.perform( put( "/users/{user_id}/roles", "$" )
-                        .header( "X-Request-Id", "theId" )
+                        .header( "X-Request-Id", "theId123" )
                         .contentType( "application/json" )
                         .content( roles ) )
                 .andExpect( status().isBadRequest() );
@@ -97,7 +97,7 @@ public class UserRolesControllerTest {
     @Test
     void setUserRolesWithoutRolesReturnsBadRequest() throws Exception {
         mockMvc.perform( put( "/users/{user_id}/roles", "999" )
-                        .header( "X-Request-Id", "theId" )
+                        .header( "X-Request-Id", "theId123" )
                         .contentType( "application/json" ) )
                 .andExpect( status().isBadRequest() );
     }
@@ -108,7 +108,7 @@ public class UserRolesControllerTest {
         final var roles = objectMapper.writeValueAsString( List.of() );
 
         mockMvc.perform( put( "/users/{user_id}/roles", "999" )
-                        .header( "X-Request-Id", "theId" )
+                        .header( "X-Request-Id", "theId123" )
                         .contentType( "application/json" )
                         .content( roles ) )
                 .andExpect( status().isBadRequest() );
@@ -122,7 +122,7 @@ public class UserRolesControllerTest {
         final var roles = objectMapper.writeValueAsString( List.of("support-member") );
 
         mockMvc.perform( put( "/users/{user_id}/roles", "999" )
-                        .header( "X-Request-Id", "theId" )
+                        .header( "X-Request-Id", "theId123" )
                         .contentType( "application/json" )
                         .content( roles ) )
                 .andExpect( status().isNotFound() );
@@ -136,7 +136,7 @@ public class UserRolesControllerTest {
         final var roles = objectMapper.writeValueAsString( List.of("support-member") );
 
         mockMvc.perform( put( "/users/{user_id}/roles", "333" )
-                        .header( "X-Request-Id", "theId" )
+                        .header( "X-Request-Id", "theId123" )
                         .contentType( "application/json" )
                         .content( roles ) )
                 .andExpect( status().isCreated() );
@@ -152,7 +152,7 @@ public class UserRolesControllerTest {
         final var roles = objectMapper.writeValueAsString( List.of("support-member", "csi_support" ) );
 
         mockMvc.perform( put( "/users/{user_id}/roles", "333" )
-                        .header( "X-Request-Id", "theId" )
+                        .header( "X-Request-Id", "theId123" )
                         .contentType( "application/json" )
                         .content( roles ) )
                 .andExpect( status().isCreated() );
@@ -168,7 +168,7 @@ public class UserRolesControllerTest {
         final var roles = objectMapper.writeValueAsString( List.of("support-member", "support-member" ) );
 
         mockMvc.perform( put( "/users/{user_id}/roles", "333" )
-                        .header( "X-Request-Id", "theId" )
+                        .header( "X-Request-Id", "theId123" )
                         .contentType( "application/json" )
                         .content( roles ) )
                 .andExpect( status().isCreated() );
@@ -184,7 +184,7 @@ public class UserRolesControllerTest {
         final var roles = objectMapper.writeValueAsString( List.of("support-member") );
 
         mockMvc.perform( put( "/users/{user_id}/roles", "444" )
-                        .header( "X-Request-Id", "theId" )
+                        .header( "X-Request-Id", "theId123" )
                         .contentType( "application/json" )
                         .content( roles ) )
                 .andExpect( status().isCreated() );
@@ -202,7 +202,7 @@ public class UserRolesControllerTest {
         final var roles = objectMapper.writeValueAsString( List.of("support-member") );
 
         mockMvc.perform( put( "/users/{user_id}/roles", "444" )
-                        .header( "X-Request-Id", "theId" )
+                        .header( "X-Request-Id", "theId123" )
                         .contentType( "application/json" )
                         .content( roles ) )
                 .andExpect( status().isInternalServerError() );

@@ -43,18 +43,18 @@ class ControllerAdviceTest {
                 .when( usersService ).fetchUsers( any() );
 
         mockMvc.perform(get( "/users/search?user_email=jessica.simpson@hollywood.com" )
-                        .header("X-Request-Id", "theId") )
+                        .header("X-Request-Id", "theId123") )
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void testBadRequestRuntimeError() throws Exception {
-        mockMvc.perform( get( "/users/search" ).header("X-Request-Id", "theId") ).andExpect(status().isBadRequest());
+        mockMvc.perform( get( "/users/search" ).header("X-Request-Id", "theId123") ).andExpect(status().isBadRequest());
     }
 
     @Test
     void testConstraintViolationError() throws Exception {
-        mockMvc.perform( get( "/users/search?user_email=abc" ).header("X-Request-Id", "theId") ).andExpect(status().isBadRequest());
+        mockMvc.perform( get( "/users/search?user_email=abc" ).header("X-Request-Id", "theId123") ).andExpect(status().isBadRequest());
     }
 
     @Test
@@ -63,7 +63,7 @@ class ControllerAdviceTest {
                 .when( usersService ).fetchUsers( any() );
 
         mockMvc.perform(get( "/users/search?user_email=jessica.simpson@hollywood.com" )
-                        .header("X-Request-Id", "theId") )
+                        .header("X-Request-Id", "theId123") )
                 .andExpect(status().isInternalServerError());
     }
 
@@ -73,7 +73,7 @@ class ControllerAdviceTest {
                 .when( usersService ).fetchUsers( any() );
 
         mockMvc.perform(get( "/users/search?user_email=jessica.simpson@hollywood.com" )
-                        .header("X-Request-Id", "theId") )
+                        .header("X-Request-Id", "theId123") )
                 .andExpect(status().isInternalServerError());
     }
 

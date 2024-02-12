@@ -30,7 +30,7 @@ public class UserRolesController implements UserRolesInterface {
     }
 
     @Override
-    public ResponseEntity<List<Role>> getUserRoles (final String requestId, final String userId){
+    public ResponseEntity<List<Role>> getUserRoles (final String userId, final String requestId){
         LOG.debug(String.format("%s: Retrieving user roles for user (%s) ...", requestId, userId));
 
         if (Objects.isNull(userId)){
@@ -49,7 +49,7 @@ public class UserRolesController implements UserRolesInterface {
 
 
     @Override
-    public ResponseEntity<Void> setUserRoles( final String xRequestId, final String userId, final List<Role> roles ) {
+    public ResponseEntity<Void> setUserRoles( final String userId, final List<Role> roles, final String xRequestId ) {
 
         if( Objects.isNull(roles) || roles.isEmpty() ){
             LOG.error(String.format("%s: No roles were provided.", xRequestId));

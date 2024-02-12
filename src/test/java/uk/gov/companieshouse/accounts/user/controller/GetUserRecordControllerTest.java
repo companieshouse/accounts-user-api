@@ -70,19 +70,19 @@ public class GetUserRecordControllerTest {
 
     @Test
     void getUserDetailsWithoutPathVariableReturnsNotFound() throws Exception {
-        mockMvc.perform( get( "/users/" ).header( "X-Request-Id", "theId" ) ).andExpect( status().isNotFound() );
+        mockMvc.perform( get( "/users/" ).header( "X-Request-Id", "theId123" ) ).andExpect( status().isNotFound() );
     }
 
     @Test
     void getUserDetailsWithMalformedInputReturnsBadRequest() throws Exception {
-        mockMvc.perform( get( "/users/{user_id}", "$" ).header( "X-Request-Id", "theId" ) ).andExpect( status().isBadRequest() );
+        mockMvc.perform( get( "/users/{user_id}", "$" ).header( "X-Request-Id", "theId123" ) ).andExpect( status().isBadRequest() );
     }
 
     @Test
-    void getUserDetailsWithNonexistentUserIdReturnsNoContent() throws Exception {
+    void getUserDetailsWithNonexistentUserIdReturnsNotFound() throws Exception {
         Mockito.doReturn( Optional.empty() ).when( usersService ).fetchUser( any() );
 
-        mockMvc.perform( get( "/users/{user_id}", "999" ).header( "X-Request-Id", "theId" ) ).andExpect( status().isNoContent() );
+        mockMvc.perform( get( "/users/{user_id}", "999" ).header( "X-Request-Id", "theId123" ) ).andExpect( status().isNotFound() );
     }
 
     @Test
@@ -90,7 +90,7 @@ public class GetUserRecordControllerTest {
         Mockito.doReturn( Optional.of( userHarleyQuinn ) ).when( usersService ).fetchUser( any() );
 
         final var responseBody =
-                mockMvc.perform( get( "/users/{user_id}", "333" ).header( "X-Request-Id", "theId" ) )
+                mockMvc.perform( get( "/users/{user_id}", "333" ).header( "X-Request-Id", "theId123" ) )
                         .andExpect( status().isOk() )
                         .andReturn()
                         .getResponse()
