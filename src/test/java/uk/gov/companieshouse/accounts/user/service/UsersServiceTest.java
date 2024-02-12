@@ -1,23 +1,28 @@
 package uk.gov.companieshouse.accounts.user.service;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import org.bson.Document;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.mongodb.UncategorizedMongoDbException;
+import org.springframework.data.mongodb.core.query.Update;
 import uk.gov.companieshouse.accounts.user.mapper.UsersDtoDaoMapper;
 import uk.gov.companieshouse.accounts.user.models.Users;
 import uk.gov.companieshouse.accounts.user.repositories.UsersRepository;
@@ -43,6 +48,7 @@ public class UsersServiceTest {
     private User userTheRock;
     private Users usersHarleyQuinn;
     private User userHarleyQuinn;
+    private Users harryPotter;
 
     @BeforeEach
     void setup(){
@@ -103,6 +109,16 @@ public class UsersServiceTest {
                        .displayName("Harley Quinn")
                        .email("harley.quinn@gotham.city")
                        .roles(Set.of( Role.APPEALS_TEAM ));
+
+        harryPotter = new Users();
+        harryPotter.setId( "444" );
+        harryPotter.setLocale( "GB_en" );
+        harryPotter.setForename( "Daniel" );
+        harryPotter.setSurname( "Radcliff" );
+        harryPotter.setDisplayName( "Harry Potter" );
+        harryPotter.setEmail( "harry.potter@under-the-stairs.com" );
+        harryPotter.setCreated( LocalDateTime.now().minusDays( 10 ) );
+        harryPotter.setUpdated( LocalDateTime.now().minusDays( 5 ) );
     }
 
     @Test
@@ -165,5 +181,64 @@ public class UsersServiceTest {
         Assertions.assertEquals( "Harley Quinn", usersService.fetchUser( "333" ).get().getDisplayName() );
     }
 
+    private ArgumentMatcher<Update> setRolesUpdateParameterMatches( Set<Role> expectedRoles ) {
+        return update -> {
+            final var document = update.getUpdateObject().get("$set", Document.class);
+            final var roles = document.getOrDefault("roles", null );
+            return roles.equals( expectedRoles );
+        };
+    }
+
+    @Test
+    void setRolesWithNullOrMalformedOrNonexistentUserIdUserRunsQuery(){
+        Mockito.doReturn( 0 ).when( usersRepository ).updateUser( any(), any() );
+
+        Assertions.assertThrows( RuntimeException.class, () -> usersService.setRoles( null, List.of( Role.SUPPORT_MEMBER ) ) );
+        Mockito.verify( usersRepository ).updateUser( isNull(), argThat(setRolesUpdateParameterMatches( Set.of( Role.SUPPORT_MEMBER ) ) ) );
+
+        Assertions.assertThrows( RuntimeException.class, () -> usersService.setRoles( "", List.of( Role.SUPPORT_MEMBER ) ) );
+        Mockito.verify( usersRepository ).updateUser( eq(""), argThat(setRolesUpdateParameterMatches( Set.of( Role.SUPPORT_MEMBER ) ) ) );
+
+        Assertions.assertThrows( RuntimeException.class, () -> usersService.setRoles( "$", List.of( Role.SUPPORT_MEMBER ) ) );
+        Mockito.verify( usersRepository ).updateUser( eq("$"), argThat(setRolesUpdateParameterMatches( Set.of( Role.SUPPORT_MEMBER ) ) ) );
+
+        Assertions.assertThrows( RuntimeException.class, () -> usersService.setRoles( "999", List.of( Role.SUPPORT_MEMBER ) ) );
+        Mockito.verify( usersRepository ).updateUser( eq("999"), argThat(setRolesUpdateParameterMatches( Set.of( Role.SUPPORT_MEMBER ) ) ) );
+    }
+
+    @Test
+    void setRolesInsertsRolesFieldIfNotPresentRunsQuery(){
+        Mockito.doReturn( 1 ).when( usersRepository ).updateUser( any(), any() );
+
+        usersService.setRoles( "444", List.of( Role.SUPPORT_MEMBER ) );
+        Mockito.verify( usersRepository ).updateUser( eq("444"), argThat(setRolesUpdateParameterMatches( Set.of( Role.SUPPORT_MEMBER ) ) ) );
+    }
+
+    @Test
+    void setRolesWithNullRolesThrowsNullPointerException(){
+        Assertions.assertThrows( NullPointerException.class, () -> usersService.setRoles( "333", null ) );
+    }
+
+    @Test
+    void setRolesUpdatesRolesRunsQuery(){
+        Mockito.doReturn( 1 ).when( usersRepository ).updateUser( any(), any() );
+
+        usersService.setRoles( "333", List.of() );
+        Mockito.verify( usersRepository ).updateUser( eq("333"), argThat(setRolesUpdateParameterMatches( Set.of(  ) ) ) );
+
+        usersService.setRoles( "333", List.of( Role.SUPPORT_MEMBER ) );
+        Mockito.verify( usersRepository ).updateUser( eq("333"), argThat(setRolesUpdateParameterMatches( Set.of( Role.SUPPORT_MEMBER ) ) ) );
+
+        usersService.setRoles( "333", List.of( Role.SUPPORT_MEMBER, Role.CSI_SUPPORT ) );
+        Mockito.verify( usersRepository ).updateUser( eq("333"), argThat(setRolesUpdateParameterMatches( Set.of( Role.SUPPORT_MEMBER, Role.CSI_SUPPORT ) ) ) );
+    }
+
+    @Test
+    void setRolesEliminatesDuplicates(){
+        Mockito.doReturn( 1 ).when( usersRepository ).updateUser( any(), any() );
+
+        usersService.setRoles( "444", List.of( Role.SUPPORT_MEMBER, Role.SUPPORT_MEMBER ) );
+        Mockito.verify( usersRepository ).updateUser( eq("444"), argThat(setRolesUpdateParameterMatches( Set.of( Role.SUPPORT_MEMBER ) ) ) );
+    }
 
 }

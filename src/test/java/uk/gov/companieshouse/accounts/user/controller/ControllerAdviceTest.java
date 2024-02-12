@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.client.HttpServerErrorException;
 import uk.gov.companieshouse.accounts.user.configuration.InterceptorConfig;
+import uk.gov.companieshouse.accounts.user.exceptions.InternalServerErrorRuntimeException;
 import uk.gov.companieshouse.accounts.user.exceptions.NotFoundRuntimeException;
 import uk.gov.companieshouse.accounts.user.service.UsersService;
 
@@ -59,6 +60,16 @@ class ControllerAdviceTest {
     @Test
     void testOnInternalServerError() throws Exception {
         Mockito.doThrow(new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error"))
+                .when( usersService ).fetchUsers( any() );
+
+        mockMvc.perform(get( "/users/search?user_email=jessica.simpson@hollywood.com" )
+                        .header("X-Request-Id", "theId") )
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    void testOnInternalServerErrorRuntimeException() throws Exception {
+        Mockito.doThrow(new InternalServerErrorRuntimeException("Internal Server Error"))
                 .when( usersService ).fetchUsers( any() );
 
         mockMvc.perform(get( "/users/search?user_email=jessica.simpson@hollywood.com" )

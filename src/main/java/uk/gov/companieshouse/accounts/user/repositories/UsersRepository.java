@@ -2,6 +2,7 @@ package uk.gov.companieshouse.accounts.user.repositories;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -14,6 +15,9 @@ public interface UsersRepository extends MongoRepository<Users, String> {
     List<Users> fetchUsers( List<String> emails );
 
     Optional<Users> findUsersById( String userId );
+
+    @Query( "{ 'id': ?0 }" )
+    int updateUser( String userId, Update update );
 
 }
 

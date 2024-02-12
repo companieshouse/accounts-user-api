@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static uk.gov.companieshouse.api.accounts.user.model.Role.SUPERVISOR;
 
 @Tag("unit-test")
-@WebMvcTest(FindRolesBasedOnUserIDController.class)
+@WebMvcTest(UserRolesController.class)
 public class FindRolesBasedOnUserIDControllerTest {
 
     @Autowired

@@ -3,6 +3,7 @@ package uk.gov.companieshouse.accounts.user.repositories;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -14,12 +15,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.data.mongodb.UncategorizedMongoDbException;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Update;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import uk.gov.companieshouse.accounts.user.models.Users;
 import uk.gov.companieshouse.api.accounts.user.model.Role;
-
 
 @SpringBootTest
 @Testcontainers(parallel = true)
@@ -72,7 +73,17 @@ public class UsersRepositoryTest {
         harleyQuinn.setCreated( LocalDateTime.now().minusDays( 10 ) );
         harleyQuinn.setUpdated( LocalDateTime.now().minusDays( 5 ) );
 
-        usersRepository.insert( List.of( eminem, theRock, harleyQuinn ) );
+        final var harryPotter = new Users();
+        harryPotter.setId( "444" );
+        harryPotter.setLocale( "GB_en" );
+        harryPotter.setForename( "Daniel" );
+        harryPotter.setSurname( "Radcliff" );
+        harryPotter.setDisplayName( "Harry Potter" );
+        harryPotter.setEmail( "harry.potter@under-the-stairs.com" );
+        harryPotter.setCreated( LocalDateTime.now().minusDays( 10 ) );
+        harryPotter.setUpdated( LocalDateTime.now().minusDays( 5 ) );
+
+        usersRepository.insert( List.of( eminem, theRock, harleyQuinn, harryPotter ) );
     }
 
     @Test
@@ -122,6 +133,41 @@ public class UsersRepositoryTest {
     @AfterEach
     public void after() {
         mongoTemplate.dropCollection( Users.class );
+    }
+
+    @Test
+    void updateUserWithNullOrMalformedOrNonexistentUserIdUserDoesNothing(){
+        final var update = new Update().set( "roles", List.of( Role.SUPPORT_MEMBER ) );
+        usersRepository.updateUser( null, update );
+        usersRepository.updateUser( "", update );
+        usersRepository.updateUser( "$", update );
+        usersRepository.updateUser( "999", update );
+
+        final var users = usersRepository.findAll();
+        Assertions.assertEquals( users.size(), 4 );
+        for ( Users user: users ){
+            final var roles = user.getRoles();
+            Assertions.assertTrue( Objects.isNull( roles ) || !roles.contains( Role.SUPPORT_MEMBER ) );
+        }
+    }
+
+    @Test
+    void updateUserWithNullUpdateThrowsIllegalStateException(){
+        Assertions.assertThrows( IllegalStateException.class, () -> usersRepository.updateUser( "444", null ) );
+    }
+
+    @Test
+    void updateUserInsertSpecifiedFieldIfNotPresent(){
+        final var update = new Update().set( "roles", List.of( Role.SUPPORT_MEMBER ) );
+        usersRepository.updateUser( "444", update );
+        Assertions.assertEquals( Set.of( Role.SUPPORT_MEMBER ), usersRepository.findUsersById( "444" ).get().getRoles() );
+    }
+
+    @Test
+    void updateUserUpdatesSpecifiedField(){
+        final var update = new Update().set( "roles", List.of( Role.SUPPORT_MEMBER ) );
+        usersRepository.updateUser( "333", update );
+        Assertions.assertEquals( Set.of( Role.SUPPORT_MEMBER ), usersRepository.findUsersById( "333" ).get().getRoles() );
     }
 
 }

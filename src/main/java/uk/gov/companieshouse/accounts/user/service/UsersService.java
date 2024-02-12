@@ -1,14 +1,20 @@
 package uk.gov.companieshouse.accounts.user.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import uk.gov.companieshouse.accounts.user.exceptions.InternalServerErrorRuntimeException;
 import uk.gov.companieshouse.accounts.user.mapper.UsersDtoDaoMapper;
 import uk.gov.companieshouse.accounts.user.repositories.UsersRepository;
+import uk.gov.companieshouse.api.accounts.user.model.Role;
 import uk.gov.companieshouse.api.accounts.user.model.User;
 
+@Transactional
 @Service
 public class UsersService {
 
@@ -31,6 +37,15 @@ public class UsersService {
     public Optional<User> fetchUser( final String userId ){
         return usersRepository.findUsersById( userId )
                               .map( usersDtoDaoMapper::daoToDto );
+    }
+
+    public void setRoles( String userId, List<Role> roles ){
+        final var rolesSet = new HashSet<>( roles );
+        final var update = new Update().set( "roles", rolesSet );
+        final var numUpdatedRecords = usersRepository.updateUser( userId, update );
+        if ( numUpdatedRecords != 1 ) {
+            throw new InternalServerErrorRuntimeException( "Failed to update database" );
+        }
     }
 
 }
