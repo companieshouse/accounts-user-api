@@ -90,19 +90,19 @@ public class FindRolesBasedOnUserIDControllerTest {
     @Test
     void getUserRolesWithMalformedUserIDReturnsBadRequest() throws Exception {
 
-        mockMvc.perform(get("/users/{user_id}/roles", "$%").header("X-Request-Id", "theId")).andExpect(status().isBadRequest());
+        mockMvc.perform(get("/users/{user_id}/roles", "$%").header("X-Request-Id", "theId123")).andExpect(status().isBadRequest());
     }
 
     @Test
     void getUserRolesWithNonexistentUserIDReturnsNotFound() throws Exception {
-        mockMvc.perform( get( "/associations/companies/{company_number}/users/{user_email}/{status}", "111111", "krishna.patel@dahai.art", "Removed" ).header("X-Request-Id", "theId") ).andExpect(status().isNotFound());
+        mockMvc.perform( get( "/associations/companies/{company_number}/users/{user_email}/{status}", "111111", "krishna.patel@dahai.art", "Removed" ).header("X-Request-Id", "theId123") ).andExpect(status().isNotFound());
     }
 
     @Test
     void getUserRolesWithOneUserIdReturnsOneRole() throws Exception {
 
         final var responseBody =
-                mockMvc.perform( get( "/users/{user_id}/roles", "111" ).header("X-Request-Id", "theId") )
+                mockMvc.perform( get( "/users/{user_id}/roles", "111" ).header("X-Request-Id", "theId123") )
                         .andExpect(status().isOk())
                         .andReturn()
                         .getResponse()
@@ -118,7 +118,7 @@ public class FindRolesBasedOnUserIDControllerTest {
     void searchUserRolesWithOneUserIdReturnsMultipleRoles() throws Exception {
 
         final var responseBody =
-                mockMvc.perform( get( "/users/{user_id}/roles" , "222" ).header("X-Request-Id", "theId") )
+                mockMvc.perform( get( "/users/{user_id}/roles" , "222" ).header("X-Request-Id", "theId123") )
                         .andExpect(status().isOk())
                         .andReturn()
                         .getResponse()

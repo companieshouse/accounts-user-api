@@ -72,19 +72,19 @@ public class FindRolesBasedOnUserIDControllerTest {
     @Test
     void getUserRolesWithMalformedUserIDReturnsBadRequest() throws Exception {
 
-        mockMvc.perform(get("/users/{user_id}/roles", "$").header("X-Request-Id", "theId")).andExpect(status().isBadRequest());
+        mockMvc.perform(get("/users/{user_id}/roles", "$").header("X-Request-Id", "theId123")).andExpect(status().isBadRequest());
     }
 
     @Test
     void getUserRolesWithNonexistentUserIDReturnsNotFound() throws Exception {
-        mockMvc.perform( get( "/users/roles").header("X-Request-Id", "theId") ).andExpect(status().isNotFound());
+        mockMvc.perform( get( "/users/roles").header("X-Request-Id", "theId123") ).andExpect(status().isNotFound());
     }
 
     @Test
     void getUserRolesWithOneUserIdReturnsOneRole() throws Exception {
         Mockito.doReturn( Optional.of( userEminem ) ).when( usersService ).fetchUser( any() );
         final var responseBody =
-                mockMvc.perform( get( "/users/{user_id}/roles", "111" ).header("X-Request-Id", "theId") )
+                mockMvc.perform( get( "/users/{user_id}/roles", "111" ).header("X-Request-Id", "theId123") )
                         .andExpect(status().isOk())
                         .andReturn()
                         .getResponse()
@@ -101,7 +101,7 @@ public class FindRolesBasedOnUserIDControllerTest {
     void getUserRolesWithOneUserIdReturnsMultipleRoles() throws Exception {
         Mockito.doReturn( Optional.of( userTheRock ) ).when( usersService ).fetchUser( any() );
         final var responseBody =
-                mockMvc.perform( get( "/users/{user_id}/roles" , "222").header("X-Request-Id", "theId") )
+                mockMvc.perform( get( "/users/{user_id}/roles" , "222").header("X-Request-Id", "theId123") )
                         .andExpect(status().isOk()) .andReturn()
                         .getResponse()
                         .getContentAsString();

@@ -30,7 +30,7 @@ public class GetUserRecordController implements GetUserRecordInterface {
 
         if ( userOptional.isEmpty() ){
             LOG.debug( String.format( "%s: Could not find user: %s", xRequestId, userId ) );
-            return new ResponseEntity<>( HttpStatus.NO_CONTENT );
+            return new ResponseEntity<>( HttpStatus.NOT_FOUND );
         }
 
         final var user = userOptional.get();
