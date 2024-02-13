@@ -38,10 +38,10 @@ public class UsersService {
                               .map( usersDtoDaoMapper::daoToDto );
     }
 
-    public void setRoles( String userId, List<Role> roles ){
+    public int setRoles( String userId, List<Role> roles ){
         final var rolesSet = new HashSet<>( roles );
         final var update = new Update().set( "roles", rolesSet );
-        usersRepository.updateUser( userId, update );
+        return usersRepository.updateUser( userId, update );
     }
 
 }
