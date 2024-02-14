@@ -8,7 +8,6 @@ import java.util.Optional;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import uk.gov.companieshouse.accounts.user.exceptions.InternalServerErrorRuntimeException;
 import uk.gov.companieshouse.accounts.user.mapper.UsersDtoDaoMapper;
 import uk.gov.companieshouse.accounts.user.repositories.UsersRepository;
 import uk.gov.companieshouse.api.accounts.user.model.Role;
@@ -39,13 +38,10 @@ public class UsersService {
                               .map( usersDtoDaoMapper::daoToDto );
     }
 
-    public void setRoles( String userId, List<Role> roles ){
+    public int setRoles( String userId, List<Role> roles ){
         final var rolesSet = new HashSet<>( roles );
         final var update = new Update().set( "roles", rolesSet );
-        final var numUpdatedRecords = usersRepository.updateUser( userId, update );
-        if ( numUpdatedRecords != 1 ) {
-            throw new InternalServerErrorRuntimeException( "Failed to update database" );
-        }
+        return usersRepository.updateUser( userId, update );
     }
 
 }

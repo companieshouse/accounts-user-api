@@ -63,7 +63,9 @@ public class UserRolesController implements UserRolesInterface {
             throw new NotFoundRuntimeException( "accounts-user-api", "Please check the request and try again" );
         }
 
-        usersService.setRoles( userId, roles );
+        final var numUpdatedUsers = usersService.setRoles( userId, roles );
+        LOG.trace( String.format( "%s: Ran update query for userId %s, resulted in %d record%s being updated.", xRequestId, userId, numUpdatedUsers, numUpdatedUsers == 1 ? "" : "s"  ) );
+
 
         LOG.debug( String.format( "%s: Successfully set status of %s to %s", xRequestId, userId, String.join( ",", roles.stream().map( Role::getValue ).toList() ) ) );
 

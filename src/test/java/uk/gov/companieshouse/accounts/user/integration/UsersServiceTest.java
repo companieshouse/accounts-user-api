@@ -142,10 +142,10 @@ public class UsersServiceTest {
 
     @Test
     void setRolesWithNullOrMalformedOrNonexistentUserIdUserDoesNothing(){
-        Assertions.assertThrows( RuntimeException.class, () -> usersService.setRoles( null, List.of( Role.SUPPORT_MEMBER ) ) );
-        Assertions.assertThrows( RuntimeException.class, () -> usersService.setRoles( "", List.of( Role.SUPPORT_MEMBER ) ) );
-        Assertions.assertThrows( RuntimeException.class, () -> usersService.setRoles( "$", List.of( Role.SUPPORT_MEMBER ) ) );
-        Assertions.assertThrows( RuntimeException.class, () -> usersService.setRoles( "999", List.of( Role.SUPPORT_MEMBER ) ) );
+        usersService.setRoles( null, List.of( Role.SUPPORT_MEMBER ) );
+        usersService.setRoles( "", List.of( Role.SUPPORT_MEMBER ) );
+        usersService.setRoles( "$", List.of( Role.SUPPORT_MEMBER ) );
+        usersService.setRoles( "999", List.of( Role.SUPPORT_MEMBER ) );
 
         final var users = usersRepository.findAll();
         Assertions.assertEquals( users.size(), 4 );
