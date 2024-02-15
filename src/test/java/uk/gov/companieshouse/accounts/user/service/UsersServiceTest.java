@@ -60,7 +60,7 @@ public class UsersServiceTest {
         usersEminem.setSurname( "Mathers" );
         usersEminem.setDisplayName( "Eminem" );
         usersEminem.setEmail( "eminem@rap.com" );
-        usersEminem.setRoles( Set.of( Role.SUPERVISOR ) );
+        usersEminem.setRoles( List.of( Role.SUPERVISOR ) );
         usersEminem.setCreated( LocalDateTime.now().minusDays( 1 ) );
         usersEminem.setUpdated( LocalDateTime.now() );
 
@@ -70,7 +70,7 @@ public class UsersServiceTest {
                   .surname("Mathers")
                   .displayName("Eminem")
                   .email("eminem@rap.com")
-                  .roles(Set.of( Role.SUPERVISOR ));
+                  .roles(List.of( Role.SUPERVISOR ));
 
         usersTheRock = new Users();
         usersTheRock.setId( "222" );
@@ -79,7 +79,7 @@ public class UsersServiceTest {
         usersTheRock.setSurname( "Johnson" );
         usersTheRock.setDisplayName( "The Rock" );
         usersTheRock.setEmail( "the.rock@wrestling.com" );
-        usersTheRock.setRoles( Set.of( Role.BADOS_USER, Role.RESTRICTED_WORD ) );
+        usersTheRock.setRoles( List.of( Role.BADOS_USER, Role.RESTRICTED_WORD ) );
         usersTheRock.setCreated( LocalDateTime.now().minusDays( 4 ) );
         usersTheRock.setUpdated( LocalDateTime.now().minusDays( 2 ) );
 
@@ -89,7 +89,7 @@ public class UsersServiceTest {
                    .surname("Johnson")
                    .displayName("The Rock")
                    .email("the.rock@wrestling.com")
-                   .roles(Set.of( Role.BADOS_USER, Role.RESTRICTED_WORD ));
+                   .roles(List.of( Role.BADOS_USER, Role.RESTRICTED_WORD ));
 
         usersHarleyQuinn = new Users();
         usersHarleyQuinn.setId( "333" );
@@ -98,7 +98,7 @@ public class UsersServiceTest {
         usersHarleyQuinn.setSurname( "Quinzel" );
         usersHarleyQuinn.setDisplayName( "Harley Quinn" );
         usersHarleyQuinn.setEmail( "harley.quinn@gotham.city" );
-        usersHarleyQuinn.setRoles( Set.of( Role.APPEALS_TEAM ) );
+        usersHarleyQuinn.setRoles( List.of( Role.APPEALS_TEAM ) );
         usersHarleyQuinn.setCreated( LocalDateTime.now().minusDays( 10 ) );
         usersHarleyQuinn.setUpdated( LocalDateTime.now().minusDays( 5 ) );
 
@@ -108,7 +108,7 @@ public class UsersServiceTest {
                        .surname("Quinzel")
                        .displayName("Harley Quinn")
                        .email("harley.quinn@gotham.city")
-                       .roles(Set.of( Role.APPEALS_TEAM ));
+                       .roles(List.of( Role.APPEALS_TEAM ));
 
         harryPotter = new Users();
         harryPotter.setId( "444" );

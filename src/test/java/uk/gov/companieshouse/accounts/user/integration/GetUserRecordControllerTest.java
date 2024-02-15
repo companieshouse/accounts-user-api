@@ -62,7 +62,7 @@ public class GetUserRecordControllerTest {
         eminem.setSurname( "Mathers" );
         eminem.setDisplayName( "Eminem" );
         eminem.setEmail( "eminem@rap.com" );
-        eminem.setRoles( Set.of( Role.SUPERVISOR ) );
+        eminem.setRoles( List.of( Role.SUPERVISOR ) );
         eminem.setCreated( LocalDateTime.now().minusDays( 1 ) );
         eminem.setUpdated( LocalDateTime.now() );
 
@@ -73,7 +73,7 @@ public class GetUserRecordControllerTest {
         theRock.setSurname( "Johnson" );
         theRock.setDisplayName( "The Rock" );
         theRock.setEmail( "the.rock@wrestling.com" );
-        theRock.setRoles( Set.of( Role.BADOS_USER, Role.RESTRICTED_WORD ) );
+        theRock.setRoles( List.of( Role.BADOS_USER, Role.RESTRICTED_WORD ) );
         theRock.setCreated( LocalDateTime.now().minusDays( 4 ) );
         theRock.setUpdated( LocalDateTime.now().minusDays( 2 ) );
 
@@ -84,7 +84,7 @@ public class GetUserRecordControllerTest {
         harleyQuinn.setSurname( "Quinzel" );
         harleyQuinn.setDisplayName( "Harley Quinn" );
         harleyQuinn.setEmail( "harley.quinn@gotham.city" );
-        harleyQuinn.setRoles( Set.of( Role.APPEALS_TEAM ) );
+        harleyQuinn.setRoles( List.of( Role.APPEALS_TEAM ) );
         harleyQuinn.setCreated( LocalDateTime.now().minusDays( 10 ) );
         harleyQuinn.setUpdated( LocalDateTime.now().minusDays( 5 ) );
 

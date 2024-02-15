@@ -5,8 +5,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -47,7 +47,7 @@ public class GetUserRecordControllerTest {
                 .surname("Mathers")
                 .displayName("Eminem")
                 .email("eminem@rap.com")
-                .roles(Set.of( Role.SUPERVISOR ));
+                .roles(List.of( Role.SUPERVISOR ));
 
         userTheRock = new User();
         userTheRock.userId("222")
@@ -55,7 +55,7 @@ public class GetUserRecordControllerTest {
                 .surname("Johnson")
                 .displayName("The Rock")
                 .email("the.rock@wrestling.com")
-                .roles(Set.of( Role.BADOS_USER, Role.RESTRICTED_WORD ));
+                .roles(List.of( Role.BADOS_USER, Role.RESTRICTED_WORD ));
 
         userHarleyQuinn = new User();
         userHarleyQuinn.userId("333")
@@ -63,7 +63,7 @@ public class GetUserRecordControllerTest {
                 .surname("Quinzel")
                 .displayName("Harley Quinn")
                 .email("harley.quinn@gotham.city")
-                .roles(Set.of( Role.APPEALS_TEAM ));
+                .roles(List.of( Role.APPEALS_TEAM ));
 
         Mockito.doNothing().when(interceptorConfig).addInterceptors( any() );
     }
