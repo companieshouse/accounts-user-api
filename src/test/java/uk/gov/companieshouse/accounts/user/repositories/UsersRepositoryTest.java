@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,7 +46,7 @@ public class UsersRepositoryTest {
         eminem.setSurname( "Mathers" );
         eminem.setDisplayName( "Eminem" );
         eminem.setEmail( "eminem@rap.com" );
-        eminem.setRoles( Set.of( Role.SUPERVISOR ) );
+        eminem.setRoles( List.of( Role.SUPERVISOR ) );
         eminem.setCreated( LocalDateTime.now().minusDays( 1 ) );
         eminem.setUpdated( LocalDateTime.now() );
 
@@ -58,7 +57,7 @@ public class UsersRepositoryTest {
         theRock.setSurname( "Johnson" );
         theRock.setDisplayName( "The Rock" );
         theRock.setEmail( "the.rock@wrestling.com" );
-        theRock.setRoles( Set.of( Role.BADOS_USER, Role.RESTRICTED_WORD ) );
+        theRock.setRoles( List.of( Role.BADOS_USER, Role.RESTRICTED_WORD ) );
         theRock.setCreated( LocalDateTime.now().minusDays( 4 ) );
         theRock.setUpdated( LocalDateTime.now().minusDays( 2 ) );
 
@@ -69,7 +68,7 @@ public class UsersRepositoryTest {
         harleyQuinn.setSurname( "Quinzel" );
         harleyQuinn.setDisplayName( "Harley Quinn" );
         harleyQuinn.setEmail( "harley.quinn@gotham.city" );
-        harleyQuinn.setRoles( Set.of( Role.APPEALS_TEAM ) );
+        harleyQuinn.setRoles( List.of( Role.APPEALS_TEAM ) );
         harleyQuinn.setCreated( LocalDateTime.now().minusDays( 10 ) );
         harleyQuinn.setUpdated( LocalDateTime.now().minusDays( 5 ) );
 
@@ -160,14 +159,14 @@ public class UsersRepositoryTest {
     void updateUserInsertSpecifiedFieldIfNotPresent(){
         final var update = new Update().set( "roles", List.of( Role.SUPPORT_MEMBER ) );
         usersRepository.updateUser( "444", update );
-        Assertions.assertEquals( Set.of( Role.SUPPORT_MEMBER ), usersRepository.findUsersById( "444" ).get().getRoles() );
+        Assertions.assertEquals( List.of( Role.SUPPORT_MEMBER ), usersRepository.findUsersById( "444" ).get().getRoles() );
     }
 
     @Test
     void updateUserUpdatesSpecifiedField(){
         final var update = new Update().set( "roles", List.of( Role.SUPPORT_MEMBER ) );
         usersRepository.updateUser( "333", update );
-        Assertions.assertEquals( Set.of( Role.SUPPORT_MEMBER ), usersRepository.findUsersById( "333" ).get().getRoles() );
+        Assertions.assertEquals( List.of( Role.SUPPORT_MEMBER ), usersRepository.findUsersById( "333" ).get().getRoles() );
     }
 
 }

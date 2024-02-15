@@ -8,7 +8,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -62,7 +61,7 @@ public class FindUserBasedOnEmailControllerTest {
         eminem.setSurname( "Mathers" );
         eminem.setDisplayName( "Eminem" );
         eminem.setEmail( "eminem@rap.com" );
-        eminem.setRoles( Set.of( Role.SUPERVISOR ) );
+        eminem.setRoles( List.of( Role.SUPERVISOR ) );
         eminem.setCreated( LocalDateTime.now().minusDays( 1 ) );
         eminem.setUpdated( LocalDateTime.now() );
 
@@ -73,7 +72,7 @@ public class FindUserBasedOnEmailControllerTest {
         theRock.setSurname( "Johnson" );
         theRock.setDisplayName( "The Rock" );
         theRock.setEmail( "the.rock@wrestling.com" );
-        theRock.setRoles( Set.of( Role.BADOS_USER, Role.RESTRICTED_WORD ) );
+        theRock.setRoles( List.of( Role.BADOS_USER, Role.RESTRICTED_WORD ) );
         theRock.setCreated( LocalDateTime.now().minusDays( 4 ) );
         theRock.setUpdated( LocalDateTime.now().minusDays( 2 ) );
 
@@ -84,7 +83,7 @@ public class FindUserBasedOnEmailControllerTest {
         harleyQuinn.setSurname( "Quinzel" );
         harleyQuinn.setDisplayName( "Harley Quinn" );
         harleyQuinn.setEmail( "harley.quinn@gotham.city" );
-        harleyQuinn.setRoles( Set.of( Role.APPEALS_TEAM ) );
+        harleyQuinn.setRoles( List.of( Role.APPEALS_TEAM ) );
         harleyQuinn.setCreated( LocalDateTime.now().minusDays( 10 ) );
         harleyQuinn.setUpdated( LocalDateTime.now().minusDays( 5 ) );
 

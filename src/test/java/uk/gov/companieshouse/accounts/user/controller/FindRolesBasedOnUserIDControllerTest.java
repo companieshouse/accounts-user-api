@@ -2,6 +2,7 @@ package uk.gov.companieshouse.accounts.user.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -49,7 +50,7 @@ public class FindRolesBasedOnUserIDControllerTest {
                 .surname("Mathers")
                 .displayName("Eminem")
                 .email("eminem@rap.com")
-                .roles(Set.of( Role.SUPERVISOR ));
+                .roles(List.of( Role.SUPERVISOR ));
 
         userTheRock = new User();
         userTheRock.userId("222")
@@ -57,7 +58,7 @@ public class FindRolesBasedOnUserIDControllerTest {
                 .surname("Johnson")
                 .displayName("The Rock")
                 .email("the.rock@wrestling.com")
-                .roles(Set.of( Role.BADOS_USER, Role.RESTRICTED_WORD ));
+                .roles(List.of( Role.BADOS_USER, Role.RESTRICTED_WORD ));
 
         User userHarleyQuinn = new User();
         userHarleyQuinn.userId("333")
@@ -65,7 +66,7 @@ public class FindRolesBasedOnUserIDControllerTest {
                 .surname("Quinzel")
                 .displayName("Harley Quinn")
                 .email("harley.quinn@gotham.city")
-                .roles(Set.of( Role.APPEALS_TEAM ));
+                .roles(List.of( Role.APPEALS_TEAM ));
 
         Mockito.doNothing().when(interceptorConfig).addInterceptors(any());
     }

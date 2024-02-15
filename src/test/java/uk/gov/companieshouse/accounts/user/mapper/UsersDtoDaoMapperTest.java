@@ -1,7 +1,7 @@
 package uk.gov.companieshouse.accounts.user.mapper;
 
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -25,7 +25,7 @@ public class UsersDtoDaoMapperTest {
     private final String EMINEM_DISPLAY_NAME = "Eminem";
     private final String EMINEM_EMAIL = "eminem@rap.com";
     private final LocalDateTime EMINEM_CREATED = LocalDateTime.now();
-    private final Set<Role> EMINEM_ROLES = Set.of( Role.SUPERVISOR );
+    private final List<Role> EMINEM_ROLES = List.of( Role.SUPERVISOR );
 
     @Test
     void usersDaoToDtoWithNullInputReturnsNull(){

@@ -2,7 +2,7 @@ package uk.gov.companieshouse.accounts.user.models;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Set;
+import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -36,7 +36,7 @@ public class Users implements Serializable {
     private String email;
 
     @Field("roles")
-    private Set<Role> roles;
+    private List<Role> roles;
 
     @Field("created")
     private LocalDateTime created;
@@ -46,7 +46,7 @@ public class Users implements Serializable {
     private LocalDateTime updated;
 
     public Users(String locale, String forename, String surname, String displayName, String email,
-            LocalDateTime created, Set<Role> roles ) {
+            LocalDateTime created, List<Role> roles ) {
         this.locale = locale;
         this.forename = forename;
         this.surname = surname;
@@ -124,11 +124,11 @@ public class Users implements Serializable {
     }
 
 
-    public Set<Role> getRoles() {
+    public List<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<Role> roles) {
+    public void setRoles(List<Role> roles) {
         this.roles = roles;
     }
 
