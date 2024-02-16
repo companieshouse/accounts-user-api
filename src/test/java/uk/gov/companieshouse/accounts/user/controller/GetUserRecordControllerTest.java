@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.companieshouse.accounts.user.configuration.InterceptorConfig;
 import uk.gov.companieshouse.accounts.user.service.UsersService;
 import uk.gov.companieshouse.api.accounts.user.model.Role;
+import uk.gov.companieshouse.api.accounts.user.model.RolesList;
 import uk.gov.companieshouse.api.accounts.user.model.User;
 
 @Tag("unit-test")
@@ -41,13 +42,19 @@ public class GetUserRecordControllerTest {
     @BeforeEach
     void setup() {
 
+        final var supervisor = new RolesList();
+        supervisor.add( Role.SUPERVISOR );
+
         userEminem = new User();
         userEminem.userId("111")
                 .forename("Marshall")
                 .surname("Mathers")
                 .displayName("Eminem")
                 .email("eminem@rap.com")
-                .roles(List.of( Role.SUPERVISOR ));
+                .roles( supervisor );
+
+        final var badosUserAndRestrictedWord = new RolesList();
+        badosUserAndRestrictedWord.addAll( List.of( Role.BADOS_USER, Role.RESTRICTED_WORD ) );
 
         userTheRock = new User();
         userTheRock.userId("222")
@@ -55,7 +62,10 @@ public class GetUserRecordControllerTest {
                 .surname("Johnson")
                 .displayName("The Rock")
                 .email("the.rock@wrestling.com")
-                .roles(List.of( Role.BADOS_USER, Role.RESTRICTED_WORD ));
+                .roles( badosUserAndRestrictedWord );
+
+        final var appealsTeam = new RolesList();
+        appealsTeam.add( Role.APPEALS_TEAM );
 
         userHarleyQuinn = new User();
         userHarleyQuinn.userId("333")
@@ -63,7 +73,7 @@ public class GetUserRecordControllerTest {
                 .surname("Quinzel")
                 .displayName("Harley Quinn")
                 .email("harley.quinn@gotham.city")
-                .roles(List.of( Role.APPEALS_TEAM ));
+                .roles( appealsTeam );
 
         Mockito.doNothing().when(interceptorConfig).addInterceptors( any() );
     }

@@ -28,6 +28,7 @@ import uk.gov.companieshouse.accounts.user.models.Users;
 import uk.gov.companieshouse.accounts.user.repositories.UsersRepository;
 import uk.gov.companieshouse.accounts.user.configuration.InterceptorConfig;
 import uk.gov.companieshouse.api.accounts.user.model.Role;
+import uk.gov.companieshouse.api.accounts.user.model.RolesList;
 import uk.gov.companieshouse.api.accounts.user.model.User;
 
 @AutoConfigureMockMvc
@@ -54,6 +55,10 @@ public class FindUserBasedOnEmailControllerTest {
 
     @BeforeEach
     public void setup() {
+
+        final var supervisor = new RolesList();
+        supervisor.add( Role.SUPERVISOR );
+
         final var eminem = new Users();
         eminem.setId( "111" );
         eminem.setLocale( "GB_en" );
@@ -61,9 +66,12 @@ public class FindUserBasedOnEmailControllerTest {
         eminem.setSurname( "Mathers" );
         eminem.setDisplayName( "Eminem" );
         eminem.setEmail( "eminem@rap.com" );
-        eminem.setRoles( List.of( Role.SUPERVISOR ) );
+        eminem.setRoles( supervisor );
         eminem.setCreated( LocalDateTime.now().minusDays( 1 ) );
         eminem.setUpdated( LocalDateTime.now() );
+
+        final var badosUserAndRestrictedWord = new RolesList();
+        badosUserAndRestrictedWord.addAll( List.of( Role.BADOS_USER, Role.RESTRICTED_WORD ) );
 
         final var theRock = new Users();
         theRock.setId( "222" );
@@ -72,9 +80,12 @@ public class FindUserBasedOnEmailControllerTest {
         theRock.setSurname( "Johnson" );
         theRock.setDisplayName( "The Rock" );
         theRock.setEmail( "the.rock@wrestling.com" );
-        theRock.setRoles( List.of( Role.BADOS_USER, Role.RESTRICTED_WORD ) );
+        theRock.setRoles( badosUserAndRestrictedWord );
         theRock.setCreated( LocalDateTime.now().minusDays( 4 ) );
         theRock.setUpdated( LocalDateTime.now().minusDays( 2 ) );
+
+        final var appealsTeam = new RolesList();
+        appealsTeam.add( Role.APPEALS_TEAM );
 
         final var harleyQuinn = new Users();
         harleyQuinn.setId( "333" );
@@ -83,7 +94,7 @@ public class FindUserBasedOnEmailControllerTest {
         harleyQuinn.setSurname( "Quinzel" );
         harleyQuinn.setDisplayName( "Harley Quinn" );
         harleyQuinn.setEmail( "harley.quinn@gotham.city" );
-        harleyQuinn.setRoles( List.of( Role.APPEALS_TEAM ) );
+        harleyQuinn.setRoles( appealsTeam );
         harleyQuinn.setCreated( LocalDateTime.now().minusDays( 10 ) );
         harleyQuinn.setUpdated( LocalDateTime.now().minusDays( 5 ) );
 
