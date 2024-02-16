@@ -148,7 +148,7 @@ public class UserRolesControllerTest {
                         .header( "X-Request-Id", "theId123" )
                         .contentType( "application/json" )
                         .content( roles ) )
-                .andExpect( status().isCreated() );
+                .andExpect( status().isOk() );
 
         Mockito.verify( usersService ).setRoles( eq( "333" ), eq( List.of( Role.SUPPORT_MEMBER ) ) );
     }
@@ -164,7 +164,7 @@ public class UserRolesControllerTest {
                         .header( "X-Request-Id", "theId123" )
                         .contentType( "application/json" )
                         .content( roles ) )
-                .andExpect( status().isCreated() );
+                .andExpect( status().isOk() );
 
         Mockito.verify( usersService ).setRoles( eq( "333" ), eq( List.of( Role.SUPPORT_MEMBER, Role.CSI_SUPPORT ) ) );
     }
@@ -180,7 +180,7 @@ public class UserRolesControllerTest {
                         .header( "X-Request-Id", "theId123" )
                         .contentType( "application/json" )
                         .content( roles ) )
-                .andExpect( status().isCreated() );
+                .andExpect( status().isOk() );
 
         Mockito.verify( usersService ).setRoles( eq( "333" ), eq( List.of( Role.SUPPORT_MEMBER, Role.SUPPORT_MEMBER ) ) );
     }
@@ -196,7 +196,7 @@ public class UserRolesControllerTest {
                         .header( "X-Request-Id", "theId123" )
                         .contentType( "application/json" )
                         .content( roles ) )
-                .andExpect( status().isCreated() );
+                .andExpect( status().isOk() );
 
         Mockito.verify( usersService ).setRoles( eq( "444" ), eq( List.of( Role.SUPPORT_MEMBER ) ) );
     }

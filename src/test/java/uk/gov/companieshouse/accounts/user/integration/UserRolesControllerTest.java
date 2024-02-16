@@ -165,7 +165,7 @@ public class UserRolesControllerTest {
                          .header( "X-Request-Id", "theId123" )
                          .contentType( "application/json" )
                          .content( roles ) )
-               .andExpect( status().isCreated() );
+               .andExpect( status().isOk() );
 
         Assertions.assertEquals( List.of(Role.SUPPORT_MEMBER), usersRepository.findUsersById( "333" ).get().getRoles() );
     }
@@ -179,7 +179,7 @@ public class UserRolesControllerTest {
                         .header( "X-Request-Id", "theId123" )
                         .contentType( "application/json" )
                         .content( roles ) )
-                .andExpect( status().isCreated() );
+                .andExpect( status().isOk() );
 
         final var actualRoles = usersRepository.findUsersById( "333" ).get().getRoles();
         Assertions.assertEquals( 2, actualRoles.size() );
@@ -195,7 +195,7 @@ public class UserRolesControllerTest {
                         .header( "X-Request-Id", "theId123" )
                         .contentType( "application/json" )
                         .content( roles ) )
-                .andExpect( status().isCreated() );
+                .andExpect( status().isOk() );
 
         Assertions.assertEquals( List.of(Role.SUPPORT_MEMBER ), usersRepository.findUsersById( "333" ).get().getRoles() );
     }
@@ -209,7 +209,7 @@ public class UserRolesControllerTest {
                         .header( "X-Request-Id", "theId123" )
                         .contentType( "application/json" )
                         .content( roles ) )
-                .andExpect( status().isCreated() );
+                .andExpect( status().isOk() );
 
         Assertions.assertEquals( List.of(Role.SUPPORT_MEMBER), usersRepository.findUsersById( "444" ).get().getRoles() );
     }

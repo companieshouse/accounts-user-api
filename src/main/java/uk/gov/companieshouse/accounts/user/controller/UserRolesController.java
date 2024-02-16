@@ -71,7 +71,7 @@ public class UserRolesController implements UserRolesInterface {
 
         LOG.debug( String.format( "%s: Successfully set status of %s to %s", xRequestId, userId, String.join( ",", roles.stream().map( Role::getValue ).toList() ) ) );
 
-        return new ResponseEntity<>(HttpStatus.CREATED );
+        return new ResponseEntity<>(HttpStatus.OK );
     }
 
 }
