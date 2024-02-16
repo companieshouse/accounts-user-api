@@ -14,6 +14,7 @@ import uk.gov.companieshouse.accounts.user.exceptions.NotFoundRuntimeException;
 import uk.gov.companieshouse.accounts.user.service.UsersService;
 import uk.gov.companieshouse.api.accounts.user.api.UserRolesInterface;
 import uk.gov.companieshouse.api.accounts.user.model.Role;
+import uk.gov.companieshouse.api.accounts.user.model.RolesList;
 import uk.gov.companieshouse.api.accounts.user.model.User;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
@@ -30,7 +31,7 @@ public class UserRolesController implements UserRolesInterface {
     }
 
     @Override
-    public ResponseEntity<List<Role>> getUserRoles (final String userId, final String requestId){
+    public ResponseEntity<RolesList> getUserRoles (final String userId, final String requestId){
         LOG.debug(String.format("%s: Retrieving user roles for user (%s) ...", requestId, userId));
 
         if (Objects.isNull(userId)){
@@ -40,16 +41,17 @@ public class UserRolesController implements UserRolesInterface {
         final var userRolesOptional = usersService.fetchUser(userId).map(User::getRoles);
         if (userRolesOptional.isEmpty()) {
             LOG.debug(String.format("%s: Unable to find roles for the userId: %s", requestId, userId));
-            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(new RolesList(), HttpStatus.NO_CONTENT);
         }
         final var userRoles= userRolesOptional.get();
         LOG.debug(String.format("%s: Successfully retrieved roles for the userId: %s", requestId, userId));
-        return new ResponseEntity<>(new ArrayList<>(userRoles), HttpStatus.OK);
+
+        return new ResponseEntity<>( userRoles, HttpStatus.OK);
     }
 
 
     @Override
-    public ResponseEntity<Void> setUserRoles( final String userId, final List<Role> roles, final String xRequestId ) {
+    public ResponseEntity<Void> setUserRoles( final String userId, final RolesList roles, final String xRequestId ) {
 
         if( Objects.isNull(roles) || roles.isEmpty() ){
             LOG.error(String.format("%s: No roles were provided.", xRequestId));
@@ -69,7 +71,7 @@ public class UserRolesController implements UserRolesInterface {
 
         LOG.debug( String.format( "%s: Successfully set status of %s to %s", xRequestId, userId, String.join( ",", roles.stream().map( Role::getValue ).toList() ) ) );
 
-        return new ResponseEntity<>(HttpStatus.CREATED );
+        return new ResponseEntity<>(HttpStatus.OK );
     }
 
 }

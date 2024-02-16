@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.companieshouse.accounts.user.models.Users;
 import uk.gov.companieshouse.api.accounts.user.model.Role;
+import uk.gov.companieshouse.api.accounts.user.model.RolesList;
 import uk.gov.companieshouse.api.accounts.user.model.User;
 
 @SpringBootTest
@@ -25,7 +26,12 @@ public class UsersDtoDaoMapperTest {
     private final String EMINEM_DISPLAY_NAME = "Eminem";
     private final String EMINEM_EMAIL = "eminem@rap.com";
     private final LocalDateTime EMINEM_CREATED = LocalDateTime.now();
-    private final List<Role> EMINEM_ROLES = List.of( Role.SUPERVISOR );
+    private final RolesList EMINEM_ROLES;
+
+    public UsersDtoDaoMapperTest(){
+        EMINEM_ROLES = new RolesList();
+        EMINEM_ROLES.add( Role.SUPERVISOR );
+    }
 
     @Test
     void usersDaoToDtoWithNullInputReturnsNull(){
@@ -40,7 +46,7 @@ public class UsersDtoDaoMapperTest {
          Assertions.assertNull( user.getEmail() );
          Assertions.assertNull( user.getUserId() );
          Assertions.assertNull( user.getDisplayName() );
-         Assertions.assertTrue( user.getRoles().isEmpty() );
+         Assertions.assertNull( user.getRoles() );
     }
 
     @Test
@@ -72,7 +78,7 @@ public class UsersDtoDaoMapperTest {
         Assertions.assertNull( users.getEmail() );
         Assertions.assertNull( users.getId() );
         Assertions.assertNull( users.getDisplayName() );
-        Assertions.assertTrue( users.getRoles().isEmpty() );
+        Assertions.assertNull( users.getRoles() );
     }
 
     @Test
@@ -92,27 +98,7 @@ public class UsersDtoDaoMapperTest {
         Assertions.assertEquals( EMINEM_EMAIL, user.getEmail() );
         Assertions.assertEquals( EMINEM_ID, user.getId() );
         Assertions.assertEquals( EMINEM_DISPLAY_NAME, user.getDisplayName() );
-        Assertions.assertEquals( EMINEM_ROLES, user.getRoles() );
-    }
-
-    @Test
-    void roleDaoToDtoWithNullInputReturnsNull(){
-        Assertions.assertNull( usersDtoDaoMapper.daoToDto( (Role) null ) );
-    }
-
-    @Test
-    void roleDaoToDtoShouldMapObject(){
-        Assertions.assertEquals( Role.SUPERVISOR, usersDtoDaoMapper.daoToDto( Role.SUPERVISOR ) );
-    }
-
-    @Test
-    void roleDtoToDaoWithNullInputReturnsNull(){
-        Assertions.assertNull( usersDtoDaoMapper.dtoToDao( (Role) null ) );
-    }
-
-    @Test
-    void roleDtoToDaoShouldMapObject(){
-        Assertions.assertEquals( Role.SUPERVISOR, usersDtoDaoMapper.dtoToDao( Role.SUPERVISOR ) );
+        Assertions.assertEquals( List.of( Role.SUPERVISOR ), user.getRoles() );
     }
 
 }

@@ -27,6 +27,7 @@ import uk.gov.companieshouse.accounts.user.mapper.UsersDtoDaoMapper;
 import uk.gov.companieshouse.accounts.user.models.Users;
 import uk.gov.companieshouse.accounts.user.repositories.UsersRepository;
 import uk.gov.companieshouse.api.accounts.user.model.Role;
+import uk.gov.companieshouse.api.accounts.user.model.RolesList;
 import uk.gov.companieshouse.api.accounts.user.model.User;
 
 @ExtendWith(MockitoExtension.class)
@@ -64,13 +65,19 @@ public class UsersServiceTest {
         usersEminem.setCreated( LocalDateTime.now().minusDays( 1 ) );
         usersEminem.setUpdated( LocalDateTime.now() );
 
+        final var supervisor = new RolesList();
+        supervisor.add( Role.SUPERVISOR );
+
         userEminem = new User();
         userEminem.userId("111")
                   .forename("Marshall")
                   .surname("Mathers")
                   .displayName("Eminem")
                   .email("eminem@rap.com")
-                  .roles(List.of( Role.SUPERVISOR ));
+                  .roles( supervisor );
+
+        final var badosUserAndRestrictedWord = new RolesList();
+        badosUserAndRestrictedWord.addAll( List.of( Role.BADOS_USER, Role.RESTRICTED_WORD ) );
 
         usersTheRock = new Users();
         usersTheRock.setId( "222" );
@@ -79,7 +86,7 @@ public class UsersServiceTest {
         usersTheRock.setSurname( "Johnson" );
         usersTheRock.setDisplayName( "The Rock" );
         usersTheRock.setEmail( "the.rock@wrestling.com" );
-        usersTheRock.setRoles( List.of( Role.BADOS_USER, Role.RESTRICTED_WORD ) );
+        usersTheRock.setRoles( badosUserAndRestrictedWord );
         usersTheRock.setCreated( LocalDateTime.now().minusDays( 4 ) );
         usersTheRock.setUpdated( LocalDateTime.now().minusDays( 2 ) );
 
@@ -89,7 +96,7 @@ public class UsersServiceTest {
                    .surname("Johnson")
                    .displayName("The Rock")
                    .email("the.rock@wrestling.com")
-                   .roles(List.of( Role.BADOS_USER, Role.RESTRICTED_WORD ));
+                   .roles( badosUserAndRestrictedWord );
 
         usersHarleyQuinn = new Users();
         usersHarleyQuinn.setId( "333" );
@@ -102,13 +109,16 @@ public class UsersServiceTest {
         usersHarleyQuinn.setCreated( LocalDateTime.now().minusDays( 10 ) );
         usersHarleyQuinn.setUpdated( LocalDateTime.now().minusDays( 5 ) );
 
+        final var appealsTeam = new RolesList();
+        appealsTeam.add( Role.APPEALS_TEAM );
+
         userHarleyQuinn = new User();
         userHarleyQuinn.userId("333")
                        .forename("Harleen")
                        .surname("Quinzel")
                        .displayName("Harley Quinn")
                        .email("harley.quinn@gotham.city")
-                       .roles(List.of( Role.APPEALS_TEAM ));
+                       .roles( appealsTeam );
 
         harryPotter = new Users();
         harryPotter.setId( "444" );
