@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.accounts.user.configuration;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
@@ -44,7 +45,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
     private void addEricInterceptors( final InterceptorRegistry registry){
         registry.addInterceptor(
                 new UserAuthenticationInterceptor(
-                        Collections.EMPTY_LIST,
+                        new ArrayList<>(0),
                         Collections.singletonList("oauth2"),
                         new InternalUserInterceptor(
                                 AccountsUserServiceApplication.applicationNameSpace)

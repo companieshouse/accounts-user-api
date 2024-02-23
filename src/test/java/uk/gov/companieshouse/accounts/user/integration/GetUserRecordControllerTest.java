@@ -1,15 +1,7 @@
 package uk.gov.companieshouse.accounts.user.integration;
 
-import static org.mockito.ArgumentMatchers.any;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.LocalDateTime;
-import java.util.List;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -22,12 +14,17 @@ import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import uk.gov.companieshouse.accounts.user.configuration.InterceptorConfig;
+import uk.gov.companieshouse.accounts.user.models.OneLoginDataDao;
 import uk.gov.companieshouse.accounts.user.models.Users;
 import uk.gov.companieshouse.accounts.user.repositories.UsersRepository;
 import uk.gov.companieshouse.api.accounts.user.model.Role;
 import uk.gov.companieshouse.api.accounts.user.model.RolesList;
 import uk.gov.companieshouse.api.accounts.user.model.User;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -56,34 +53,6 @@ public class GetUserRecordControllerTest {
     @BeforeEach
     public void setup() {
 
-        final var supervisor = new RolesList();
-        supervisor.add( Role.SUPERVISOR );
-
-        final var eminem = new Users();
-        eminem.setId( "111" );
-        eminem.setLocale( "GB_en" );
-        eminem.setForename( "Marshall" );
-        eminem.setSurname( "Mathers" );
-        eminem.setDisplayName( "Eminem" );
-        eminem.setEmail( "eminem@rap.com" );
-        eminem.setRoles( supervisor );
-        eminem.setCreated( LocalDateTime.now().minusDays( 1 ) );
-        eminem.setUpdated( LocalDateTime.now() );
-
-        final var badosUserAndRestrictedWord = new RolesList();
-        badosUserAndRestrictedWord.addAll( List.of( Role.BADOS_USER, Role.RESTRICTED_WORD ) );
-
-        final var theRock = new Users();
-        theRock.setId( "222" );
-        theRock.setLocale( "GB_en" );
-        theRock.setForename( "Dwayne" );
-        theRock.setSurname( "Johnson" );
-        theRock.setDisplayName( "The Rock" );
-        theRock.setEmail( "the.rock@wrestling.com" );
-        theRock.setRoles( badosUserAndRestrictedWord );
-        theRock.setCreated( LocalDateTime.now().minusDays( 4 ) );
-        theRock.setUpdated( LocalDateTime.now().minusDays( 2 ) );
-
         final var appealsTeam = new RolesList();
         appealsTeam.add( Role.APPEALS_TEAM );
 
@@ -97,8 +66,12 @@ public class GetUserRecordControllerTest {
         harleyQuinn.setRoles( appealsTeam );
         harleyQuinn.setCreated( LocalDateTime.now().minusDays( 10 ) );
         harleyQuinn.setUpdated( LocalDateTime.now().minusDays( 5 ) );
+        OneLoginDataDao oneLoginDataDao = new OneLoginDataDao();
+        oneLoginDataDao.setOneLoginUserId("333");
+        harleyQuinn.setOneLoginData(oneLoginDataDao);
+        harleyQuinn.setPrivateBetaUser(true);
 
-        usersRepository.insert( List.of( eminem, theRock, harleyQuinn ) );
+        usersRepository.insert( List.of( harleyQuinn ) );
 
         Mockito.doNothing().when(interceptorConfig).addInterceptors( any() );
     }
@@ -131,6 +104,8 @@ public class GetUserRecordControllerTest {
         final var user = objectMapper.readValue( responseBody, User.class );
 
         Assertions.assertEquals( "Harley Quinn", user.getDisplayName() );
+        Assertions.assertTrue(user.getHasLinkedOneLogin());
+        Assertions.assertTrue(user.getIsPrivateBetaUser());
     }
 
     @AfterEach

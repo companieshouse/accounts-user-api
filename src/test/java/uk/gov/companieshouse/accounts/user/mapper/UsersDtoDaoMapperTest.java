@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import uk.gov.companieshouse.accounts.user.models.OneLoginDataDao;
 import uk.gov.companieshouse.accounts.user.models.Users;
 import uk.gov.companieshouse.api.accounts.user.model.Role;
 import uk.gov.companieshouse.api.accounts.user.model.RolesList;
@@ -20,7 +21,6 @@ public class UsersDtoDaoMapperTest {
     UsersDtoDaoMapper usersDtoDaoMapper;
 
     private final String EMINEM_ID = "111";
-    private final String EMINEM_LOCALE = "GB_en";
     private final String EMINEM_FORENAME = "Marshall";
     private final String EMINEM_SURNAME = "Mathers";
     private final String EMINEM_DISPLAY_NAME = "Eminem";
@@ -35,7 +35,7 @@ public class UsersDtoDaoMapperTest {
 
     @Test
     void usersDaoToDtoWithNullInputReturnsNull(){
-        Assertions.assertNull( usersDtoDaoMapper.daoToDto( (Users) null ) );
+        Assertions.assertNull( usersDtoDaoMapper.daoToDto(  null ) );
     }
 
     @Test
@@ -51,8 +51,19 @@ public class UsersDtoDaoMapperTest {
 
     @Test
     void usersDaoToDtoShouldMapObject(){
-        final var eminemUsers = new Users(EMINEM_LOCALE, EMINEM_FORENAME, EMINEM_SURNAME, EMINEM_DISPLAY_NAME, EMINEM_EMAIL, EMINEM_CREATED, EMINEM_ROLES );
+        final var eminemUsers = new Users();
         eminemUsers.setId( EMINEM_ID );
+        eminemUsers.setEmail(EMINEM_EMAIL);
+        eminemUsers.setForename(EMINEM_FORENAME);
+        eminemUsers.setSurname(EMINEM_SURNAME);
+        String EMINEM_LOCALE = "GB_en";
+        eminemUsers.setLocale(EMINEM_LOCALE);
+        eminemUsers.setDisplayName(EMINEM_DISPLAY_NAME);
+        eminemUsers.setCreated(EMINEM_CREATED);
+        eminemUsers.setRoles(EMINEM_ROLES);
+        eminemUsers.setPrivateBetaUser(true);
+        eminemUsers.setOneLoginData(new OneLoginDataDao());
+
 
         final var user = usersDtoDaoMapper.daoToDto( eminemUsers );
 
@@ -62,11 +73,13 @@ public class UsersDtoDaoMapperTest {
         Assertions.assertEquals( EMINEM_ID, user.getUserId() );
         Assertions.assertEquals( EMINEM_DISPLAY_NAME, user.getDisplayName() );
         Assertions.assertEquals( EMINEM_ROLES, user.getRoles() );
+        Assertions.assertTrue(user.getIsPrivateBetaUser());
+        Assertions.assertTrue(user.getHasLinkedOneLogin());
     }
 
     @Test
     void userDtoToDaoWithNullInputReturnsNull(){
-        Assertions.assertNull( usersDtoDaoMapper.dtoToDao( (User) null ) );
+        Assertions.assertNull( usersDtoDaoMapper.dtoToDao( null ) );
     }
 
     @Test
