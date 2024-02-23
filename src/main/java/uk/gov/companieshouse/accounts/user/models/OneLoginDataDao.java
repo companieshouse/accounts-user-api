@@ -2,7 +2,13 @@ package uk.gov.companieshouse.accounts.user.models;
 
 import org.springframework.data.mongodb.core.mapping.Field;
 
-public class OneLoginDataDao {
+import java.io.Serial;
+import java.io.Serializable;
+
+public class OneLoginDataDao implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1234567L;
     @Field("user_id")
     private String oneLoginUserId;
 
