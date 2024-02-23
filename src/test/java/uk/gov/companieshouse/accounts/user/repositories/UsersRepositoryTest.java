@@ -18,6 +18,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import uk.gov.companieshouse.accounts.user.models.OneLoginDataDao;
 import uk.gov.companieshouse.accounts.user.models.Users;
 import uk.gov.companieshouse.api.accounts.user.model.Role;
 
@@ -35,6 +36,8 @@ public class UsersRepositoryTest {
 
     @Autowired
     UsersRepository usersRepository;
+
+    List<Users> users ;
 
     @BeforeEach
     void setup(){
@@ -71,6 +74,10 @@ public class UsersRepositoryTest {
         harleyQuinn.setRoles( List.of( Role.APPEALS_TEAM ) );
         harleyQuinn.setCreated( LocalDateTime.now().minusDays( 10 ) );
         harleyQuinn.setUpdated( LocalDateTime.now().minusDays( 5 ) );
+        OneLoginDataDao oneLoginDataDao = new OneLoginDataDao();
+        oneLoginDataDao.setOneLoginUserId("333");
+        harleyQuinn.setOneLoginData(oneLoginDataDao);
+
 
         final var harryPotter = new Users();
         harryPotter.setId( "444" );
@@ -82,7 +89,7 @@ public class UsersRepositoryTest {
         harryPotter.setCreated( LocalDateTime.now().minusDays( 10 ) );
         harryPotter.setUpdated( LocalDateTime.now().minusDays( 5 ) );
 
-        usersRepository.insert( List.of( eminem, theRock, harleyQuinn, harryPotter ) );
+        users = usersRepository.saveAll( List.of( eminem, theRock, harleyQuinn, harryPotter ) );
     }
 
     @Test
@@ -127,6 +134,7 @@ public class UsersRepositoryTest {
     @Test
     void findUsersByIdFetchesUser(){
         Assertions.assertEquals( "Harley Quinn", usersRepository.findUsersById( "333" ).get().getDisplayName() );
+        Assertions.assertEquals("333",usersRepository.findUsersById( "333" ).get().getOneLoginData().getOneLoginUserId());
     }
 
     @AfterEach
@@ -168,5 +176,6 @@ public class UsersRepositoryTest {
         usersRepository.updateUser( "333", update );
         Assertions.assertEquals( List.of( Role.SUPPORT_MEMBER ), usersRepository.findUsersById( "333" ).get().getRoles() );
     }
+
 
 }

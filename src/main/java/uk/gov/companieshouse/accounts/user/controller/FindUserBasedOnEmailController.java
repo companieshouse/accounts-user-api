@@ -48,13 +48,6 @@ public class FindUserBasedOnEmailController implements FindUserBasedOnEmailInter
         LOG.debug( String.format( "%s: Successfully fetched users: %s",
                 xRequestId, String.join(", ", emails) ) );
 
-        // TODO:
-        // The data for hasLinkedOneLogin was not available at the time of implementing this endpoint.
-        // For this reason, we have set hasLinkedOneLogin to null.
-        // Team Phoenix has been tasked with making the data for this variable available.
-        // Once the data is available, this endpoint will have to be updated to return the
-        // real data for the hasLinkedOneLogin variable.
-        users.forEach( user -> user.setHasLinkedOneLogin( null ) );
 
         return new ResponseEntity<>( users, HttpStatus.OK );
     }

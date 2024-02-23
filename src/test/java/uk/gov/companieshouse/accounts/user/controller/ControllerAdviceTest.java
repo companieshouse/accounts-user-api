@@ -77,4 +77,9 @@ class ControllerAdviceTest {
                 .andExpect(status().isInternalServerError());
     }
 
+    @Test
+    void testNotFoundExceptionWhenUserNotFoundForRoles() throws Exception {
+        mockMvc.perform( get( "/users/123dd/roles" ).header("X-Request-Id", "theId123") ).andExpect(status().isNotFound());
+    }
+
 }

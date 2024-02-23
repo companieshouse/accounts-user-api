@@ -1,14 +1,6 @@
 package uk.gov.companieshouse.accounts.user.integration;
 
-import static org.mockito.ArgumentMatchers.any;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -27,6 +19,10 @@ import uk.gov.companieshouse.accounts.user.repositories.UsersRepository;
 import uk.gov.companieshouse.api.accounts.user.model.Role;
 import uk.gov.companieshouse.api.accounts.user.model.RolesList;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -213,6 +209,14 @@ public class UserRolesControllerTest {
 
         Assertions.assertEquals( List.of(Role.SUPPORT_MEMBER), usersRepository.findUsersById( "444" ).get().getRoles() );
     }
+
+    @Test
+    void testBadRequestExceptionWhenRolesNotSet() throws Exception {
+        mockMvc.perform( put( "/users/{user_id}/roles", "444" )
+                        .header( "X-Request-Id", "theId123" )
+                        .contentType( "application/json" )
+                       )
+                .andExpect( status().isBadRequest() );    }
 
     @AfterEach
     public void after() {

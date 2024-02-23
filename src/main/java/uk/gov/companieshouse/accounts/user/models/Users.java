@@ -1,15 +1,15 @@
 package uk.gov.companieshouse.accounts.user.models;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-
-import java.time.LocalDateTime;
 import uk.gov.companieshouse.api.accounts.user.model.Role;
+
+import java.io.Serial;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Document(collection = "users")
 public class Users implements Serializable {
@@ -45,19 +45,12 @@ public class Users implements Serializable {
     @LastModifiedDate
     private LocalDateTime updated;
 
-    public Users(String locale, String forename, String surname, String displayName, String email,
-            LocalDateTime created, List<Role> roles ) {
-        this.locale = locale;
-        this.forename = forename;
-        this.surname = surname;
-        this.displayName = displayName;
-        this.email = email;
-        this.created = created;
-        this.roles = roles;
-    }
+    @Field("one_login_data")
+    private OneLoginDataDao oneLoginData;
 
-    public Users() {
-    }
+    @Field("private_beta_user")
+    private boolean privateBetaUser;
+
 
     public String getId() {
         return id;
@@ -132,6 +125,22 @@ public class Users implements Serializable {
         this.roles = roles;
     }
 
+    public void setOneLoginData(OneLoginDataDao oneLoginData) {
+        this.oneLoginData = oneLoginData;
+    }
+
+    public OneLoginDataDao getOneLoginData() {
+        return oneLoginData;
+    }
+
+    public boolean isPrivateBetaUser() {
+        return privateBetaUser;
+    }
+
+    public void setPrivateBetaUser(boolean privateBetaUser) {
+        this.privateBetaUser = privateBetaUser;
+    }
+
     @Override
     public String toString() {
         return "Users{" +
@@ -141,10 +150,11 @@ public class Users implements Serializable {
                 ", surname='" + surname + '\'' +
                 ", displayName='" + displayName + '\'' +
                 ", email='" + email + '\'' +
+                ", roles=" + roles +
                 ", created=" + created +
                 ", updated=" + updated +
-                ", roles=" + roles +
+                ", oneLoginData=" + oneLoginData +
+                ", privateBetaUser=" + privateBetaUser +
                 '}';
     }
-
 }

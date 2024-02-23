@@ -1,10 +1,5 @@
 package uk.gov.companieshouse.accounts.user.controller;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,11 +8,12 @@ import uk.gov.companieshouse.accounts.user.exceptions.BadRequestRuntimeException
 import uk.gov.companieshouse.accounts.user.exceptions.NotFoundRuntimeException;
 import uk.gov.companieshouse.accounts.user.service.UsersService;
 import uk.gov.companieshouse.api.accounts.user.api.UserRolesInterface;
-import uk.gov.companieshouse.api.accounts.user.model.Role;
 import uk.gov.companieshouse.api.accounts.user.model.RolesList;
 import uk.gov.companieshouse.api.accounts.user.model.User;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
+
+import java.util.Objects;
 
 @RestController
 public class UserRolesController implements UserRolesInterface {
@@ -58,7 +54,8 @@ public class UserRolesController implements UserRolesInterface {
             throw new BadRequestRuntimeException("Please check the request and try again");
         }
 
-        LOG.debug( String.format( "%s: attempting to set the status of %s to %s", xRequestId, userId, String.join( ",", roles.stream().map( Role::getValue ).toList() ) ) );
+        LOG.debug( String.format( "%s: attempting to set the status of %s to %s",
+                xRequestId, userId, roles) );
 
         if ( usersService.fetchUser( userId ).isEmpty() ){
             LOG.debug( String.format( "%s: Unable to find user: %s", xRequestId, userId ) );
@@ -69,7 +66,7 @@ public class UserRolesController implements UserRolesInterface {
         LOG.trace( String.format( "%s: Ran update query for userId %s, resulted in %d record%s being updated.", xRequestId, userId, numUpdatedUsers, numUpdatedUsers == 1 ? "" : "s"  ) );
 
 
-        LOG.debug( String.format( "%s: Successfully set status of %s to %s", xRequestId, userId, String.join( ",", roles.stream().map( Role::getValue ).toList() ) ) );
+        LOG.debug( String.format( "%s: Successfully set status of %s to %s", xRequestId, userId,  roles) );
 
         return new ResponseEntity<>(HttpStatus.OK );
     }
