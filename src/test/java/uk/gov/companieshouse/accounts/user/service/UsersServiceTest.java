@@ -32,7 +32,7 @@ import uk.gov.companieshouse.api.accounts.user.model.User;
 
 @ExtendWith(MockitoExtension.class)
 @Tag("unit-test")
-public class UsersServiceTest {
+class UsersServiceTest {
 
     @Mock
     UsersDtoDaoMapper usersDtoDaoMapper;
@@ -153,11 +153,11 @@ public class UsersServiceTest {
     @Test
     void fetchUsersReturnsSpecifiedUsers(){
 
-        Mockito.doReturn( List.of( usersHarleyQuinn ) ).when( usersRepository ).fetchUsers( eq( List.of( "harley.quinn@gotham.city" ) ) );
-        Mockito.doReturn( userHarleyQuinn ).when( usersDtoDaoMapper ).daoToDto( eq( usersHarleyQuinn ) );
-        Mockito.doReturn( List.of( usersEminem, usersTheRock ) ).when( usersRepository ).fetchUsers( eq( List.of( "eminem@rap.com", "the.rock@wrestling.com" ) ) );
-        Mockito.doReturn( userEminem ).when( usersDtoDaoMapper ).daoToDto( eq( usersEminem ) );
-        Mockito.doReturn( userTheRock ).when( usersDtoDaoMapper ).daoToDto( eq( usersTheRock ) );
+        Mockito.doReturn( List.of( usersHarleyQuinn ) ).when( usersRepository ).fetchUsers( List.of( "harley.quinn@gotham.city" ));
+        Mockito.doReturn( userHarleyQuinn ).when( usersDtoDaoMapper ).daoToDto( usersHarleyQuinn );
+        Mockito.doReturn( List.of( usersEminem, usersTheRock ) ).when( usersRepository ).fetchUsers( List.of( "eminem@rap.com", "the.rock@wrestling.com" ));
+        Mockito.doReturn( userEminem ).when( usersDtoDaoMapper ).daoToDto( usersEminem );
+        Mockito.doReturn( userTheRock ).when( usersDtoDaoMapper ).daoToDto( usersTheRock );
 
         final var oneUser = usersService.fetchUsers( List.of( "harley.quinn@gotham.city" ) );
         final var multipleUsers = usersService.fetchUsers( List.of( "eminem@rap.com", "the.rock@wrestling.com" ) );
@@ -186,7 +186,7 @@ public class UsersServiceTest {
     @Test
     void fetchUserFetchesUser(){
         Mockito.doReturn( Optional.of( usersHarleyQuinn ) ).when( usersRepository ).findUsersById( any() );
-        Mockito.doReturn( userHarleyQuinn ).when( usersDtoDaoMapper ).daoToDto( eq( usersHarleyQuinn ) );
+        Mockito.doReturn( userHarleyQuinn ).when( usersDtoDaoMapper ).daoToDto( usersHarleyQuinn );
 
         Assertions.assertEquals( "Harley Quinn", usersService.fetchUser( "333" ).get().getDisplayName() );
     }

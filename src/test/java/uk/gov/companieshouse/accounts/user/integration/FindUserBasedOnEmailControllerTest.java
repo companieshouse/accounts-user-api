@@ -35,7 +35,7 @@ import uk.gov.companieshouse.api.accounts.user.model.User;
 @SpringBootTest
 @Testcontainers
 @Tag("integration-test")
-public class FindUserBasedOnEmailControllerTest {
+class FindUserBasedOnEmailControllerTest {
 
     @Container
     @ServiceConnection

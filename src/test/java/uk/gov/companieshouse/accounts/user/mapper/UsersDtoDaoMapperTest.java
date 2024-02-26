@@ -15,7 +15,7 @@ import uk.gov.companieshouse.api.accounts.user.model.User;
 
 @SpringBootTest
 @Tag("unit-test")
-public class UsersDtoDaoMapperTest {
+class UsersDtoDaoMapperTest {
 
     @Autowired
     UsersDtoDaoMapper usersDtoDaoMapper;

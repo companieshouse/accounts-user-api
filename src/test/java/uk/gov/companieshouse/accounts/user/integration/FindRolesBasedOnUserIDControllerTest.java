@@ -33,7 +33,7 @@ import static uk.gov.companieshouse.api.accounts.user.model.Role.SUPERVISOR;
 @SpringBootTest
 @Testcontainers
 @Tag("integration-test")
-public class FindRolesBasedOnUserIDControllerTest {
+class FindRolesBasedOnUserIDControllerTest {
 
     @Container
     @ServiceConnection

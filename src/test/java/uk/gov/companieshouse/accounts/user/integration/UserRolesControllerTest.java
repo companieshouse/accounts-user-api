@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @Testcontainers
 @Tag("integration-test")
-public class UserRolesControllerTest {
+class UserRolesControllerTest {
 
     @Container
     @ServiceConnection

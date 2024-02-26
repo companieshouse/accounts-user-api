@@ -28,9 +28,11 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
     public static final String X_REQUEST_ID = "X-Request-Id";
     public static final String ACCOUNTS_USER_API = "accounts_user_api";
 
+    private static final String QUERY_PARAMETERS_KEY = "query-parameters";
+
     private String getJsonStringFromErrors(String requestId, Errors errors) {
 
-        ObjectMapper objectMapper = new ObjectMapper();
+        var objectMapper = new ObjectMapper();
         try {
             return objectMapper.writeValueAsString(errors);
         }
@@ -48,11 +50,11 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
 
         Map<String, Object> contextMap = new HashMap<>();
         contextMap.put("url", r.getRequestURL().toString());
-        contextMap.put("query-parameters", r.getQueryString() != null ? "?" + r.getQueryString() : "");
+        contextMap.put("QUERY_PARAMETERS_KEY", r.getQueryString() != null ? "?" + r.getQueryString() : "");
 
         LOG.errorContext(requestId, e.getMessage(), null, contextMap);
 
-        Errors errors = new Errors();
+        var errors = new Errors();
         errors.addError(Err.invalidBodyBuilderWithLocation(e.getFieldLocation()).withError(e.getMessage()).build());
         return errors;
     }
@@ -65,11 +67,11 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
 
         Map<String, Object> contextMap = new HashMap<>();
         contextMap.put("url", request.getRequestURL().toString());
-        contextMap.put("query-parameters", request.getQueryString() != null ? "?" + request.getQueryString() : "");
+        contextMap.put("QUERY_PARAMETERS_KEY", request.getQueryString() != null ? "?" + request.getQueryString() : "");
 
         LOG.errorContext(requestId, e.getMessage(), null, contextMap);
 
-        Errors errors = new Errors();
+        var errors = new Errors();
         errors.addError(Err.invalidBodyBuilderWithLocation(ACCOUNTS_USER_API).withError(e.getMessage()).build());
         return errors;
     }
@@ -82,11 +84,11 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
 
         Map<String, Object> contextMap = new HashMap<>();
         contextMap.put("url", request.getRequestURL().toString());
-        contextMap.put("query-parameters", request.getQueryString() != null ? "?" + request.getQueryString() : "");
+        contextMap.put("QUERY_PARAMETERS_KEY", request.getQueryString() != null ? "?" + request.getQueryString() : "");
 
         LOG.errorContext(requestId, e.getMessage(), null, contextMap);
 
-        Errors errors = new Errors();
+        var errors = new Errors();
         errors.addError(Err.invalidBodyBuilderWithLocation(ACCOUNTS_USER_API).withError(e.getMessage()).build());
         return errors;
     }
@@ -96,14 +98,14 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
     @ResponseBody
     public Errors onConstraintViolationException( ConstraintViolationException exception, HttpServletRequest request) {
 
-        Errors errors = new Errors();
+        var errors = new Errors();
         for (ConstraintViolation<?> constraintViolation : exception.getConstraintViolations()) {
-            var errorMessage = "Please check the request and try again";
+            var errorMessage = "Please check the request and try again" + constraintViolation.getMessage();
             errors.addError(Err.invalidBodyBuilderWithLocation(ACCOUNTS_USER_API).withError(errorMessage).build());
         }
 
         String requestId = request.getHeader(X_REQUEST_ID);
-        String errorsJsonString = getJsonStringFromErrors(requestId, errors);
+        var errorsJsonString = getJsonStringFromErrors(requestId, errors);
         LOG.errorContext(requestId, String.format("Validation Failed with [%s]", errorsJsonString), exception, null );
 
         return errors;

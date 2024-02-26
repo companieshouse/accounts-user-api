@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class AccountsUserServiceApplication {
 
     @Value("${spring.application.name}")
-    public static String applicationNameSpace;
+    public static final String applicationNameSpace="accounts-user-api";
 
     public static void main(String[] args) {
         SpringApplication.run(AccountsUserServiceApplication.class, args);

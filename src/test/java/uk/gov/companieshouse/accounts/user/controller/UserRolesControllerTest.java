@@ -26,7 +26,7 @@ import uk.gov.companieshouse.api.accounts.user.model.User;
 
 @Tag("unit-test")
 @WebMvcTest(UserRolesController.class)
-public class UserRolesControllerTest {
+class UserRolesControllerTest {
 
     @Autowired
     public MockMvc mockMvc;
@@ -150,7 +150,7 @@ public class UserRolesControllerTest {
                         .content( roles ) )
                 .andExpect( status().isOk() );
 
-        Mockito.verify( usersService ).setRoles( eq( "333" ), eq( List.of( Role.SUPPORT_MEMBER ) ) );
+        Mockito.verify( usersService ).setRoles( "333", List.of( Role.SUPPORT_MEMBER ));
     }
 
     @Test
@@ -166,7 +166,7 @@ public class UserRolesControllerTest {
                         .content( roles ) )
                 .andExpect( status().isOk() );
 
-        Mockito.verify( usersService ).setRoles( eq( "333" ), eq( List.of( Role.SUPPORT_MEMBER, Role.CSI_SUPPORT ) ) );
+        Mockito.verify( usersService ).setRoles("333", List.of( Role.SUPPORT_MEMBER, Role.CSI_SUPPORT ));
     }
 
     @Test
@@ -182,7 +182,7 @@ public class UserRolesControllerTest {
                         .content( roles ) )
                 .andExpect( status().isOk() );
 
-        Mockito.verify( usersService ).setRoles( eq( "333" ), eq( List.of( Role.SUPPORT_MEMBER, Role.SUPPORT_MEMBER ) ) );
+        Mockito.verify( usersService ).setRoles("333", List.of( Role.SUPPORT_MEMBER, Role.SUPPORT_MEMBER ));
     }
 
     @Test
@@ -198,7 +198,7 @@ public class UserRolesControllerTest {
                         .content( roles ) )
                 .andExpect( status().isOk() );
 
-        Mockito.verify( usersService ).setRoles( eq( "444" ), eq( List.of( Role.SUPPORT_MEMBER ) ) );
+        Mockito.verify( usersService ).setRoles( "444", List.of( Role.SUPPORT_MEMBER ));
     }
 
 
@@ -216,7 +216,7 @@ public class UserRolesControllerTest {
                         .content( roles ) )
                 .andExpect( status().isInternalServerError() );
 
-        Mockito.verify( usersService ).setRoles( eq( "444" ), eq( List.of( Role.SUPPORT_MEMBER ) ) );
+        Mockito.verify( usersService ).setRoles("444", List.of( Role.SUPPORT_MEMBER ));
     }
 
 }

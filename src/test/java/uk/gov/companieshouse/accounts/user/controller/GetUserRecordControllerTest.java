@@ -24,7 +24,7 @@ import uk.gov.companieshouse.api.accounts.user.model.User;
 
 @Tag("unit-test")
 @WebMvcTest(GetUserRecordController.class)
-public class GetUserRecordControllerTest {
+class GetUserRecordControllerTest {
 
     @Autowired
     public MockMvc mockMvc;

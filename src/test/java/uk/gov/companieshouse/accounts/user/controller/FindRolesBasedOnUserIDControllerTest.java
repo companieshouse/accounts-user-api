@@ -28,7 +28,7 @@ import static uk.gov.companieshouse.api.accounts.user.model.Role.SUPERVISOR;
 
 @Tag("unit-test")
 @WebMvcTest(UserRolesController.class)
-public class FindRolesBasedOnUserIDControllerTest {
+class FindRolesBasedOnUserIDControllerTest {
 
     @Autowired
     public MockMvc mockMvc;

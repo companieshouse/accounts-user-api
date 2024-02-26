@@ -9,15 +9,14 @@ import uk.gov.companieshouse.api.accounts.user.model.User;
 @Mapper(componentModel = "spring")
 public interface UsersDtoDaoMapper {
 
-    @Mappings({
-            @Mapping(source = "id", target = "userId"),
-            @Mapping(target = "hasLinkedOneLogin",
-                    expression = "java(java.util.Objects.nonNull(users.getOneLoginData()))"),
-            @Mapping(source = "privateBetaUser", target = "isPrivateBetaUser")
-    })
+    @Mapping(source = "id", target = "userId")
+    @Mapping(target = "hasLinkedOneLogin",
+            expression = "java(java.util.Objects.nonNull(users.getOneLoginData()))")
+    @Mapping(source = "privateBetaUser", target = "isPrivateBetaUser")
+
     User daoToDto(Users users);
 
-    @Mappings({@Mapping(source = "userId", target = "id")})
+    @Mapping(source = "userId", target = "id")
     Users dtoToDao(User user);
 
 

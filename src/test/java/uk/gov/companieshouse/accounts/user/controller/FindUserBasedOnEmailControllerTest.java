@@ -24,7 +24,7 @@ import uk.gov.companieshouse.api.accounts.user.model.User;
 
 @Tag("unit-test")
 @WebMvcTest(FindUserBasedOnEmailController.class)
-public class FindUserBasedOnEmailControllerTest {
+class FindUserBasedOnEmailControllerTest {
 
     @Autowired
     public MockMvc mockMvc;
