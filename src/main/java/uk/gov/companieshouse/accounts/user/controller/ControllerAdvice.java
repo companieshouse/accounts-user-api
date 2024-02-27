@@ -27,6 +27,7 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
     private static final Logger LOG = LoggerFactory.getLogger(AccountsUserServiceApplication.applicationNameSpace);
     public static final String X_REQUEST_ID = "X-Request-Id";
     public static final String ACCOUNTS_USER_API = "accounts_user_api";
+    public static final String QUERY_PARAMETERS = "query-parameters";
 
     private String getJsonStringFromErrors(String requestId, Errors errors) {
 
@@ -48,7 +49,7 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
 
         Map<String, Object> contextMap = new HashMap<>();
         contextMap.put("url", r.getRequestURL().toString());
-        contextMap.put("query-parameters", r.getQueryString() != null ? "?" + r.getQueryString() : "");
+        contextMap.put(QUERY_PARAMETERS, r.getQueryString() != null ? "?" + r.getQueryString() : "");
 
         LOG.errorContext(requestId, e.getMessage(), null, contextMap);
 
@@ -65,7 +66,7 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
 
         Map<String, Object> contextMap = new HashMap<>();
         contextMap.put("url", request.getRequestURL().toString());
-        contextMap.put("query-parameters", request.getQueryString() != null ? "?" + request.getQueryString() : "");
+        contextMap.put(QUERY_PARAMETERS, request.getQueryString() != null ? "?" + request.getQueryString() : "");
 
         LOG.errorContext(requestId, e.getMessage(), null, contextMap);
 
@@ -82,7 +83,7 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
 
         Map<String, Object> contextMap = new HashMap<>();
         contextMap.put("url", request.getRequestURL().toString());
-        contextMap.put("query-parameters", request.getQueryString() != null ? "?" + request.getQueryString() : "");
+        contextMap.put(QUERY_PARAMETERS, request.getQueryString() != null ? "?" + request.getQueryString() : "");
 
         LOG.errorContext(requestId, e.getMessage(), null, contextMap);
 
