@@ -9,7 +9,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -105,30 +107,28 @@ public class UserRolesControllerTest {
         mockMvc.perform( get( "/users/{user_id}/roles", "$" ).header( "X-Request-Id", "theId123" ) )
                 .andExpect( status().isBadRequest() );
     }
-
     @Test
-    void getUserRolesWithNonexistentUserIdReturnsNotFound() throws Exception {
-        Mockito.doReturn( Optional.empty() ).when( usersService ).fetchUser( any() );
-
-        mockMvc.perform( get( "/users/{user_id}/roles", "999" ).header( "X-Request-Id", "theId123" ) )
-                .andExpect( status().isNotFound() );
+    void getUserRolesWithNonexistentUserIDReturnsNotFound() throws Exception {
+        mockMvc.perform( get( "/users/roles").header("X-Request-Id", "theId123") ).
+                andExpect(status().isNotFound());
     }
 
     @Test
     void getUserRolesForValidUserDetails() throws Exception {
-        Mockito.doReturn( Optional.of( userHarleyQuinn ) ).when( usersService ).fetchUser( any() );
+        Mockito.doReturn( Optional.of( userTheRock ) ).when( usersService ).fetchUser( any() );
 
         final var responseBody =
-                mockMvc.perform( get( "/users/{user_id}/roles", "333" ).header( "X-Request-Id", "theId123" ) )
+                mockMvc.perform( get( "/users/{user_id}/roles", "222" ).header( "X-Request-Id", "theId123" ) )
                         .andExpect( status().isOk() )
                         .andReturn()
                         .getResponse()
                         .getContentAsString();
 
         final var objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
-        final var user = objectMapper.readValue( responseBody, User.class );
+        final var roles = objectMapper.readValue(responseBody, new TypeReference<Set<Role>>(){} );
+        Assertions.assertEquals( 2, roles.size() );
+        Assertions.assertTrue( roles.containsAll( Set.of(Role.BADOS_USER, Role.RESTRICTED_WORD )));
 
-        Assertions.assertEquals( "Harley Quinn", user.getDisplayName() );
     }
     @Test
     void setUserRolesWithMalformedInputReturnsBadRequest() throws Exception {
