@@ -21,6 +21,7 @@ public class UserRolesController implements UserRolesInterface {
     private final UsersService usersService;
 
     private static final Logger LOG = LoggerFactory.getLogger(AccountsUserServiceApplication.applicationNameSpace);
+    private static final String ERR_REQUEST_MESSAGE = "Please check the request and try again";
 
     public UserRolesController(UsersService usersService) {
         this.usersService = usersService;
@@ -32,7 +33,7 @@ public class UserRolesController implements UserRolesInterface {
 
         if (Objects.isNull(userId)){
             LOG.error(String.format("%s: No userId was provided.", requestId));
-            throw new BadRequestRuntimeException("Please check the request and try again");
+            throw new BadRequestRuntimeException(ERR_REQUEST_MESSAGE);
         }
         final var userRolesOptional = usersService.fetchUser(userId).map(User::getRoles);
         if (userRolesOptional.isEmpty()) {
@@ -51,7 +52,7 @@ public class UserRolesController implements UserRolesInterface {
 
         if( Objects.isNull(roles) || roles.isEmpty() ){
             LOG.error(String.format("%s: No roles were provided.", xRequestId));
-            throw new BadRequestRuntimeException("Please check the request and try again");
+            throw new BadRequestRuntimeException(ERR_REQUEST_MESSAGE);
         }
 
         LOG.debug( String.format( "%s: attempting to set the status of %s to %s",
@@ -59,7 +60,7 @@ public class UserRolesController implements UserRolesInterface {
 
         if ( usersService.fetchUser( userId ).isEmpty() ){
             LOG.debug( String.format( "%s: Unable to find user: %s", xRequestId, userId ) );
-            throw new NotFoundRuntimeException( "accounts-user-api", "Please check the request and try again" );
+            throw new NotFoundRuntimeException( "accounts-user-api", ERR_REQUEST_MESSAGE );
         }
 
         final var numUpdatedUsers = usersService.setRoles( userId, roles );

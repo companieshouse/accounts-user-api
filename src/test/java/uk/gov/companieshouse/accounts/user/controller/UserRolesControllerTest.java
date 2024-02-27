@@ -2,12 +2,15 @@ package uk.gov.companieshouse.accounts.user.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -92,6 +95,42 @@ public class UserRolesControllerTest {
     }
 
     @Test
+    void getUserRolesWithoutPathVariableReturnsNotFound() throws Exception {
+        mockMvc.perform( get( "/users/roles" ).header( "X-Request-Id", "theId123" ) )
+                .andExpect( status().isNotFound() );
+    }
+
+    @Test
+    void getUserRolesWithMalformedInputReturnsBadRequest() throws Exception {
+        mockMvc.perform( get( "/users/{user_id}/roles", "$" ).header( "X-Request-Id", "theId123" ) )
+                .andExpect( status().isBadRequest() );
+    }
+
+    @Test
+    void getUserRolesWithNonexistentUserIdReturnsNotFound() throws Exception {
+        Mockito.doReturn( Optional.empty() ).when( usersService ).fetchUser( any() );
+
+        mockMvc.perform( get( "/users/{user_id}/roles", "999" ).header( "X-Request-Id", "theId123" ) )
+                .andExpect( status().isNotFound() );
+    }
+
+    @Test
+    void getUserRolesForValidUserDetails() throws Exception {
+        Mockito.doReturn( Optional.of( userHarleyQuinn ) ).when( usersService ).fetchUser( any() );
+
+        final var responseBody =
+                mockMvc.perform( get( "/users/{user_id}/roles", "333" ).header( "X-Request-Id", "theId123" ) )
+                        .andExpect( status().isOk() )
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        final var objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
+        final var user = objectMapper.readValue( responseBody, User.class );
+
+        Assertions.assertEquals( "Harley Quinn", user.getDisplayName() );
+    }
+    @Test
     void setUserRolesWithMalformedInputReturnsBadRequest() throws Exception {
         final var objectMapper = new ObjectMapper();
         final var roles = objectMapper.writeValueAsString( List.of("supervisor") );
@@ -150,7 +189,7 @@ public class UserRolesControllerTest {
                         .content( roles ) )
                 .andExpect( status().isOk() );
 
-        Mockito.verify( usersService ).setRoles( eq( "333" ), eq( List.of( Role.SUPPORT_MEMBER ) ) );
+        Mockito.verify( usersService ).setRoles( "333", List.of( Role.SUPPORT_MEMBER ));
     }
 
     @Test
@@ -166,7 +205,7 @@ public class UserRolesControllerTest {
                         .content( roles ) )
                 .andExpect( status().isOk() );
 
-        Mockito.verify( usersService ).setRoles( eq( "333" ), eq( List.of( Role.SUPPORT_MEMBER, Role.CSI_SUPPORT ) ) );
+        Mockito.verify( usersService ).setRoles("333", List.of( Role.SUPPORT_MEMBER, Role.CSI_SUPPORT ));
     }
 
     @Test
@@ -182,7 +221,7 @@ public class UserRolesControllerTest {
                         .content( roles ) )
                 .andExpect( status().isOk() );
 
-        Mockito.verify( usersService ).setRoles( eq( "333" ), eq( List.of( Role.SUPPORT_MEMBER, Role.SUPPORT_MEMBER ) ) );
+        Mockito.verify( usersService ).setRoles("333", List.of( Role.SUPPORT_MEMBER, Role.SUPPORT_MEMBER ));
     }
 
     @Test
@@ -198,7 +237,7 @@ public class UserRolesControllerTest {
                         .content( roles ) )
                 .andExpect( status().isOk() );
 
-        Mockito.verify( usersService ).setRoles( eq( "444" ), eq( List.of( Role.SUPPORT_MEMBER ) ) );
+        Mockito.verify( usersService ).setRoles( "444", List.of( Role.SUPPORT_MEMBER ));
     }
 
 
@@ -216,7 +255,7 @@ public class UserRolesControllerTest {
                         .content( roles ) )
                 .andExpect( status().isInternalServerError() );
 
-        Mockito.verify( usersService ).setRoles( eq( "444" ), eq( List.of( Role.SUPPORT_MEMBER ) ) );
+        Mockito.verify( usersService ).setRoles( "444", List.of( Role.SUPPORT_MEMBER ));
     }
 
 }

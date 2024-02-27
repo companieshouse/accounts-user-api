@@ -151,7 +151,7 @@ public class UsersRepositoryTest {
         usersRepository.updateUser( "999", update );
 
         final var users = usersRepository.findAll();
-        Assertions.assertEquals( users.size(), 4 );
+        Assertions.assertEquals( 4, users.size());
         for ( Users user: users ){
             final var roles = user.getRoles();
             Assertions.assertTrue( Objects.isNull( roles ) || !roles.contains( Role.SUPPORT_MEMBER ) );
