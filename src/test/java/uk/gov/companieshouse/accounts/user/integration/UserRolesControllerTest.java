@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.accounts.user.integration;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +22,11 @@ import uk.gov.companieshouse.api.accounts.user.model.RolesList;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -107,7 +111,39 @@ public class UserRolesControllerTest {
 
         Mockito.doNothing().when(interceptorConfig).addInterceptors( any() );
     }
+    @Test
+    void getUserRolesWithoutPathVariableReturnsNotFound() throws Exception {
+        mockMvc.perform( get( "/users/roles" ).header( "X-Request-Id", "theId123" ) )
+                .andExpect( status().isNotFound() );
+    }
 
+    @Test
+    void getUserRolesWithMalformedInputReturnsBadRequest() throws Exception {
+        mockMvc.perform( get( "/users/{user_id}/roles", "$" ).header( "X-Request-Id", "theId123" ) )
+                .andExpect( status().isBadRequest() );
+    }
+    @Test
+    void getUserRolesWithNonexistentUserIDReturnsNotFound() throws Exception {
+        mockMvc.perform( get( "/users/roles").header("X-Request-Id", "theId123") ).
+                andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getUserRolesForValidUserDetails() throws Exception {
+
+        final var responseBody =
+                mockMvc.perform( get( "/users/{user_id}/roles", "222" ).header( "X-Request-Id", "theId123" ) )
+                        .andExpect( status().isOk() )
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        final var objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
+        final var roles = objectMapper.readValue(responseBody, new TypeReference<Set<Role>>(){} );
+        Assertions.assertEquals( 2, roles.size() );
+        Assertions.assertTrue( roles.containsAll( Set.of(Role.BADOS_USER, Role.RESTRICTED_WORD )));
+
+    }
     @Test
     void setUserRolesWithMalformedInputReturnsBadRequest() throws Exception {
         final var objectMapper = new ObjectMapper();
