@@ -10,6 +10,7 @@ import uk.gov.companieshouse.api.accounts.user.model.Role;
 import uk.gov.companieshouse.api.accounts.user.model.User;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service
@@ -29,7 +30,7 @@ public class UsersService {
         return Objects.requireNonNullElse(usersRepository.fetchUsers(emails), new ArrayList<Users>())
                               .stream()
                               .map(usersDtoDaoMapper::daoToDto)
-                              .toList();
+                .collect(Collectors.toList());
     }
 
     public Optional<User> fetchUser( final String userId ){
