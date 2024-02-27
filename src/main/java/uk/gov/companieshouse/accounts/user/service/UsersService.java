@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
@@ -29,9 +28,9 @@ public class UsersService {
     public List<User> fetchUsers( final List<String> emails ) {
         return Optional.ofNullable(usersRepository.fetchUsers(emails))
                 .orElse(new ArrayList<>())
-                .stream()
-                .map(usersDtoDaoMapper::daoToDto)
-                .collect(Collectors.toList());
+                              .stream()
+                              .map(usersDtoDaoMapper::daoToDto)
+                              .toList();
     }
 
     public Optional<User> fetchUser( final String userId ){

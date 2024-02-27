@@ -27,7 +27,6 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
     private static final Logger LOG = LoggerFactory.getLogger(AccountsUserServiceApplication.applicationNameSpace);
     public static final String X_REQUEST_ID = "X-Request-Id";
     public static final String ACCOUNTS_USER_API = "accounts_user_api";
-    private static final String QUERY_PARAMETERS_KEY = "query-parameters";
 
     private String getJsonStringFromErrors(String requestId, Errors errors) {
 
@@ -49,7 +48,7 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
 
         Map<String, Object> contextMap = new HashMap<>();
         contextMap.put("url", r.getRequestURL().toString());
-        contextMap.put(QUERY_PARAMETERS_KEY, r.getQueryString() != null ? "?" + r.getQueryString() : "");
+        contextMap.put("query-parameters", r.getQueryString() != null ? "?" + r.getQueryString() : "");
 
         LOG.errorContext(requestId, e.getMessage(), null, contextMap);
 
@@ -66,7 +65,7 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
 
         Map<String, Object> contextMap = new HashMap<>();
         contextMap.put("url", request.getRequestURL().toString());
-        contextMap.put(QUERY_PARAMETERS_KEY, request.getQueryString() != null ? "?" + request.getQueryString() : "");
+        contextMap.put("query-parameters", request.getQueryString() != null ? "?" + request.getQueryString() : "");
 
         LOG.errorContext(requestId, e.getMessage(), null, contextMap);
 
@@ -83,7 +82,7 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
 
         Map<String, Object> contextMap = new HashMap<>();
         contextMap.put("url", request.getRequestURL().toString());
-        contextMap.put(QUERY_PARAMETERS_KEY, request.getQueryString() != null ? "?" + request.getQueryString() : "");
+        contextMap.put("query-parameters", request.getQueryString() != null ? "?" + request.getQueryString() : "");
 
         LOG.errorContext(requestId, e.getMessage(), null, contextMap);
 
@@ -99,7 +98,7 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
 
         Errors errors = new Errors();
         for (ConstraintViolation<?> constraintViolation : exception.getConstraintViolations()) {
-            var errorMessage = "Please check the request and try again" + constraintViolation.getMessage();;
+            var errorMessage = "Please check the request and try again";
             errors.addError(Err.invalidBodyBuilderWithLocation(ACCOUNTS_USER_API).withError(errorMessage).build());
         }
 
