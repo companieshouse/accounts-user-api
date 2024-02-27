@@ -50,7 +50,7 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
 
         Map<String, Object> contextMap = new HashMap<>();
         contextMap.put("url", r.getRequestURL().toString());
-        contextMap.put("QUERY_PARAMETERS_KEY", r.getQueryString() != null ? "?" + r.getQueryString() : "");
+        contextMap.put(QUERY_PARAMETERS_KEY, r.getQueryString() != null ? "?" + r.getQueryString() : "");
 
         LOG.errorContext(requestId, e.getMessage(), null, contextMap);
 
@@ -67,7 +67,7 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
 
         Map<String, Object> contextMap = new HashMap<>();
         contextMap.put("url", request.getRequestURL().toString());
-        contextMap.put("QUERY_PARAMETERS_KEY", request.getQueryString() != null ? "?" + request.getQueryString() : "");
+        contextMap.put(QUERY_PARAMETERS_KEY, request.getQueryString() != null ? "?" + request.getQueryString() : "");
 
         LOG.errorContext(requestId, e.getMessage(), null, contextMap);
 
@@ -84,7 +84,7 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
 
         Map<String, Object> contextMap = new HashMap<>();
         contextMap.put("url", request.getRequestURL().toString());
-        contextMap.put("QUERY_PARAMETERS_KEY", request.getQueryString() != null ? "?" + request.getQueryString() : "");
+        contextMap.put(QUERY_PARAMETERS_KEY, request.getQueryString() != null ? "?" + request.getQueryString() : "");
 
         LOG.errorContext(requestId, e.getMessage(), null, contextMap);
 
