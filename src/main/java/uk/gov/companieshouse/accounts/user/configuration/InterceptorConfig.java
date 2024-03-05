@@ -7,6 +7,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import uk.gov.companieshouse.accounts.user.AccountsUserServiceApplication;
+import uk.gov.companieshouse.accounts.user.interceptor.EricAuthorisedKeyPrivilegesInterceptor;
 import uk.gov.companieshouse.accounts.user.interceptor.LoggingInterceptor;
 import uk.gov.companieshouse.api.interceptor.InternalUserInterceptor;
 import uk.gov.companieshouse.api.interceptor.UserAuthenticationInterceptor;
@@ -51,6 +52,9 @@ public class InterceptorConfig implements WebMvcConfigurer {
                                 AccountsUserServiceApplication.applicationNameSpace)
                 )
         ).excludePathPatterns("/*/healthcheck");
+
+        registry.addInterceptor( new EricAuthorisedKeyPrivilegesInterceptor() )
+                .excludePathPatterns("/*/healthcheck");
     }
 
 }
