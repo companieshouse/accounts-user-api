@@ -31,10 +31,10 @@ public class EricAuthorisedKeyPrivilegesInterceptor extends UserAuthenticationIn
                     .orElse(new String[]{});
 
             final var hasInternalPrivilege = ArrayUtils.contains(privileges, "internal-app");
-            final var hasUserDataPrivilege = ArrayUtils.contains(privileges, "user-data-privilege");
+            final var hasUserDataPrivilege = ArrayUtils.contains(privileges, "user-data");
 
             if( hasInternalPrivilege && hasUserDataPrivilege ){
-                LOG.debug( "Caller authorised with internal-app and user-data-privilege privileges" );
+                LOG.debug( "Caller authorised with internal-app and user-data privileges" );
                 return true;
             } else {
                 LOG.error( "Caller does not have required privileges" );
