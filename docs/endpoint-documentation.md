@@ -68,7 +68,7 @@ This API provides access to user account information and related functionalities
 ## Error Handling
 - Errors are returned with appropriate HTTP status codes and error messages.
 
-For detailed information on request and response schemas, please refer to the API documentation.
+For detailed information on request and response schemas, please refer to the API documentation. [High Level Design](https://companieshouse.atlassian.net/wiki/spaces/IDV/pages/4471619599/High+Level+Design+V3#API-Spec)
 
 
 
