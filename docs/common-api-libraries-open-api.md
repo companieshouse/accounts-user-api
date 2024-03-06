@@ -24,8 +24,5 @@ If using a generated controller interface, you would need to implements it and o
 ### 5. Develop API Endpoints
 Implement your API endpoints according to your requirements. If using a generated controller interface, ensure to implement it and override the necessary endpoints.
 
-### 6. Generate Spec But Do NOT Overwrite
-As you progress with endpoint development, consider generating your API spec locally from code using `source generate-spec.sh`. This allows you to compare the locally generated spec with the private repo spec. Manually update the private spec where required. Additional details on generating spec from code can be found [here](https://companieshouse.atlassian.net/wiki/spaces/IDV/pages/4301848621/Spike+-+How+to+generate+OpenAPI+spec+from+existing+code).
-
 
 
