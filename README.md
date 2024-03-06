@@ -28,7 +28,8 @@ Note: These instructions are tailored for a local Docker environment.
 For further details, please refer to the documentation and associated resources.
 
 Common API libraries
-[Common API Library Usage README](docs/common-api-libraries-readme.md) 
+[Common API Library Usage README](docs/common-api-libraries-readme.md)
+[Common API Library Open API](docs/common-api-libraries-open-api.md)
 
 ## ERIC Request Headers
 Header Code Variable    | Header Field Name   | Usage
@@ -41,3 +42,7 @@ Header Code Variable    | Header Field Name   | Usage
 The full path for each public endpoints:
 
 [Endpoints Documentation](docs/endpoint-documentation.md) 
+
+### Workflow when updating the API Spec
+
+[Workflow Documentation](docs/workflow-when-updating-api-spec.md) 
