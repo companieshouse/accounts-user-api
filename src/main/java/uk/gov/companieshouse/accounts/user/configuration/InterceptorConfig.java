@@ -7,9 +7,9 @@ import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import uk.gov.companieshouse.accounts.user.AccountsUserServiceApplication;
+import uk.gov.companieshouse.accounts.user.interceptor.EricAuthorisedKeyPrivilegesInterceptor;
 import uk.gov.companieshouse.accounts.user.interceptor.LoggingInterceptor;
 import uk.gov.companieshouse.api.interceptor.InternalUserInterceptor;
-import uk.gov.companieshouse.api.interceptor.UserAuthenticationInterceptor;
 
 @Configuration
 public class InterceptorConfig implements WebMvcConfigurer {
@@ -44,7 +44,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
 
     private void addEricInterceptors( final InterceptorRegistry registry){
         registry.addInterceptor(
-                new UserAuthenticationInterceptor(
+                new EricAuthorisedKeyPrivilegesInterceptor(
                         new ArrayList<>(0),
                         Collections.singletonList("oauth2"),
                         new InternalUserInterceptor(
