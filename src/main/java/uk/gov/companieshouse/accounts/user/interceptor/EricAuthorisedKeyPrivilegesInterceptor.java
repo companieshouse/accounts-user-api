@@ -2,32 +2,47 @@ package uk.gov.companieshouse.accounts.user.interceptor;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Objects;
-import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.HandlerInterceptor;
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+import org.apache.commons.lang.ArrayUtils;
 import uk.gov.companieshouse.accounts.user.AccountsUserServiceApplication;
+import uk.gov.companieshouse.api.interceptor.InternalUserInterceptor;
+import uk.gov.companieshouse.api.interceptor.UserAuthenticationInterceptor;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
-import uk.gov.companieshouse.logging.util.RequestLogger;
 
-@Component
-public class EricAuthorisedKeyPrivilegesInterceptor implements HandlerInterceptor, RequestLogger {
+public class EricAuthorisedKeyPrivilegesInterceptor extends UserAuthenticationInterceptor {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger( AccountsUserServiceApplication.applicationNameSpace );
+    private static final Logger LOG = LoggerFactory.getLogger(AccountsUserServiceApplication.applicationNameSpace);
+
+    public EricAuthorisedKeyPrivilegesInterceptor(List<String> externalMethods,
+            List<String> otherAllowedIdentityTypes,
+            InternalUserInterceptor internalUserInterceptor) {
+        super(externalMethods, otherAllowedIdentityTypes, internalUserInterceptor);
+    }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
-        final var privileges = request.getHeader( "eric-authorised-key-privileges" );
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
+        if ( super.preHandle( request, response, handler ) ) {
+            final var privileges =
+            Optional.ofNullable( request.getHeader("ERIC-Authorised-Key-Privileges") )
+                    .map(s -> s.split(","))
+                    .orElse(new String[]{});
 
-        if ( Objects.isNull( privileges ) || !privileges.contains("sensitive-data") ) {
-            LOGGER.error( "Caller does not have sensitive-data privileges" );
-            response.setStatus( 401 );
-            return false;
+            final var hasInternalPrivilege = ArrayUtils.contains(privileges, "internal-app");
+            final var hasSensitiveDataPrivilege = ArrayUtils.contains(privileges, "sensitive-data");
+
+            if( hasInternalPrivilege && hasSensitiveDataPrivilege ){
+                LOG.debug( "Caller authorised with internal-app and sensitive-data privileges" );
+                return true;
+            } else {
+                LOG.error( "Caller does not have required privileges" );
+                response.setStatus( 401 );
+                return false;
+            }
         }
-
-        LOGGER.debug( "Caller authorised with sensitive-data privileges" );
-        return true;
+        return false;
     }
 
 }
