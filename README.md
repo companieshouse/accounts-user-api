@@ -6,23 +6,15 @@ This API grants access to user account information and associated functionalitie
 For more detailed information and related Confluence pages, refer to the following:
 
 
-- [LLD](https://your-company.atlassian.net/wiki/spaces/...)
-- [HLD](https://companieshouse.atlassian.net/wiki/spaces/IDV/pages/4471619599/High+Level+Design+V3)
-- [API Specification](https://companieshouse.atlassian.net/wiki/spaces/IDV/pages/4471619599/High+Level+Design+V3#API-Spec)
+- [LLD](https://companieshouse.atlassian.net/wiki/spaces/IDV/pages/4443963495/accounts-user-api+LLD)
+- [HLD](https://companieshouse.atlassian.net/wiki/spaces/IDV/pages/4441571350/accounts-user-api+API+HLD)
+- [API Specification](https://companieshouse.atlassian.net/wiki/spaces/IDV/pages/4441571350/accounts-user-api+API+HLD)
 
 ### Prerequisites
 To build the service and execute unit tests, ensure you have the following:
 - Java 21
 - Maven
 - Git
-
-
-
-## Endpoint Documentation
-
-The full path for each endpoint:
-
-[Endpoints Documentation](docs/endpoint-documentation.md)
 
 ## Adding a new API Endpoint:
 ### Specification for API: Private Java and Controllers
@@ -66,9 +58,23 @@ Note: These instructions are tailored for a local Docker environment.
 
 For further details, please refer to the documentation and associated resources.
 
-Common API libraries
-[Common API Library Usage README](docs/common-api-libraries-readme.md)
+## Endpoint Documentation
 
-Request Headers [Header variables](./docs/header-variables.md)
+#### User API Documentation
+
+- [Endpoints Documentation](docs/endpoint-documentation.md)
+
+#### Request Headers 
+
+- [Header variables](./docs/header-variables.md)
+
+#### Common API libraries: 
+
+
+- [API Model Specification](docs/common-api-libraries-open-api.md)
+
+- [Common API Library Usage README](docs/common-api-libraries-readme.md)
+
+
 
 
