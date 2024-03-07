@@ -28,5 +28,3 @@ The `private-api-sdk-java` contains the API resources used in this project.
 1. The model for the API should be authored in `private.api.ch.gov.uk-specifications` (and this project should **NOT** be directly referenced in `accounts-user-api`). This allows the resources to be generated for both Java and Node clients.
 2. In `private-api-sdk-java`, the API resources required by `accounts-user-api` are generated. (The `private-api-sdk-java` utilizes the spec defined in `private.api.ch.gov.uk-specifications` to generate the necessary API resources).
 3. The DTOs are brought into `accounts-user-api` as a dependency from `private-api-sdk-java` (ensure that these generated classes are stored in source control). Be sure to use the version generated when the PR for `private-api-sdk-java` is merged.
-
-Refer to the additional [open-api.md](https://github.com/companieshouse/accounts-user-api/docs/common-api-libraries-open-api.md) for the full process.
