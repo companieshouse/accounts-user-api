@@ -2,7 +2,7 @@ package uk.gov.companieshouse.accounts.user.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
+
 import uk.gov.companieshouse.accounts.user.models.Users;
 import uk.gov.companieshouse.api.accounts.user.model.User;
 
