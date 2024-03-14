@@ -1,8 +1,11 @@
 package uk.gov.companieshouse.accounts.user.controller;
 
+import java.util.Objects;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+
 import uk.gov.companieshouse.accounts.user.AccountsUserServiceApplication;
 import uk.gov.companieshouse.accounts.user.exceptions.BadRequestRuntimeException;
 import uk.gov.companieshouse.accounts.user.exceptions.NotFoundRuntimeException;
@@ -12,8 +15,6 @@ import uk.gov.companieshouse.api.accounts.user.model.RolesList;
 import uk.gov.companieshouse.api.accounts.user.model.User;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
-
-import java.util.Objects;
 
 @RestController
 public class UserRolesController implements UserRolesInterface {
