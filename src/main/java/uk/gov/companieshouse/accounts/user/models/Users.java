@@ -1,15 +1,16 @@
 package uk.gov.companieshouse.accounts.user.models;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
-import uk.gov.companieshouse.api.accounts.user.model.Role;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+
+import uk.gov.companieshouse.api.accounts.user.model.Role;
 
 @Document(collection = "users")
 public class Users implements Serializable {

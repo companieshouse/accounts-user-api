@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,12 +13,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.UncategorizedMongoDbException;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Update;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+
 import uk.gov.companieshouse.accounts.user.models.OneLoginDataDao;
 import uk.gov.companieshouse.accounts.user.models.Users;
 import uk.gov.companieshouse.api.accounts.user.model.Role;
@@ -177,5 +180,18 @@ public class UsersRepositoryTest {
         Assertions.assertEquals( List.of( Role.SUPPORT_MEMBER ), usersRepository.findUsersById( "333" ).get().getRoles() );
     }
 
+    @Test
+    void fetchUsersUsingPartialEmail(){
+        final var oneUser = usersRepository.fetchUsersUsingPartialEmail("city", PageRequest.of(0, 50)).getContent();
+        final var multipleUsers = usersRepository.fetchUsersUsingPartialEmail("ha", PageRequest.of(0, 50)).getContent();
+
+        Assertions.assertEquals(1, oneUser.size());
+        Assertions.assertEquals("Harley Quinn", oneUser.get(0).getDisplayName());
+
+        Assertions.assertEquals(2, multipleUsers.size());
+        
+        Assertions.assertTrue(multipleUsers.stream()
+                                            .map(Users::getDisplayName).allMatch(user -> (user.equals("Harry Potter")) || (user.equals("Harley Quinn"))));
+    }
 
 }

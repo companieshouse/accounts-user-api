@@ -3,11 +3,8 @@ package uk.gov.companieshouse.accounts.user.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static uk.gov.companieshouse.api.accounts.user.model.Role.SUPERVISOR;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,8 +26,8 @@ import uk.gov.companieshouse.api.accounts.user.model.RolesList;
 import uk.gov.companieshouse.api.accounts.user.model.User;
 
 @Tag("unit-test")
-@WebMvcTest(UserRolesController.class)
-public class FindRolesBasedOnUserIDControllerTest {
+@WebMvcTest(FindUserBasedOnPartialEmailController.class)
+public class FindUserBasedOnPartialEmailControllerTest {
 
     @Autowired
     public MockMvc mockMvc;
@@ -41,88 +38,92 @@ public class FindRolesBasedOnUserIDControllerTest {
     @MockBean
     InterceptorConfig interceptorConfig;
 
-    private User userEminem;
-    private User userTheRock;
-
+    private User eminem;
+    private User theRock;
+    private User harleyQuinn;
+    private User harryPotter;
     @BeforeEach
     void setup() {
 
         final var supervisor = new RolesList();
-        supervisor.add( Role.SUPERVISOR );
+        supervisor.add(Role.SUPERVISOR);
 
-        userEminem = new User();
-        userEminem.userId("111")
+        eminem = new User();
+        eminem.userId("111")
                 .forename("Marshall")
                 .surname("Mathers")
                 .displayName("Eminem")
                 .email("eminem@rap.com")
-                .roles( supervisor );
+                .roles(supervisor);
 
         final var badosUserAndRestrictedWord = new RolesList();
-        badosUserAndRestrictedWord.addAll( List.of( Role.BADOS_USER, Role.RESTRICTED_WORD ) );
+        badosUserAndRestrictedWord.addAll(List.of(Role.BADOS_USER, Role.RESTRICTED_WORD));
 
-        userTheRock = new User();
-        userTheRock.userId("222")
+        theRock = new User();
+        theRock.userId("222")
                 .forename("Dwayne")
                 .surname("Johnson")
                 .displayName("The Rock")
                 .email("the.rock@wrestling.com")
-                .roles( badosUserAndRestrictedWord );
+                .roles(badosUserAndRestrictedWord);
 
         final var appealsTeam = new RolesList();
-        appealsTeam.add( Role.APPEALS_TEAM );
+        appealsTeam.add(Role.APPEALS_TEAM);
 
-        User userHarleyQuinn = new User();
-        userHarleyQuinn.userId("333")
+        harleyQuinn = new User();
+        harleyQuinn.userId("333")
                 .forename("Harleen")
                 .surname("Quinzel")
                 .displayName("Harley Quinn")
                 .email("harley.quinn@gotham.city")
-                .roles( appealsTeam );
+                .roles(appealsTeam);
+
+        harryPotter = new User().userId("444")
+        .forename("Daniel")
+        .surname("Radcliff")
+        .displayName("Harry Potter")
+        .email("harry.potter@under-the-stairs.com");
+        
 
         Mockito.doNothing().when(interceptorConfig).addInterceptors(any());
     }
-    @Test
-    void getUserRolesWithMalformedUserIDReturnsBadRequest() throws Exception {
-
-        mockMvc.perform(get("/users/{user_id}/roles", "$").header("X-Request-Id", "theId123")).andExpect(status().isBadRequest());
-    }
 
     @Test
-    void getUserRolesWithNonexistentUserIDReturnsNotFound() throws Exception {
-        mockMvc.perform( get( "/users/roles").header("X-Request-Id", "theId123") ).andExpect(status().isNotFound());
-    }
+    void searchUsersDetailsPartialEmailSingle() throws Exception {
+        
+        Mockito.doReturn(List.of(theRock)).when(usersService).fetchUsersUsingPartialEmail(any());
 
-    @Test
-    void getUserRolesWithOneUserIdReturnsOneRole() throws Exception {
-        Mockito.doReturn( Optional.of( userEminem ) ).when( usersService ).fetchUser( any() );
         final var responseBody =
-                mockMvc.perform( get( "/users/{user_id}/roles", "111" ).header("X-Request-Id", "theId123") )
+                mockMvc.perform(get("/internal/users/search?partial_email=rock").header("X-Request-Id", "theId123"))
                         .andExpect(status().isOk())
                         .andReturn()
                         .getResponse()
                         .getContentAsString();
 
         final var objectMapper = new ObjectMapper();
-        final var roles = objectMapper.readValue(responseBody, new TypeReference<Set<Role>>(){} );
+        final var users = objectMapper.readValue(responseBody, new TypeReference<List<User>>(){});
 
-        Assertions.assertEquals( 1, roles.size() );
-        Assertions.assertTrue( roles.contains(SUPERVISOR) );
-    }
-
+        Assertions.assertEquals(1, users.size());
+        Assertions.assertTrue(users.stream().map(User::getDisplayName).toList().containsAll(List.of("The Rock")));
+    }    
+    
     @Test
-    void getUserRolesWithOneUserIdReturnsMultipleRoles() throws Exception {
-        Mockito.doReturn( Optional.of( userTheRock ) ).when( usersService ).fetchUser( any() );
+    void searchUsersDetailsPartialEmailMultiple() throws Exception {
+        
+        Mockito.doReturn(List.of(harleyQuinn,harryPotter)).when(usersService).fetchUsersUsingPartialEmail(any());
+
         final var responseBody =
-                mockMvc.perform( get( "/users/{user_id}/roles" , "222").header("X-Request-Id", "theId123") )
-                        .andExpect(status().isOk()) .andReturn()
+                mockMvc.perform(get("/internal/users/search?partial_email=ha").header("X-Request-Id", "theId123"))
+                        .andExpect(status().isOk())
+                        .andReturn()
                         .getResponse()
                         .getContentAsString();
 
         final var objectMapper = new ObjectMapper();
-        final var roles = objectMapper.readValue(responseBody, new TypeReference<Set<Role>>(){} );
+        final var users = objectMapper.readValue(responseBody, new TypeReference<List<User>>(){});
 
-        Assertions.assertEquals( 2, roles.size() );
-        Assertions.assertTrue( roles.containsAll( Set.of(Role.BADOS_USER, Role.RESTRICTED_WORD )));
-    }
+        Assertions.assertEquals(2, users.size());
+        
+        Assertions.assertTrue(users.stream().map(User::getDisplayName).allMatch(user -> (user.equals("Harry Potter")) || (user.equals("Harley Quinn"))));    }
+
 }

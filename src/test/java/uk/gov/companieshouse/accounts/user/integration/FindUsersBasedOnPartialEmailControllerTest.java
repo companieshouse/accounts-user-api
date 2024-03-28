@@ -3,11 +3,9 @@ package uk.gov.companieshouse.accounts.user.integration;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static uk.gov.companieshouse.api.accounts.user.model.Role.SUPERVISOR;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -34,18 +32,21 @@ import uk.gov.companieshouse.accounts.user.models.Users;
 import uk.gov.companieshouse.accounts.user.repositories.UsersRepository;
 import uk.gov.companieshouse.api.accounts.user.model.Role;
 import uk.gov.companieshouse.api.accounts.user.model.RolesList;
+import uk.gov.companieshouse.api.accounts.user.model.User;
 
 @AutoConfigureMockMvc
 @SpringBootTest
 @Testcontainers
 @Tag("integration-test")
-public class FindRolesBasedOnUserIDControllerTest {
+public class FindUsersBasedOnPartialEmailControllerTest {
 
     @Container
     @ServiceConnection
     static MongoDBContainer container = new MongoDBContainer("mongo:5");
+
     @Autowired
     MongoTemplate mongoTemplate;
+
     @Autowired
     public MockMvc mockMvc;
 
@@ -100,52 +101,79 @@ public class FindRolesBasedOnUserIDControllerTest {
         harleyQuinn.setCreated( LocalDateTime.now().minusDays( 10 ) );
         harleyQuinn.setUpdated( LocalDateTime.now().minusDays( 5 ) );
 
-        usersRepository.insert( List.of( eminem, theRock, harleyQuinn ) );
+
+        final var harryPotter = new Users();
+        harryPotter.setId( "444" );
+        harryPotter.setLocale( "GB_en" );
+        harryPotter.setForename( "Daniel" );
+        harryPotter.setSurname( "Radcliff" );
+        harryPotter.setDisplayName( "Harry Potter" );
+        harryPotter.setEmail( "harry.potter@under-the-stairs.com" );
+        harryPotter.setCreated( LocalDateTime.now().minusDays( 10 ) );
+        harryPotter.setUpdated( LocalDateTime.now().minusDays( 5 ) );
+
+        usersRepository.insert( List.of( eminem, theRock, harleyQuinn, harryPotter ) );
 
         Mockito.doNothing().when(interceptorConfig).addInterceptors( any() );
     }
-    @Test
-    void getUserRolesWithMalformedUserIDReturnsBadRequest() throws Exception {
 
-        mockMvc.perform(get("/users/{user_id}/roles", "$%").header("X-Request-Id", "theId123")).andExpect(status().isBadRequest());
+    @Test
+    void searchUsersWithoutQueryParamsReturnsBadRequest() throws Exception {
+        mockMvc.perform( get( "/internal/users/search" ).header("X-Request-Id", "theId123") ).andExpect(status().isBadRequest());
     }
 
     @Test
-    void getUserRolesWithNonexistentUserIDReturnsNotFound() throws Exception {
-        mockMvc.perform( get( "/associations/companies/{company_number}/users/{user_email}/{status}", "111111", "krishna.patel@dahai.art", "Removed" ).header("X-Request-Id", "theId123") ).andExpect(status().isNotFound());
+    void searchUsersWithMalformedEmailReturnsBadRequest() throws Exception {
+        mockMvc.perform( get( "/internal/users/search?partial_email" ).header("X-Request-Id", "theId123") ).andExpect(status().isBadRequest());
     }
 
     @Test
-    void getUserRolesWithOneUserIdReturnsOneRole() throws Exception {
+    void searchUsersWithNonExistentEmailsReturnsEmptyList() throws Exception {
 
         final var responseBody =
-                mockMvc.perform( get( "/users/{user_id}/roles", "111" ).header("X-Request-Id", "theId123") )
+                mockMvc.perform( get( "/internal/users/search?partial_email=this.doesnt.exist@really.com" ).header("X-Request-Id", "theId123") )
+                        .andExpect(status().isNoContent())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        final var objectMapper = new ObjectMapper();
+        final var users = objectMapper.readValue(responseBody, new TypeReference<List<User>>(){} );
+
+        Assertions.assertEquals( List.of(), users );
+    }
+
+    @Test
+    void searchUsersReturnsOneUser() throws Exception {
+
+        final var responseBody =
+        mockMvc.perform( get( "/internal/users/search?partial_email=harley.quinn@gotham.city" ).header("X-Request-Id", "theId123") )
+               .andExpect(status().isOk())
+               .andReturn()
+               .getResponse()
+               .getContentAsString();
+
+        final var objectMapper = new ObjectMapper();
+        final var users = objectMapper.readValue(responseBody, new TypeReference<List<User>>(){} );
+
+        Assertions.assertEquals( 1, users.size() );
+        Assertions.assertEquals( "Harley Quinn", users.get(0).getDisplayName() );
+    }
+
+    @Test
+    void searchUsersReturnsMultipleUsers() throws Exception {
+
+        final var responseBody = mockMvc.perform( get( "/internal/users/search?partial_email=ha" ).header("X-Request-Id", "theId123") )
                         .andExpect(status().isOk())
                         .andReturn()
                         .getResponse()
                         .getContentAsString();
 
         final var objectMapper = new ObjectMapper();
-        final var roles = objectMapper.readValue(responseBody, new TypeReference<Set<Role>>(){} );
+        final var users = objectMapper.readValue(responseBody, new TypeReference<List<User>>(){} );
 
-        Assertions.assertEquals( 1, roles.size() );
-        Assertions.assertTrue( roles.contains(SUPERVISOR) );
-    }
-    @Test
-    void searchUserRolesWithOneUserIdReturnsMultipleRoles() throws Exception {
-
-        final var responseBody =
-                mockMvc.perform( get( "/users/{user_id}/roles" , "222" ).header("X-Request-Id", "theId123") )
-                        .andExpect(status().isOk())
-                        .andReturn()
-                        .getResponse()
-                        .getContentAsString();
-
-        final var objectMapper = new ObjectMapper();
-        final var roles = objectMapper.readValue(responseBody, new TypeReference<Set<Role>>(){} );
-
-        Assertions.assertEquals( 2, roles.size() );
-        Assertions.assertTrue( roles.containsAll( Set.of(Role.BADOS_USER, Role.RESTRICTED_WORD )));
+        Assertions.assertEquals( 2, users.size() );
+        Assertions.assertTrue( users.stream().map( User::getDisplayName ).toList().containsAll( List.of( "Harry Potter", "Harley Quinn" ) ) );
     }
 
     @AfterEach
