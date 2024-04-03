@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Limit;
 import org.springframework.data.mongodb.UncategorizedMongoDbException;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Update;
@@ -182,8 +182,8 @@ public class UsersRepositoryTest {
 
     @Test
     void fetchUsersUsingPartialEmail(){
-        final var oneUser = usersRepository.fetchUsersUsingPartialEmail("city", PageRequest.of(0, 50)).getContent();
-        final var multipleUsers = usersRepository.fetchUsersUsingPartialEmail("ha", PageRequest.of(0, 50)).getContent();
+        final var oneUser = usersRepository.findUsersByEmailLike("city", Limit.of(50));
+        final var multipleUsers = usersRepository.findUsersByEmailLike("ha",  Limit.of(50)); Limit.of(50);
 
         Assertions.assertEquals(1, oneUser.size());
         Assertions.assertEquals("Harley Quinn", oneUser.get(0).getDisplayName());

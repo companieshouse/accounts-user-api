@@ -3,8 +3,7 @@ package uk.gov.companieshouse.accounts.user.repositories;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Limit;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
@@ -20,8 +19,7 @@ public interface UsersRepository extends MongoRepository<Users, String> {
 
     Optional<Users> findUsersById( String userId );
 
-    @Query("{email : { $regex : /?0/}}")
-    Page<Users> fetchUsersUsingPartialEmail(String subStringOfEmail, Pageable pageable);
+    List<Users> findUsersByEmailLike(String email, Limit limit);
 
     @Query( "{ 'id': ?0 }" )
     int updateUser( String userId, Update update );

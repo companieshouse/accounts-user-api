@@ -22,8 +22,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Limit;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.UncategorizedMongoDbException;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -266,7 +266,7 @@ public class UsersServiceTest {
     @Test
     void fetchUsersUsingPartialEmail(){
         ReflectionTestUtils.setField(usersService, "limit", 50);
-        Mockito.doReturn(new PageImpl<>(List.of(usersHarleyQuinn, usersHarryPotter))).when(usersRepository).fetchUsersUsingPartialEmail("har", PageRequest.of(0, 50));
+        Mockito.doReturn(List.of(usersHarleyQuinn, usersHarryPotter)).when(usersRepository).findUsersByEmailLike("har", Limit.of(50));
         Mockito.doReturn(userHarleyQuinn).when(usersDtoDaoMapper).daoToDto(usersHarleyQuinn);
         Mockito.doReturn(userHarryPotter).when(usersDtoDaoMapper).daoToDto(usersHarryPotter);
 

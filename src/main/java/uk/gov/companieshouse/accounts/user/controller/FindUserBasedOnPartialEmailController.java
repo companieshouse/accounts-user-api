@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.accounts.user.controller;
 
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import uk.gov.companieshouse.accounts.user.AccountsUserServiceApplication;
 import uk.gov.companieshouse.accounts.user.exceptions.BadRequestRuntimeException;
 import uk.gov.companieshouse.accounts.user.service.UsersService;
 import uk.gov.companieshouse.api.accounts.user.api.FindUsersBasedOnAPartialEmailInterface;
+import uk.gov.companieshouse.api.accounts.user.model.User;
 import uk.gov.companieshouse.api.accounts.user.model.UsersList;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
@@ -37,22 +39,17 @@ public class FindUserBasedOnPartialEmailController implements FindUsersBasedOnAP
             String.format( "%s: Attempting to search for users with an email address containing: %s",   xRequestId, partialEmail)
         );
 
-        final UsersList users = new UsersList();            
-        StringBuilder userEmailList = new StringBuilder();
-
-        usersService.fetchUsersUsingPartialEmail(partialEmail).forEach(user  -> { 
-            users.add(user);
-            userEmailList.append(user.getEmail());
-        });
+        final UsersList users = new UsersList();
+        users.addAll(usersService.fetchUsersUsingPartialEmail(partialEmail));
 
         ResponseEntity<UsersList> response = new ResponseEntity<>( users, HttpStatus.NO_CONTENT);
 
         if (! users.isEmpty() ) {
-            users.forEach(user -> userEmailList.append(user.getEmail()).append(" "));
-            LOG.debug( String.format( "%s: Successfully fetched %d users : %s",
-                    xRequestId, 
-                    users.size(), 
-                    userEmailList.toString()));
+
+            LOG.debug(String.format("%s: Successfully fetched %d users : %s",
+            xRequestId,
+            users.size(),
+            users.stream().map(User::getEmail).collect(Collectors.joining(","))));
             
             response = new ResponseEntity<>( users, HttpStatus.OK );            
         } else {

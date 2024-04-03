@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Limit;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,10 +56,8 @@ public class UsersService {
 
     public List<User> fetchUsersUsingPartialEmail(final String partialEmail) {
 
-        List<Users> foundUsers = usersRepository
-                                        .fetchUsersUsingPartialEmail(partialEmail, PageRequest.of(0, limit))
-                                        .getContent();
-
+        List<Users> foundUsers = usersRepository.findUsersByEmailLike(partialEmail, Limit.of(limit));
+                    
         return Objects.requireNonNullElse(foundUsers, new ArrayList<Users>())
                 .stream()
                 .map(usersDtoDaoMapper::daoToDto)
