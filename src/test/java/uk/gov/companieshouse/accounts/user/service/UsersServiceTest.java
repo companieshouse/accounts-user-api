@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+
 import org.bson.Document;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,8 +22,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Limit;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.mongodb.UncategorizedMongoDbException;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.test.util.ReflectionTestUtils;
+
 import uk.gov.companieshouse.accounts.user.mapper.UsersDtoDaoMapper;
 import uk.gov.companieshouse.accounts.user.models.Users;
 import uk.gov.companieshouse.accounts.user.repositories.UsersRepository;
@@ -49,11 +54,11 @@ public class UsersServiceTest {
     private User userTheRock;
     private Users usersHarleyQuinn;
     private User userHarleyQuinn;
-    private Users harryPotter;
+    private Users usersHarryPotter;
+    private User userHarryPotter;
 
     @BeforeEach
     void setup(){
-
         usersEminem = new Users();
         usersEminem.setId( "111" );
         usersEminem.setLocale( "GB_en" );
@@ -120,15 +125,22 @@ public class UsersServiceTest {
                        .email("harley.quinn@gotham.city")
                        .roles( appealsTeam );
 
-        harryPotter = new Users();
-        harryPotter.setId( "444" );
-        harryPotter.setLocale( "GB_en" );
-        harryPotter.setForename( "Daniel" );
-        harryPotter.setSurname( "Radcliff" );
-        harryPotter.setDisplayName( "Harry Potter" );
-        harryPotter.setEmail( "harry.potter@under-the-stairs.com" );
-        harryPotter.setCreated( LocalDateTime.now().minusDays( 10 ) );
-        harryPotter.setUpdated( LocalDateTime.now().minusDays( 5 ) );
+        usersHarryPotter = new Users();
+        usersHarryPotter.setId("444");
+        usersHarryPotter.setLocale("GB_en");
+        usersHarryPotter.setForename("Daniel");
+        usersHarryPotter.setSurname("Radcliff");
+        usersHarryPotter.setDisplayName("Harry Potter");
+        usersHarryPotter.setEmail("harry.potter@under-the-stairs.com");
+        usersHarryPotter.setCreated(LocalDateTime.now().minusDays(10));
+        usersHarryPotter.setUpdated(LocalDateTime.now().minusDays(5));
+
+        userHarryPotter = new User();
+        userHarryPotter.userId("444");
+        userHarryPotter.setForename("Daniel");
+        userHarryPotter.setSurname("Radcliff");
+        userHarryPotter.setDisplayName("Harry Potter");
+        userHarryPotter.setEmail("harry.potter@under-the-stairs.com");
     }
 
     @Test
@@ -249,6 +261,20 @@ public class UsersServiceTest {
 
         usersService.setRoles( "444", List.of( Role.SUPPORT_MEMBER, Role.SUPPORT_MEMBER ) );
         Mockito.verify( usersRepository ).updateUser( eq("444"), argThat(setRolesUpdateParameterMatches( Set.of( Role.SUPPORT_MEMBER ) ) ) );
+    }
+
+    @Test
+    void fetchUsersUsingPartialEmail(){
+        ReflectionTestUtils.setField(usersService, "limit", 50);
+        Mockito.doReturn(List.of(usersHarleyQuinn, usersHarryPotter)).when(usersRepository).findUsersByEmailLike("har", Limit.of(50));
+        Mockito.doReturn(userHarleyQuinn).when(usersDtoDaoMapper).daoToDto(usersHarleyQuinn);
+        Mockito.doReturn(userHarryPotter).when(usersDtoDaoMapper).daoToDto(usersHarryPotter);
+
+        final var multipleUsers = usersService.fetchUsersUsingPartialEmail("har");
+
+        Assertions.assertEquals(2, multipleUsers.size());
+        Assertions.assertTrue(multipleUsers.stream()
+                .map(User::getDisplayName).allMatch(user -> (user.equals("Harry Potter")) || (user.equals("Harley Quinn"))));
     }
 
 }
