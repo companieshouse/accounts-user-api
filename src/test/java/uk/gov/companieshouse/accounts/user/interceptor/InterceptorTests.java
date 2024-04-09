@@ -25,11 +25,10 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jakarta.servlet.http.HttpServletResponse;
 import uk.gov.companieshouse.accounts.user.configuration.InterceptorConfig;
 import uk.gov.companieshouse.accounts.user.models.Users;
 import uk.gov.companieshouse.accounts.user.repositories.UsersRepository;
-import uk.gov.companieshouse.api.accounts.user.model.Role;
-import uk.gov.companieshouse.api.accounts.user.model.RolesList;
 import uk.gov.companieshouse.api.accounts.user.model.User;
 
 
@@ -58,8 +57,7 @@ public class InterceptorTests {
     @BeforeEach
     public void setup() {
 
-        final var supervisor = new RolesList();
-        supervisor.add( Role.SUPERVISOR );
+        // supervisor.add( Role.SUPERVISOR );
 
         final var eminem = new Users();
         eminem.setId( "111" );
@@ -68,12 +66,9 @@ public class InterceptorTests {
         eminem.setSurname( "Mathers" );
         eminem.setDisplayName( "Eminem" );
         eminem.setEmail( "eminem@rap.com" );
-        eminem.setRoles( supervisor );
+        eminem.setRoles( List.of("supervisor") );
         eminem.setCreated( LocalDateTime.now().minusDays( 1 ) );
         eminem.setUpdated( LocalDateTime.now() );
-
-        final var badosUserAndRestrictedWord = new RolesList();
-        badosUserAndRestrictedWord.addAll( List.of( Role.BADOS_USER, Role.RESTRICTED_WORD ) );
 
         final var theRock = new Users();
         theRock.setId( "222" );
@@ -82,12 +77,9 @@ public class InterceptorTests {
         theRock.setSurname( "Johnson" );
         theRock.setDisplayName( "The Rock" );
         theRock.setEmail( "the.rock@wrestling.com" );
-        theRock.setRoles( badosUserAndRestrictedWord );
+        theRock.setRoles( List.of( "bados_user", "restricted_word" ) );
         theRock.setCreated( LocalDateTime.now().minusDays( 4 ) );
         theRock.setUpdated( LocalDateTime.now().minusDays( 2 ) );
-
-        final var appealsTeam = new RolesList();
-        appealsTeam.add( Role.APPEALS_TEAM );
 
         final var harleyQuinn = new Users();
         harleyQuinn.setId( "333" );
@@ -96,7 +88,7 @@ public class InterceptorTests {
         harleyQuinn.setSurname( "Quinzel" );
         harleyQuinn.setDisplayName( "Harley Quinn" );
         harleyQuinn.setEmail( "harley.quinn@gotham.city" );
-        harleyQuinn.setRoles( appealsTeam );
+        harleyQuinn.setRoles( List.of( "appeals_team" ) );
         harleyQuinn.setCreated( LocalDateTime.now().minusDays( 10 ) );
         harleyQuinn.setUpdated( LocalDateTime.now().minusDays( 5 ) );
 
@@ -105,7 +97,7 @@ public class InterceptorTests {
 
     @Test
     void healthCheck() throws Exception {
-        String healthStatus = mockMvc.perform( get( "/account-user-api/healthcheck" ))
+        String healthStatus = mockMvc.perform( get( "/accounts-user-api/healthcheck" ))
             .andExpect(status().isOk())
             .andReturn()
             .getResponse()
@@ -142,7 +134,7 @@ public class InterceptorTests {
                     get( "/users/search?user_email=harley.quinn@gotham.city" )
                         .header("X-Request-Id", "theId123")
                        )
-               .andExpect(status().is(401));
+               .andExpect(status().is(HttpServletResponse.SC_UNAUTHORIZED));
     }
 
     @Test
@@ -154,7 +146,7 @@ public class InterceptorTests {
                         .header("ERIC-Identity-Type", "key") 
                         .header("ERIC-Authorised-Key-Roles", "*")
                     )
-               .andExpect(status().is(401));
+               .andExpect(status().is(HttpServletResponse.SC_UNAUTHORIZED));
     }
 
 
@@ -164,7 +156,20 @@ public class InterceptorTests {
                     get( "/internal/users/search?partial_email=harley.quinn@gotham.city" )
                         .header("X-Request-Id", "theId123")
                     )
-               .andExpect(status().is(401));
+                    .andExpect(status().is(HttpServletResponse.SC_FORBIDDEN));
+    }
+
+    @Test
+    void internalUserSearchIncorrectPrivileges() throws Exception {
+        mockMvc.perform( 
+                    get( "/users/search?user_email=harley.quinn@gotham.city" )
+                        .header("X-Request-Id", "theId123")
+                        .header("ERIC-Identity", "123")
+                        .header("ERIC-Identity-Type", "key") 
+                        .header("ERIC-Authorised-Key-Roles", "*")
+                        .header("ERIC-Authorised-Key-Privileges", "internal-app")                    
+                    )
+                        .andExpect(status().is(HttpServletResponse.SC_UNAUTHORIZED));
 
     }
 
@@ -175,9 +180,8 @@ public class InterceptorTests {
                     get( "/internal/users/search?partial_email=harley.quinn@gotham.city" )
                         .header("X-Request-Id", "theId123")
                         .header("ERIC-Identity", "123")
-                        .header("ERIC-Identity-Type", "key") 
-                        .header("ERIC-Authorised-Key-Roles", "*")
-                        .header("ERIC-Authorised-Key-Privileges", "internal-app")                    
+                        .header("ERIC-Identity-Type", "oauth2") 
+                        .header("ERIC-Authorised-Roles", "/admin/search")
                     )
                         .andExpect(status().isOk())
                         .andReturn()

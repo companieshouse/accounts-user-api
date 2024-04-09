@@ -8,7 +8,7 @@ locals {
   docker_repo                = "accounts-user-api"
   lb_listener_rule_priority  = 19
   lb_listener_paths          = ["/users/*", "/internal/users/*"]
-  healthcheck_path           = "/users/healthcheck" #healthcheck path for accounts association service
+  healthcheck_path           = "/accounts-user-api/healthcheck" #healthcheck path for accounts association service
   healthcheck_matcher        = "200"
   application_subnet_ids     = data.aws_subnets.application.ids
   kms_alias                  = "alias/${var.aws_profile}/environment-services-kms"
