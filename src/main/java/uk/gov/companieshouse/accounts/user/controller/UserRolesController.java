@@ -58,7 +58,7 @@ public class UserRolesController implements UserRolesInterface {
         LOG.debug( String.format( "%s: attempting to set the status of %s to %s",
                 xRequestId, userId, roles) );
 
-        if ( usersService.fetchUser( userId ).isEmpty() ){
+        if ( !usersService.userExists( userId )){
             LOG.debug( String.format( "%s: Unable to find user: %s", xRequestId, userId ) );
             throw new NotFoundRuntimeException( "accounts-user-api", PLEASE_CHECK_THE_REQUEST_AND_TRY_AGAIN);
         }

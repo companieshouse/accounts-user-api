@@ -17,11 +17,10 @@ import uk.gov.companieshouse.accounts.user.configuration.InterceptorConfig;
 import uk.gov.companieshouse.accounts.user.models.OneLoginDataDao;
 import uk.gov.companieshouse.accounts.user.models.Users;
 import uk.gov.companieshouse.accounts.user.repositories.UsersRepository;
-import uk.gov.companieshouse.api.accounts.user.model.Role;
-import uk.gov.companieshouse.api.accounts.user.model.RolesList;
 import uk.gov.companieshouse.api.accounts.user.model.User;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -53,8 +52,8 @@ public class GetUserRecordControllerTest {
     @BeforeEach
     public void setup() {
 
-        final var appealsTeam = new RolesList();
-        appealsTeam.add( Role.APPEALS_TEAM );
+        final var appealsTeam = new ArrayList<String>();
+        appealsTeam.add( "appeals_team" );
 
         final var harleyQuinn = new Users();
         harleyQuinn.setId( "333" );

@@ -1,11 +1,7 @@
 package uk.gov.companieshouse.accounts.user.controller;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.List;
-
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -15,15 +11,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import uk.gov.companieshouse.accounts.user.configuration.InterceptorConfig;
 import uk.gov.companieshouse.accounts.user.service.UsersService;
-import uk.gov.companieshouse.api.accounts.user.model.Role;
 import uk.gov.companieshouse.api.accounts.user.model.RolesList;
 import uk.gov.companieshouse.api.accounts.user.model.User;
+
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Tag("unit-test")
 @WebMvcTest(FindUserBasedOnPartialEmailController.class)
@@ -46,7 +43,7 @@ public class FindUserBasedOnPartialEmailControllerTest {
     void setup() {
 
         final var supervisor = new RolesList();
-        supervisor.add(Role.SUPERVISOR);
+        supervisor.add("supervisor");
 
         eminem = new User();
         eminem.userId("111")
@@ -57,7 +54,7 @@ public class FindUserBasedOnPartialEmailControllerTest {
                 .roles(supervisor);
 
         final var badosUserAndRestrictedWord = new RolesList();
-        badosUserAndRestrictedWord.addAll(List.of(Role.BADOS_USER, Role.RESTRICTED_WORD));
+        badosUserAndRestrictedWord.addAll(List.of("bados_user", "restricted_word"));
 
         theRock = new User();
         theRock.userId("222")
@@ -68,7 +65,7 @@ public class FindUserBasedOnPartialEmailControllerTest {
                 .roles(badosUserAndRestrictedWord);
 
         final var appealsTeam = new RolesList();
-        appealsTeam.add(Role.APPEALS_TEAM);
+        appealsTeam.add("appeals_team");
 
         harleyQuinn = new User();
         harleyQuinn.userId("333")

@@ -4,7 +4,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-import uk.gov.companieshouse.api.accounts.user.model.Role;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -36,7 +35,7 @@ public class Users implements Serializable {
     private String email;
 
     @Field("roles")
-    private List<Role> roles;
+    private List<String> roles;
 
     @Field("created")
     private LocalDateTime created;
@@ -117,11 +116,11 @@ public class Users implements Serializable {
     }
 
 
-    public List<Role> getRoles() {
+    public List<String> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<Role> roles) {
+    public void setRoles(List<String> roles) {
         this.roles = roles;
     }
 

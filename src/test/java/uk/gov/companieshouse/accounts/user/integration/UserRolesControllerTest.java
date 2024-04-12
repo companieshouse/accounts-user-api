@@ -15,14 +15,14 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 import uk.gov.companieshouse.accounts.user.configuration.InterceptorConfig;
+import uk.gov.companieshouse.accounts.user.models.UserRoles;
 import uk.gov.companieshouse.accounts.user.models.Users;
+import uk.gov.companieshouse.accounts.user.repositories.UserRolesRepository;
 import uk.gov.companieshouse.accounts.user.repositories.UsersRepository;
-import uk.gov.companieshouse.api.accounts.user.model.Role;
-import uk.gov.companieshouse.api.accounts.user.model.RolesList;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -49,14 +49,17 @@ public class UserRolesControllerTest {
     @Autowired
     UsersRepository usersRepository;
 
+    @Autowired
+    UserRolesRepository userRolesRepository;
+
     @MockBean
     InterceptorConfig interceptorConfig;
 
     @BeforeEach
     public void setup() {
 
-        final var supervisor = new RolesList();
-        supervisor.add( Role.SUPERVISOR );
+        final var supervisor = new ArrayList<String>();
+        supervisor.add( "supervisor" );
 
         final var eminem = new Users();
         eminem.setId( "111" );
@@ -69,8 +72,8 @@ public class UserRolesControllerTest {
         eminem.setCreated( LocalDateTime.now().minusDays( 1 ) );
         eminem.setUpdated( LocalDateTime.now() );
 
-        final var badosUserAndRestrictedWord = new RolesList();
-        badosUserAndRestrictedWord.addAll( List.of( Role.BADOS_USER, Role.RESTRICTED_WORD ) );
+        final var badosUserAndRestrictedWord = new ArrayList<String>();
+        badosUserAndRestrictedWord.addAll( List.of( "bados_user", "restricted_word" ) );
 
         final var theRock = new Users();
         theRock.setId( "222" );
@@ -83,8 +86,10 @@ public class UserRolesControllerTest {
         theRock.setCreated( LocalDateTime.now().minusDays( 4 ) );
         theRock.setUpdated( LocalDateTime.now().minusDays( 2 ) );
 
-        final var appealsTeam = new RolesList();
-        appealsTeam.add( Role.APPEALS_TEAM );
+
+        final var appealsTeam = new ArrayList<String>();
+        appealsTeam.add( "appeals_team" );
+
 
         final var harleyQuinn = new Users();
         harleyQuinn.setId( "333" );
@@ -108,6 +113,27 @@ public class UserRolesControllerTest {
         harryPotter.setUpdated( LocalDateTime.now().minusDays( 5 ) );
 
         usersRepository.insert( List.of( eminem, theRock, harleyQuinn, harryPotter ) );
+
+        UserRoles supervisor1 = new UserRoles();
+        supervisor1.setId("supervisor");
+
+        UserRoles badosUser = new UserRoles();
+        badosUser.setId("bados_user");
+
+
+        UserRoles restrictedWord = new UserRoles();
+        restrictedWord.setId("restricted_word");
+
+
+        UserRoles supportMember = new UserRoles();
+        supportMember.setId("support-member");
+
+        UserRoles csiSupport = new UserRoles();
+        csiSupport.setId("csi_support");
+
+        userRolesRepository.insert(List.of(supervisor1,badosUser,restrictedWord,supportMember,csiSupport));
+
+
 
         Mockito.doNothing().when(interceptorConfig).addInterceptors( any() );
     }
@@ -139,9 +165,9 @@ public class UserRolesControllerTest {
                         .getContentAsString();
 
         final var objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
-        final var roles = objectMapper.readValue(responseBody, new TypeReference<Set<Role>>(){} );
+        final var roles = objectMapper.readValue(responseBody, new TypeReference<Set<String>>(){} );
         Assertions.assertEquals( 2, roles.size() );
-        Assertions.assertTrue( roles.containsAll( Set.of(Role.BADOS_USER, Role.RESTRICTED_WORD )));
+        Assertions.assertTrue( roles.containsAll( Set.of( "bados_user", "restricted_word" )));
 
     }
     @Test
@@ -191,7 +217,7 @@ public class UserRolesControllerTest {
     @Test
     void setUserRolesWithOneRoleSetsTheUsersRole() throws Exception {
         final var objectMapper = new ObjectMapper();
-        final var roles = objectMapper.writeValueAsString( List.of("support-member") );
+        final var roles = objectMapper.writeValueAsString( List.of("supervisor") );
 
         mockMvc.perform( put( "/users/{user_id}/roles", "333" )
                          .header( "X-Request-Id", "theId123" )
@@ -199,7 +225,7 @@ public class UserRolesControllerTest {
                          .content( roles ) )
                .andExpect( status().isOk() );
 
-        Assertions.assertEquals( List.of(Role.SUPPORT_MEMBER), usersRepository.findUsersById( "333" ).get().getRoles() );
+        Assertions.assertEquals( List.of("supervisor"), usersRepository.findUsersById( "333" ).get().getRoles() );
     }
 
     @Test
@@ -215,7 +241,7 @@ public class UserRolesControllerTest {
 
         final var actualRoles = usersRepository.findUsersById( "333" ).get().getRoles();
         Assertions.assertEquals( 2, actualRoles.size() );
-        Assertions.assertTrue( actualRoles.containsAll( List.of(Role.SUPPORT_MEMBER, Role.CSI_SUPPORT) ) );
+        Assertions.assertTrue( actualRoles.containsAll( List.of("support-member", "csi_support" ) ) );
     }
 
     @Test
@@ -229,8 +255,25 @@ public class UserRolesControllerTest {
                         .content( roles ) )
                 .andExpect( status().isOk() );
 
-        Assertions.assertEquals( List.of(Role.SUPPORT_MEMBER ), usersRepository.findUsersById( "333" ).get().getRoles() );
+        Assertions.assertEquals( List.of("support-member"), usersRepository.findUsersById( "333" ).get().getRoles() );
     }
+
+    @Test
+    void setUserRolesWithDummyRolesSetsShouldThrowBadRequest() throws Exception {
+        final var objectMapper = new ObjectMapper();
+        final var roles = objectMapper.writeValueAsString( List.of("dummy", "support-member" ) );
+        final String error = "{\"errors\":[{\"error\":\"dummy not valid role(s)\",\"location\":\"accounts_user_api\",\"location_type\":\"request-body\",\"type\":\"ch:validation\"}]}";
+        var response = mockMvc.perform( put( "/users/{user_id}/roles", "333" )
+                        .header( "X-Request-Id", "theId123" )
+                        .contentType( "application/json" )
+                        .content( roles ) )
+                .andExpect( status().isBadRequest() )
+                .andReturn();
+
+        Assertions.assertEquals(error, response.getResponse().getContentAsString());
+        Assertions.assertEquals( List.of("appeals_team"), usersRepository.findUsersById( "333" ).get().getRoles() );
+    }
+
 
     @Test
     void setUserRolesCreatesNewRoleFieldWhenNotPresent() throws Exception {
@@ -243,7 +286,7 @@ public class UserRolesControllerTest {
                         .content( roles ) )
                 .andExpect( status().isOk() );
 
-        Assertions.assertEquals( List.of(Role.SUPPORT_MEMBER), usersRepository.findUsersById( "444" ).get().getRoles() );
+        Assertions.assertEquals( List.of("support-member"), usersRepository.findUsersById( "444" ).get().getRoles() );
     }
 
     @Test
@@ -256,6 +299,7 @@ public class UserRolesControllerTest {
 
     @AfterEach
     public void after() {
+        mongoTemplate.dropCollection(UserRoles.class);
         mongoTemplate.dropCollection( Users.class );
     }
 

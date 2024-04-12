@@ -1,22 +1,21 @@
 package uk.gov.companieshouse.accounts.user.service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Limit;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import uk.gov.companieshouse.accounts.user.exceptions.BadRequestRuntimeException;
 import uk.gov.companieshouse.accounts.user.mapper.UsersDtoDaoMapper;
 import uk.gov.companieshouse.accounts.user.models.Users;
+import uk.gov.companieshouse.accounts.user.repositories.UserRolesRepository;
 import uk.gov.companieshouse.accounts.user.repositories.UsersRepository;
-import uk.gov.companieshouse.api.accounts.user.model.Role;
+import uk.gov.companieshouse.api.accounts.user.model.RolesList;
 import uk.gov.companieshouse.api.accounts.user.model.User;
 
 @Transactional
@@ -24,13 +23,16 @@ import uk.gov.companieshouse.api.accounts.user.model.User;
 public class UsersService {
 
     private final UsersRepository usersRepository;
+
+    private final UserRolesRepository userRolesRepository;
     private final UsersDtoDaoMapper usersDtoDaoMapper;
 
     @Value("${database.limit:50}")
     private int limit;
 
-    public UsersService(UsersRepository usersRepository, UsersDtoDaoMapper usersDtoDaoMapper) {
+    public UsersService(UsersRepository usersRepository, UserRolesRepository userRolesRepository, UsersDtoDaoMapper usersDtoDaoMapper) {
         this.usersRepository = usersRepository;
+        this.userRolesRepository = userRolesRepository;
         this.usersDtoDaoMapper = usersDtoDaoMapper;
     }
 
@@ -48,7 +50,21 @@ public class UsersService {
                               .map( usersDtoDaoMapper::daoToDto );
     }
 
-    public int setRoles( String userId, List<Role> roles ){
+    public boolean userExists( final String userId ){
+        return usersRepository.existsById(userId);
+    }
+
+    public int setRoles( final String userId, final RolesList roles ){
+
+        List<String> errors = new ArrayList<>();
+        roles.forEach(role ->{
+            if(!userRolesRepository.existsById(role)){
+               errors.add(role);
+            }
+        });
+        if(!errors.isEmpty()){
+            throw new BadRequestRuntimeException(String.format("%s not valid role(s)",Strings.join(errors, ',')));
+        }
         final var rolesSet = new HashSet<>( roles );
         final var update = new Update().set( "roles", rolesSet );
         return usersRepository.updateUser( userId, update );
