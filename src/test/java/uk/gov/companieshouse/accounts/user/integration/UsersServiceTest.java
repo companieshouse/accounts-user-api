@@ -1,14 +1,6 @@
 package uk.gov.companieshouse.accounts.user.integration;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
@@ -17,12 +9,19 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import uk.gov.companieshouse.accounts.user.exceptions.BadRequestRuntimeException;
+import uk.gov.companieshouse.accounts.user.models.UserRoles;
 import uk.gov.companieshouse.accounts.user.models.Users;
+import uk.gov.companieshouse.accounts.user.repositories.UserRolesRepository;
 import uk.gov.companieshouse.accounts.user.repositories.UsersRepository;
 import uk.gov.companieshouse.accounts.user.service.UsersService;
-import uk.gov.companieshouse.api.accounts.user.model.Role;
 import uk.gov.companieshouse.api.accounts.user.model.RolesList;
 import uk.gov.companieshouse.api.accounts.user.model.User;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @SpringBootTest
 @Testcontainers(parallel = true)
@@ -42,11 +41,14 @@ public class UsersServiceTest {
     @Autowired
     UsersService usersService;
 
+    @Autowired
+    UserRolesRepository userRolesRepository;
+
     @BeforeEach
     void setup(){
 
-        final var supervisor = new RolesList();
-        supervisor.add( Role.SUPERVISOR );
+        final var supervisor = new ArrayList<String>();
+        supervisor.add( "supervisor" );
 
         final var eminem = new Users();
         eminem.setId( "111" );
@@ -59,8 +61,8 @@ public class UsersServiceTest {
         eminem.setCreated( LocalDateTime.now().minusDays( 1 ) );
         eminem.setUpdated( LocalDateTime.now() );
 
-        final var badosUserAndRestrictedWord = new RolesList();
-        badosUserAndRestrictedWord.addAll( List.of( Role.BADOS_USER, Role.RESTRICTED_WORD ) );
+        final var badosUserAndRestrictedWord = new ArrayList<String>();
+        badosUserAndRestrictedWord.addAll( List.of( "BADOS_USER", "RESTRICTED_WORD" ) );
 
         final var theRock = new Users();
         theRock.setId( "222" );
@@ -73,8 +75,8 @@ public class UsersServiceTest {
         theRock.setCreated( LocalDateTime.now().minusDays( 4 ) );
         theRock.setUpdated( LocalDateTime.now().minusDays( 2 ) );
 
-        final var appealsTeam = new RolesList();
-        appealsTeam.add( Role.APPEALS_TEAM );
+        final var appealsTeam = new ArrayList<String>();
+        appealsTeam.add( "APPEALS_TEAM" );
 
         final var harleyQuinn = new Users();
         harleyQuinn.setId( "333" );
@@ -98,6 +100,26 @@ public class UsersServiceTest {
         harryPotter.setUpdated( LocalDateTime.now().minusDays( 5 ) );
 
         usersRepository.insert( List.of( eminem, theRock, harleyQuinn, harryPotter ) );
+
+        UserRoles supervisor1 = new UserRoles();
+        supervisor1.setId("supervisor");
+
+        UserRoles badosUser = new UserRoles();
+        badosUser.setId("bados_user");
+
+
+        UserRoles restrictedWord = new UserRoles();
+        restrictedWord.setId("restricted_word");
+
+
+        UserRoles supportMember = new UserRoles();
+        supportMember.setId("support_member");
+
+        UserRoles csiSupport = new UserRoles();
+        csiSupport.setId("csi_support");
+
+        userRolesRepository.insert(List.of(supervisor1,badosUser,restrictedWord,supportMember,csiSupport));
+
     }
 
     @Test
@@ -144,30 +166,30 @@ public class UsersServiceTest {
         Assertions.assertEquals( "Harley Quinn", usersService.fetchUser( "333" ).get().getDisplayName() );
     }
 
-    @AfterEach
-    public void after() {
-        mongoTemplate.dropCollection( Users.class );
-    }
 
     @Test
     void setRolesWithNullOrMalformedOrNonexistentUserIdUserDoesNothing(){
-        usersService.setRoles( null, List.of( Role.SUPPORT_MEMBER ) );
-        usersService.setRoles( "", List.of( Role.SUPPORT_MEMBER ) );
-        usersService.setRoles( "$", List.of( Role.SUPPORT_MEMBER ) );
-        usersService.setRoles( "999", List.of( Role.SUPPORT_MEMBER ) );
+        var rolesList = new RolesList();
+        rolesList.add("support_member");
+        usersService.setRoles( null, rolesList);
+        usersService.setRoles( "", rolesList );
+        usersService.setRoles( "$", rolesList );
+        usersService.setRoles( "999", rolesList );
 
         final var users = usersRepository.findAll();
         Assertions.assertEquals( 4, users.size() );
         for ( Users user: users ){
             final var roles = user.getRoles();
-            Assertions.assertTrue( Objects.isNull( roles ) || !roles.contains( Role.SUPPORT_MEMBER ) );
+            Assertions.assertTrue( Objects.isNull( roles ) || !roles.contains( "support_member") );
         }
     }
 
     @Test
     void setRolesInsertsRolesFieldIfNotPresent(){
-        usersService.setRoles( "444", List.of( Role.SUPPORT_MEMBER ) );
-        Assertions.assertEquals( List.of( Role.SUPPORT_MEMBER ), usersRepository.findUsersById( "444" ).get().getRoles() );
+        var rolesList = new RolesList();
+        rolesList.add("support_member");
+        usersService.setRoles( "444", rolesList);
+        Assertions.assertEquals( List.of( "support_member"), usersRepository.findUsersById( "444" ).get().getRoles() );
     }
 
     @Test
@@ -177,24 +199,35 @@ public class UsersServiceTest {
 
     @Test
     void setRolesUpdatesRoles(){
+        var rolesList = new RolesList();
 
-        usersService.setRoles( "333", List.of() );
+        usersService.setRoles( "333", rolesList );
         Assertions.assertEquals( List.of(), usersRepository.findUsersById("333").get().getRoles() );
 
-        usersService.setRoles( "333", List.of( Role.SUPPORT_MEMBER ) );
-        Assertions.assertEquals( List.of( Role.SUPPORT_MEMBER ), usersRepository.findUsersById("333").get().getRoles() );
+        rolesList.add("support_member");
 
-        usersService.setRoles( "333", List.of( Role.SUPPORT_MEMBER, Role.CSI_SUPPORT ) );
+        usersService.setRoles( "333", rolesList );
+        Assertions.assertEquals( "support_member", usersRepository.findUsersById("333").get().getRoles().get(0) );
+
+        rolesList.add("csi_support");
+        usersService.setRoles( "333", rolesList);
 
         final var roles = usersRepository.findUsersById("333").get().getRoles();
         Assertions.assertEquals( 2, roles.size() );
-        Assertions.assertTrue( roles.containsAll( List.of( Role.SUPPORT_MEMBER, Role.CSI_SUPPORT ) ) );
+        Assertions.assertTrue( roles.containsAll( List.of( "support_member", "csi_support" ) ) );
     }
 
     @Test
-    void setRolesEliminatesDuplicates(){
-        usersService.setRoles( "444", List.of( Role.SUPPORT_MEMBER, Role.SUPPORT_MEMBER ) );
-        Assertions.assertEquals( List.of( Role.SUPPORT_MEMBER ) , usersService.fetchUser( "444" ).get().getRoles() );
+    void setRolesUpdatesRolesShouldThrowErrorWhenDummyRoleAdded(){
+        var rolesList = new RolesList();
+        rolesList.add("dummy");
+        Assertions.assertThrows( BadRequestRuntimeException.class, () ->  usersService.setRoles( "333", rolesList ) );
+    }
+
+    @AfterEach
+    public void after() {
+        mongoTemplate.dropCollection(UserRoles.class);
+        mongoTemplate.dropCollection( Users.class );
     }
 
 }

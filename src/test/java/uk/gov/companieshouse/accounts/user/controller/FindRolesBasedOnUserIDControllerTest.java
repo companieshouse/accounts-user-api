@@ -2,7 +2,6 @@ package uk.gov.companieshouse.accounts.user.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -14,17 +13,16 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.companieshouse.accounts.user.configuration.InterceptorConfig;
 import uk.gov.companieshouse.accounts.user.service.UsersService;
-import uk.gov.companieshouse.api.accounts.user.model.Role;
 import uk.gov.companieshouse.api.accounts.user.model.RolesList;
 import uk.gov.companieshouse.api.accounts.user.model.User;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static uk.gov.companieshouse.api.accounts.user.model.Role.SUPERVISOR;
 
 @Tag("unit-test")
 @WebMvcTest(UserRolesController.class)
@@ -46,7 +44,7 @@ public class FindRolesBasedOnUserIDControllerTest {
     void setup() {
 
         final var supervisor = new RolesList();
-        supervisor.add( Role.SUPERVISOR );
+        supervisor.add( "supervisor");
 
         userEminem = new User();
         userEminem.userId("111")
@@ -57,7 +55,7 @@ public class FindRolesBasedOnUserIDControllerTest {
                 .roles( supervisor );
 
         final var badosUserAndRestrictedWord = new RolesList();
-        badosUserAndRestrictedWord.addAll( List.of( Role.BADOS_USER, Role.RESTRICTED_WORD ) );
+        badosUserAndRestrictedWord.addAll( List.of( "bados_user", "restricted_word" ) );
 
         userTheRock = new User();
         userTheRock.userId("222")
@@ -68,7 +66,7 @@ public class FindRolesBasedOnUserIDControllerTest {
                 .roles( badosUserAndRestrictedWord );
 
         final var appealsTeam = new RolesList();
-        appealsTeam.add( Role.APPEALS_TEAM );
+        appealsTeam.add( "appeals_team" );
 
         User userHarleyQuinn = new User();
         userHarleyQuinn.userId("333")
@@ -102,10 +100,10 @@ public class FindRolesBasedOnUserIDControllerTest {
                         .getContentAsString();
 
         final var objectMapper = new ObjectMapper();
-        final var roles = objectMapper.readValue(responseBody, new TypeReference<Set<Role>>(){} );
+        final var roles = objectMapper.readValue(responseBody, new TypeReference<Set<String>>(){} );
 
         Assertions.assertEquals( 1, roles.size() );
-        Assertions.assertTrue( roles.contains(SUPERVISOR) );
+        Assertions.assertTrue( roles.contains("supervisor") );
     }
 
     @Test
@@ -118,9 +116,9 @@ public class FindRolesBasedOnUserIDControllerTest {
                         .getContentAsString();
 
         final var objectMapper = new ObjectMapper();
-        final var roles = objectMapper.readValue(responseBody, new TypeReference<Set<Role>>(){} );
+        final var roles = objectMapper.readValue(responseBody, new TypeReference<Set<String>>(){} );
 
         Assertions.assertEquals( 2, roles.size() );
-        Assertions.assertTrue( roles.containsAll( Set.of(Role.BADOS_USER, Role.RESTRICTED_WORD )));
+        Assertions.assertTrue( roles.containsAll( Set.of("bados_user", "restricted_word" )));
     }
 }

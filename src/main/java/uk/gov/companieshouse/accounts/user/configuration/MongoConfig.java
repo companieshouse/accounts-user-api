@@ -1,11 +1,9 @@
 package uk.gov.companieshouse.accounts.user.configuration;
 
-import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.auditing.DateTimeProvider;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
-import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 import org.springframework.data.mongodb.core.mapping.event.ValidatingMongoEventListener;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
@@ -29,9 +27,5 @@ public class MongoConfig {
         return () -> Optional.of(LocalDateTime.now());
     }
 
-    @Bean
-    public MongoCustomConversions mongoCustomConversions() {
-        return new MongoCustomConversions(List.of(new MongoRoleReadingConverter(), new MongoRoleWritingConverter()));
-    }
 
 }

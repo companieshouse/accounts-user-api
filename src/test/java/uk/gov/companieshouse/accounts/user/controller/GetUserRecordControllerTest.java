@@ -1,12 +1,6 @@
 package uk.gov.companieshouse.accounts.user.controller;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -18,9 +12,15 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.companieshouse.accounts.user.configuration.InterceptorConfig;
 import uk.gov.companieshouse.accounts.user.service.UsersService;
-import uk.gov.companieshouse.api.accounts.user.model.Role;
 import uk.gov.companieshouse.api.accounts.user.model.RolesList;
 import uk.gov.companieshouse.api.accounts.user.model.User;
+
+import java.util.List;
+import java.util.Optional;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Tag("unit-test")
 @WebMvcTest(GetUserRecordController.class)
@@ -43,7 +43,7 @@ public class GetUserRecordControllerTest {
     void setup() {
 
         final var supervisor = new RolesList();
-        supervisor.add( Role.SUPERVISOR );
+        supervisor.add( "supervisor" );
 
         userEminem = new User();
         userEminem.userId("111")
@@ -54,7 +54,7 @@ public class GetUserRecordControllerTest {
                 .roles( supervisor );
 
         final var badosUserAndRestrictedWord = new RolesList();
-        badosUserAndRestrictedWord.addAll( List.of( Role.BADOS_USER, Role.RESTRICTED_WORD ) );
+        badosUserAndRestrictedWord.addAll( List.of( "bados_user", "restricted_user" ) );
 
         userTheRock = new User();
         userTheRock.userId("222")
@@ -65,7 +65,7 @@ public class GetUserRecordControllerTest {
                 .roles( badosUserAndRestrictedWord );
 
         final var appealsTeam = new RolesList();
-        appealsTeam.add( Role.APPEALS_TEAM );
+        appealsTeam.add( "appeals_team");
 
         userHarleyQuinn = new User();
         userHarleyQuinn.userId("333")

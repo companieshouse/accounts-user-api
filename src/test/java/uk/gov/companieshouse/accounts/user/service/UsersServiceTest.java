@@ -1,16 +1,5 @@
 package uk.gov.companieshouse.accounts.user.service;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isNull;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
 import org.bson.Document;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,19 +10,28 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.internal.verification.AtMost;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Limit;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.mongodb.UncategorizedMongoDbException;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.test.util.ReflectionTestUtils;
-
+import uk.gov.companieshouse.accounts.user.exceptions.BadRequestRuntimeException;
 import uk.gov.companieshouse.accounts.user.mapper.UsersDtoDaoMapper;
 import uk.gov.companieshouse.accounts.user.models.Users;
+import uk.gov.companieshouse.accounts.user.repositories.UserRolesRepository;
 import uk.gov.companieshouse.accounts.user.repositories.UsersRepository;
-import uk.gov.companieshouse.api.accounts.user.model.Role;
 import uk.gov.companieshouse.api.accounts.user.model.RolesList;
 import uk.gov.companieshouse.api.accounts.user.model.User;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @Tag("unit-test")
@@ -44,6 +42,9 @@ public class UsersServiceTest {
 
     @Mock
     UsersRepository usersRepository;
+
+    @Mock
+    UserRolesRepository userRolesRepository;
 
     @InjectMocks
     UsersService usersService;
@@ -66,12 +67,12 @@ public class UsersServiceTest {
         usersEminem.setSurname( "Mathers" );
         usersEminem.setDisplayName( "Eminem" );
         usersEminem.setEmail( "eminem@rap.com" );
-        usersEminem.setRoles( List.of( Role.SUPERVISOR ) );
+        usersEminem.setRoles( List.of( "support_member") );
         usersEminem.setCreated( LocalDateTime.now().minusDays( 1 ) );
         usersEminem.setUpdated( LocalDateTime.now() );
 
         final var supervisor = new RolesList();
-        supervisor.add( Role.SUPERVISOR );
+        supervisor.add( "support_member" );
 
         userEminem = new User();
         userEminem.userId("111")
@@ -81,8 +82,8 @@ public class UsersServiceTest {
                   .email("eminem@rap.com")
                   .roles( supervisor );
 
-        final var badosUserAndRestrictedWord = new RolesList();
-        badosUserAndRestrictedWord.addAll( List.of( Role.BADOS_USER, Role.RESTRICTED_WORD ) );
+        final var badosUserAndRestrictedWord = new ArrayList<String>();
+        badosUserAndRestrictedWord.addAll( List.of( "bados_user", "restricted_word"  ) );
 
         usersTheRock = new Users();
         usersTheRock.setId( "222" );
@@ -95,13 +96,16 @@ public class UsersServiceTest {
         usersTheRock.setCreated( LocalDateTime.now().minusDays( 4 ) );
         usersTheRock.setUpdated( LocalDateTime.now().minusDays( 2 ) );
 
+        final var badosUserAndRestrictedWordRoles = new RolesList();
+        badosUserAndRestrictedWordRoles.addAll( List.of( "bados_user", "restricted_word"  ) );
+
         userTheRock = new User();
         userTheRock.userId("222")
                    .forename("Dwayne")
                    .surname("Johnson")
                    .displayName("The Rock")
                    .email("the.rock@wrestling.com")
-                   .roles( badosUserAndRestrictedWord );
+                   .roles( badosUserAndRestrictedWordRoles );
 
         usersHarleyQuinn = new Users();
         usersHarleyQuinn.setId( "333" );
@@ -110,12 +114,12 @@ public class UsersServiceTest {
         usersHarleyQuinn.setSurname( "Quinzel" );
         usersHarleyQuinn.setDisplayName( "Harley Quinn" );
         usersHarleyQuinn.setEmail( "harley.quinn@gotham.city" );
-        usersHarleyQuinn.setRoles( List.of( Role.APPEALS_TEAM ) );
+        usersHarleyQuinn.setRoles( List.of( "appeals_team" ) );
         usersHarleyQuinn.setCreated( LocalDateTime.now().minusDays( 10 ) );
         usersHarleyQuinn.setUpdated( LocalDateTime.now().minusDays( 5 ) );
 
         final var appealsTeam = new RolesList();
-        appealsTeam.add( Role.APPEALS_TEAM );
+        appealsTeam.add( "appeals_team");
 
         userHarleyQuinn = new User();
         userHarleyQuinn.userId("333")
@@ -203,7 +207,7 @@ public class UsersServiceTest {
         Assertions.assertEquals( "Harley Quinn", usersService.fetchUser( "333" ).get().getDisplayName() );
     }
 
-    private ArgumentMatcher<Update> setRolesUpdateParameterMatches( Set<Role> expectedRoles ) {
+    private ArgumentMatcher<Update> setRolesUpdateParameterMatches( Set<String> expectedRoles ) {
         return update -> {
             final var document = update.getUpdateObject().get("$set", Document.class);
             final var roles = document.getOrDefault("roles", null );
@@ -213,27 +217,33 @@ public class UsersServiceTest {
 
     @Test
     void setRolesWithNullOrMalformedOrNonexistentUserIdUserRunsQuery(){
+        final var support = new RolesList();
+        support.add( "support_member" );
         Mockito.doReturn( 0 ).when( usersRepository ).updateUser( any(), any() );
+        Mockito.doReturn( true ).when( userRolesRepository ).existsById( "support_member" );
 
-        usersService.setRoles( null, List.of( Role.SUPPORT_MEMBER ) );
-        Mockito.verify( usersRepository ).updateUser( isNull(), argThat(setRolesUpdateParameterMatches( Set.of( Role.SUPPORT_MEMBER ) ) ) );
+        usersService.setRoles( null, support);
+        Mockito.verify( usersRepository ).updateUser( isNull(), argThat(setRolesUpdateParameterMatches( Set.of( "support_member" ) ) ) );
 
-        usersService.setRoles( "", List.of( Role.SUPPORT_MEMBER ) );
-        Mockito.verify( usersRepository ).updateUser( eq(""), argThat(setRolesUpdateParameterMatches( Set.of( Role.SUPPORT_MEMBER ) ) ) );
+        usersService.setRoles( "", support);
+        Mockito.verify( usersRepository ).updateUser( eq(""), argThat(setRolesUpdateParameterMatches( Set.of( "support_member" ) ) ) );
 
-        usersService.setRoles( "$", List.of( Role.SUPPORT_MEMBER ) );
-        Mockito.verify( usersRepository ).updateUser( eq("$"), argThat(setRolesUpdateParameterMatches( Set.of( Role.SUPPORT_MEMBER ) ) ) );
+        usersService.setRoles( "$", support );
+        Mockito.verify( usersRepository ).updateUser( eq("$"), argThat(setRolesUpdateParameterMatches( Set.of( "support_member") ) ) );
 
-        usersService.setRoles( "999", List.of( Role.SUPPORT_MEMBER ) );
-        Mockito.verify( usersRepository ).updateUser( eq("999"), argThat(setRolesUpdateParameterMatches( Set.of( Role.SUPPORT_MEMBER ) ) ) );
+        usersService.setRoles( "999", support );
+        Mockito.verify( usersRepository ).updateUser( eq("999"), argThat(setRolesUpdateParameterMatches( Set.of( "support_member" ) ) ) );
     }
 
     @Test
     void setRolesInsertsRolesFieldIfNotPresentRunsQuery(){
+        final var support = new RolesList();
+        support.add( "support-member" );
         Mockito.doReturn( 1 ).when( usersRepository ).updateUser( any(), any() );
+        Mockito.doReturn( true ).when( userRolesRepository ).existsById( "support-member" );
 
-        usersService.setRoles( "444", List.of( Role.SUPPORT_MEMBER ) );
-        Mockito.verify( usersRepository ).updateUser( eq("444"), argThat(setRolesUpdateParameterMatches( Set.of( Role.SUPPORT_MEMBER ) ) ) );
+        usersService.setRoles( "444", support );
+        Mockito.verify( usersRepository, new AtMost(1)).updateUser( eq("444"), argThat(setRolesUpdateParameterMatches( Set.of( "support_member" ) ) ) );
     }
 
     @Test
@@ -244,23 +254,28 @@ public class UsersServiceTest {
     @Test
     void setRolesUpdatesRolesRunsQuery(){
         Mockito.doReturn( 1 ).when( usersRepository ).updateUser( any(), any() );
+        Mockito.doReturn( true ).when( userRolesRepository ).existsById( "support_member" );
+        Mockito.doReturn( true ).when( userRolesRepository ).existsById( "csi_support" );
 
-        usersService.setRoles( "333", List.of() );
+        usersService.setRoles( "333", new RolesList() );
         Mockito.verify( usersRepository ).updateUser( eq("333"), argThat(setRolesUpdateParameterMatches( Set.of(  ) ) ) );
+        final var support = new RolesList();
+        support.add( "support_member" );
+        usersService.setRoles( "333", support);
+        Mockito.verify( usersRepository, new AtMost(1) ).updateUser( eq("333"), argThat(setRolesUpdateParameterMatches( Set.of( "support_member") ) ) );
 
-        usersService.setRoles( "333", List.of( Role.SUPPORT_MEMBER ) );
-        Mockito.verify( usersRepository ).updateUser( eq("333"), argThat(setRolesUpdateParameterMatches( Set.of( Role.SUPPORT_MEMBER ) ) ) );
+        support.add( "csi_support" );
 
-        usersService.setRoles( "333", List.of( Role.SUPPORT_MEMBER, Role.CSI_SUPPORT ) );
-        Mockito.verify( usersRepository ).updateUser( eq("333"), argThat(setRolesUpdateParameterMatches( Set.of( Role.SUPPORT_MEMBER, Role.CSI_SUPPORT ) ) ) );
+        usersService.setRoles( "333", support);
+        Mockito.verify( usersRepository, new AtMost(1) ).updateUser( eq("333"), argThat(setRolesUpdateParameterMatches( Set.of( "support_member", "csi_support") ) ) );
     }
 
     @Test
-    void setRolesEliminatesDuplicates(){
-        Mockito.doReturn( 1 ).when( usersRepository ).updateUser( any(), any() );
-
-        usersService.setRoles( "444", List.of( Role.SUPPORT_MEMBER, Role.SUPPORT_MEMBER ) );
-        Mockito.verify( usersRepository ).updateUser( eq("444"), argThat(setRolesUpdateParameterMatches( Set.of( Role.SUPPORT_MEMBER ) ) ) );
+    void setRolesWithDummyRolesThrowsBadRequestException(){
+        var rolesList = new RolesList();
+        rolesList.add("dummy");
+        when(userRolesRepository.existsById("dummy")).thenReturn(false);
+        Assertions.assertThrows( BadRequestRuntimeException.class, () -> usersService.setRoles( "333", rolesList) );
     }
 
     @Test

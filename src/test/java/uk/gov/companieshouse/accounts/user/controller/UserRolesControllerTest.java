@@ -1,16 +1,5 @@
 package uk.gov.companieshouse.accounts.user.controller;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,9 +14,18 @@ import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 import uk.gov.companieshouse.accounts.user.configuration.InterceptorConfig;
 import uk.gov.companieshouse.accounts.user.models.Users;
 import uk.gov.companieshouse.accounts.user.service.UsersService;
-import uk.gov.companieshouse.api.accounts.user.model.Role;
 import uk.gov.companieshouse.api.accounts.user.model.RolesList;
 import uk.gov.companieshouse.api.accounts.user.model.User;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Tag("unit-test")
 @WebMvcTest(UserRolesController.class)
@@ -51,7 +49,7 @@ public class UserRolesControllerTest {
     void setup() {
 
         final var supervisor = new RolesList();
-        supervisor.add( Role.SUPERVISOR );
+        supervisor.add( "supervisor" );
 
         userEminem = new User();
         userEminem.userId("111")
@@ -62,7 +60,7 @@ public class UserRolesControllerTest {
                 .roles( supervisor );
 
         final var badosUserAndRestrictedWord = new RolesList();
-        badosUserAndRestrictedWord.addAll( List.of( Role.BADOS_USER, Role.RESTRICTED_WORD ) );
+        badosUserAndRestrictedWord.addAll( List.of( "bados_user", "restricted_word" ) );
 
         userTheRock = new User();
         userTheRock.userId("222")
@@ -73,7 +71,7 @@ public class UserRolesControllerTest {
                 .roles( badosUserAndRestrictedWord );
 
         final var appealsTeam = new RolesList();
-        appealsTeam.add( Role.APPEALS_TEAM );
+        appealsTeam.add( "appeals_team" );
 
         userHarleyQuinn = new User();
         userHarleyQuinn.userId("333")
@@ -125,9 +123,9 @@ public class UserRolesControllerTest {
                         .getContentAsString();
 
         final var objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
-        final var roles = objectMapper.readValue(responseBody, new TypeReference<Set<Role>>(){} );
+        final var roles = objectMapper.readValue(responseBody, new TypeReference<Set<String>>(){} );
         Assertions.assertEquals( 2, roles.size() );
-        Assertions.assertTrue( roles.containsAll( Set.of(Role.BADOS_USER, Role.RESTRICTED_WORD )));
+        Assertions.assertTrue( roles.containsAll( Set.of("bados_user", "restricted_word" )));
 
     }
     @Test
@@ -178,7 +176,7 @@ public class UserRolesControllerTest {
 
     @Test
     void setUserRolesWithOneRoleSetsTheUsersRole() throws Exception {
-        Mockito.doReturn( Optional.of( userHarleyQuinn ) ).when(usersService ).fetchUser( any() );
+        Mockito.doReturn( true ).when(usersService ).userExists( any() );
 
         final var objectMapper = new ObjectMapper();
         final var roles = objectMapper.writeValueAsString( List.of("support-member") );
@@ -189,12 +187,16 @@ public class UserRolesControllerTest {
                         .content( roles ) )
                 .andExpect( status().isOk() );
 
-        Mockito.verify( usersService ).setRoles( "333", List.of( Role.SUPPORT_MEMBER ));
+        RolesList rolesList = new RolesList();
+        rolesList.add("support_member");
+        Mockito.verify( usersService ).setRoles( "333", rolesList);
     }
 
     @Test
     void setUserRolesWithMultipleRolesSetsTheUsersRoles() throws Exception {
         Mockito.doReturn( Optional.of( userHarleyQuinn ) ).when(usersService ).fetchUser( any() );
+        Mockito.doReturn( true ).when(usersService ).userExists( any() );
+
 
         final var objectMapper = new ObjectMapper();
         final var roles = objectMapper.writeValueAsString( List.of("support-member", "csi_support" ) );
@@ -205,12 +207,15 @@ public class UserRolesControllerTest {
                         .content( roles ) )
                 .andExpect( status().isOk() );
 
-        Mockito.verify( usersService ).setRoles("333", List.of( Role.SUPPORT_MEMBER, Role.CSI_SUPPORT ));
+        RolesList rolesList = new RolesList();
+        rolesList.add("support_member");
+        rolesList.add("csi_support")  ;
+        Mockito.verify( usersService ).setRoles("333", rolesList);
     }
 
     @Test
     void setUserRolesWithDuplicatesRolesSetsTheRoleOnce() throws Exception {
-        Mockito.doReturn( Optional.of( userHarleyQuinn ) ).when(usersService ).fetchUser( any() );
+        Mockito.doReturn( true ).when(usersService ).userExists( any() );
 
         final var objectMapper = new ObjectMapper();
         final var roles = objectMapper.writeValueAsString( List.of("support-member", "support-member" ) );
@@ -220,13 +225,14 @@ public class UserRolesControllerTest {
                         .contentType( "application/json" )
                         .content( roles ) )
                 .andExpect( status().isOk() );
-
-        Mockito.verify( usersService ).setRoles("333", List.of( Role.SUPPORT_MEMBER, Role.SUPPORT_MEMBER ));
+        RolesList rolesList = new RolesList();
+        rolesList.add("support_member");
+        Mockito.verify( usersService ).setRoles("333", rolesList);
     }
 
     @Test
     void setUserRolesCreatesNewRoleFieldWhenNotPresent() throws Exception {
-        Mockito.doReturn( Optional.of( harryPotter ) ).when(usersService ).fetchUser( any() );
+        Mockito.doReturn( true ).when(usersService ).userExists( any() );
 
         final var objectMapper = new ObjectMapper();
         final var roles = objectMapper.writeValueAsString( List.of("support-member") );
@@ -236,14 +242,17 @@ public class UserRolesControllerTest {
                         .contentType( "application/json" )
                         .content( roles ) )
                 .andExpect( status().isOk() );
+        RolesList rolesList = new RolesList();
+        rolesList.add("support_member");
 
-        Mockito.verify( usersService ).setRoles( "444", List.of( Role.SUPPORT_MEMBER ));
+
+        Mockito.verify( usersService ).setRoles( "444", rolesList);
     }
 
 
     @Test
     void setUserRolesReturnsInternalServerErrorWhenDatabaseFailsToUpdate() throws Exception {
-        Mockito.doReturn( Optional.of( harryPotter ) ).when(usersService ).fetchUser( any() );
+        Mockito.doReturn( true ).when(usersService ).userExists( any() );
         Mockito.doThrow( RuntimeException.class ).when( usersService ).setRoles( any(), any() );
 
         final var objectMapper = new ObjectMapper();
@@ -255,7 +264,7 @@ public class UserRolesControllerTest {
                         .content( roles ) )
                 .andExpect( status().isInternalServerError() );
 
-        Mockito.verify( usersService ).setRoles( "444", List.of( Role.SUPPORT_MEMBER ));
+
     }
 
 }

@@ -17,17 +17,15 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import uk.gov.companieshouse.accounts.user.configuration.InterceptorConfig;
 import uk.gov.companieshouse.accounts.user.models.Users;
 import uk.gov.companieshouse.accounts.user.repositories.UsersRepository;
-import uk.gov.companieshouse.api.accounts.user.model.Role;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import uk.gov.companieshouse.api.accounts.user.model.RolesList;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static uk.gov.companieshouse.api.accounts.user.model.Role.SUPERVISOR;
 
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -52,8 +50,8 @@ public class FindRolesBasedOnUserIDControllerTest {
     @BeforeEach
     public void setup() {
 
-        final var supervisor = new RolesList();
-        supervisor.add( Role.SUPERVISOR );
+        final var supervisor = new ArrayList<String>();
+        supervisor.add( "supervisor" );
 
         final var eminem = new Users();
         eminem.setId( "111" );
@@ -66,8 +64,8 @@ public class FindRolesBasedOnUserIDControllerTest {
         eminem.setCreated( LocalDateTime.now().minusDays( 1 ) );
         eminem.setUpdated( LocalDateTime.now() );
 
-        final var badosUserAndRestrictedWord = new RolesList();
-        badosUserAndRestrictedWord.addAll( List.of( Role.BADOS_USER, Role.RESTRICTED_WORD ) );
+        final var badosUserAndRestrictedWord = new ArrayList<String>();
+        badosUserAndRestrictedWord.addAll( List.of( "bados_user", "restricted_word" ) );
 
         final var theRock = new Users();
         theRock.setId( "222" );
@@ -80,8 +78,8 @@ public class FindRolesBasedOnUserIDControllerTest {
         theRock.setCreated( LocalDateTime.now().minusDays( 4 ) );
         theRock.setUpdated( LocalDateTime.now().minusDays( 2 ) );
 
-        final var appealsTeam = new RolesList();
-        appealsTeam.add( Role.APPEALS_TEAM );
+        final var appealsTeam = new ArrayList<String>();
+        appealsTeam.add( "appeals_team" );
 
         final var harleyQuinn = new Users();
         harleyQuinn.setId( "333" );
@@ -120,10 +118,10 @@ public class FindRolesBasedOnUserIDControllerTest {
                         .getContentAsString();
 
         final var objectMapper = new ObjectMapper();
-        final var roles = objectMapper.readValue(responseBody, new TypeReference<Set<Role>>(){} );
+        final var roles = objectMapper.readValue(responseBody, new TypeReference<Set<String>>(){} );
 
         Assertions.assertEquals( 1, roles.size() );
-        Assertions.assertTrue( roles.contains(SUPERVISOR) );
+        Assertions.assertTrue( roles.contains("supervisor") );
     }
     @Test
     void searchUserRolesWithOneUserIdReturnsMultipleRoles() throws Exception {
@@ -136,10 +134,10 @@ public class FindRolesBasedOnUserIDControllerTest {
                         .getContentAsString();
 
         final var objectMapper = new ObjectMapper();
-        final var roles = objectMapper.readValue(responseBody, new TypeReference<Set<Role>>(){} );
+        final var roles = objectMapper.readValue(responseBody, new TypeReference<Set<String>>(){} );
 
         Assertions.assertEquals( 2, roles.size() );
-        Assertions.assertTrue( roles.containsAll( Set.of(Role.BADOS_USER, Role.RESTRICTED_WORD )));
+        Assertions.assertTrue( roles.containsAll( Set.of("bados_user", "restricted_word" )));
     }
 
     @AfterEach

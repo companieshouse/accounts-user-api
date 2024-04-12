@@ -1,7 +1,5 @@
 package uk.gov.companieshouse.accounts.user.mapper;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -9,9 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import uk.gov.companieshouse.accounts.user.models.OneLoginDataDao;
 import uk.gov.companieshouse.accounts.user.models.Users;
-import uk.gov.companieshouse.api.accounts.user.model.Role;
 import uk.gov.companieshouse.api.accounts.user.model.RolesList;
 import uk.gov.companieshouse.api.accounts.user.model.User;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @SpringBootTest
 @Tag("unit-test")
@@ -26,11 +27,11 @@ public class UsersDtoDaoMapperTest {
     private final String EMINEM_DISPLAY_NAME = "Eminem";
     private final String EMINEM_EMAIL = "eminem@rap.com";
     private final LocalDateTime EMINEM_CREATED = LocalDateTime.now();
-    private final RolesList EMINEM_ROLES;
+    private final List<String> EMINEM_ROLES;
 
     public UsersDtoDaoMapperTest(){
-        EMINEM_ROLES = new RolesList();
-        EMINEM_ROLES.add( Role.SUPERVISOR );
+        EMINEM_ROLES = new ArrayList<>();
+        EMINEM_ROLES.add( "supervisor" );
     }
 
     @Test
@@ -72,7 +73,7 @@ public class UsersDtoDaoMapperTest {
         Assertions.assertEquals( EMINEM_EMAIL, user.getEmail() );
         Assertions.assertEquals( EMINEM_ID, user.getUserId() );
         Assertions.assertEquals( EMINEM_DISPLAY_NAME, user.getDisplayName() );
-        Assertions.assertEquals( EMINEM_ROLES, user.getRoles() );
+        Assertions.assertEquals( EMINEM_ROLES.get(0), user.getRoles().getFirst() );
         Assertions.assertTrue(user.getIsPrivateBetaUser());
         Assertions.assertTrue(user.getHasLinkedOneLogin());
     }
@@ -96,13 +97,15 @@ public class UsersDtoDaoMapperTest {
 
     @Test
     void usersDtoToDaoShouldMapObject(){
+        var supervisorRole = new RolesList();
+        supervisorRole.add("supervisor");
         final var eminemUser =
                 new User().forename( EMINEM_FORENAME )
                           .surname( EMINEM_SURNAME )
                           .email( EMINEM_EMAIL )
                           .userId( EMINEM_ID )
                           .displayName( EMINEM_DISPLAY_NAME )
-                          .roles( EMINEM_ROLES );
+                          .roles( supervisorRole );
 
         final var user = usersDtoDaoMapper.dtoToDao( eminemUser );
 
@@ -111,7 +114,7 @@ public class UsersDtoDaoMapperTest {
         Assertions.assertEquals( EMINEM_EMAIL, user.getEmail() );
         Assertions.assertEquals( EMINEM_ID, user.getId() );
         Assertions.assertEquals( EMINEM_DISPLAY_NAME, user.getDisplayName() );
-        Assertions.assertEquals( List.of( Role.SUPERVISOR ), user.getRoles() );
+        Assertions.assertEquals( List.of( "supervisor"), user.getRoles() );
     }
 
 }

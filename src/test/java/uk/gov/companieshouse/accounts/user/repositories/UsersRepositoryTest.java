@@ -1,15 +1,6 @@
 package uk.gov.companieshouse.accounts.user.repositories;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
@@ -20,10 +11,13 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
 import uk.gov.companieshouse.accounts.user.models.OneLoginDataDao;
 import uk.gov.companieshouse.accounts.user.models.Users;
-import uk.gov.companieshouse.api.accounts.user.model.Role;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @SpringBootTest
 @Testcontainers(parallel = true)
@@ -52,7 +46,7 @@ public class UsersRepositoryTest {
         eminem.setSurname( "Mathers" );
         eminem.setDisplayName( "Eminem" );
         eminem.setEmail( "eminem@rap.com" );
-        eminem.setRoles( List.of( Role.SUPERVISOR ) );
+        eminem.setRoles( List.of("supervisor") );
         eminem.setCreated( LocalDateTime.now().minusDays( 1 ) );
         eminem.setUpdated( LocalDateTime.now() );
 
@@ -63,7 +57,7 @@ public class UsersRepositoryTest {
         theRock.setSurname( "Johnson" );
         theRock.setDisplayName( "The Rock" );
         theRock.setEmail( "the.rock@wrestling.com" );
-        theRock.setRoles( List.of( Role.BADOS_USER, Role.RESTRICTED_WORD ) );
+        theRock.setRoles( List.of( "bados_user", "restricted_word" ) );
         theRock.setCreated( LocalDateTime.now().minusDays( 4 ) );
         theRock.setUpdated( LocalDateTime.now().minusDays( 2 ) );
 
@@ -74,7 +68,7 @@ public class UsersRepositoryTest {
         harleyQuinn.setSurname( "Quinzel" );
         harleyQuinn.setDisplayName( "Harley Quinn" );
         harleyQuinn.setEmail( "harley.quinn@gotham.city" );
-        harleyQuinn.setRoles( List.of( Role.APPEALS_TEAM ) );
+        harleyQuinn.setRoles( List.of( "appeals_team" ) );
         harleyQuinn.setCreated( LocalDateTime.now().minusDays( 10 ) );
         harleyQuinn.setUpdated( LocalDateTime.now().minusDays( 5 ) );
         OneLoginDataDao oneLoginDataDao = new OneLoginDataDao();
@@ -147,7 +141,7 @@ public class UsersRepositoryTest {
 
     @Test
     void updateUserWithNullOrMalformedOrNonexistentUserIdUserDoesNothing(){
-        final var update = new Update().set( "roles", List.of( Role.SUPPORT_MEMBER ) );
+        final var update = new Update().set( "roles", List.of( "support_member") );
         usersRepository.updateUser( null, update );
         usersRepository.updateUser( "", update );
         usersRepository.updateUser( "$", update );
@@ -157,7 +151,7 @@ public class UsersRepositoryTest {
         Assertions.assertEquals( 4, users.size());
         for ( Users user: users ){
             final var roles = user.getRoles();
-            Assertions.assertTrue( Objects.isNull( roles ) || !roles.contains( Role.SUPPORT_MEMBER ) );
+            Assertions.assertTrue( Objects.isNull( roles ) || !roles.contains( "support_member" ) );
         }
     }
 
@@ -168,16 +162,16 @@ public class UsersRepositoryTest {
 
     @Test
     void updateUserInsertSpecifiedFieldIfNotPresent(){
-        final var update = new Update().set( "roles", List.of( Role.SUPPORT_MEMBER ) );
+        final var update = new Update().set( "roles", List.of( "support_member") );
         usersRepository.updateUser( "444", update );
-        Assertions.assertEquals( List.of( Role.SUPPORT_MEMBER ), usersRepository.findUsersById( "444" ).get().getRoles() );
+        Assertions.assertEquals( List.of( "support_member"), usersRepository.findUsersById( "444" ).get().getRoles() );
     }
 
     @Test
     void updateUserUpdatesSpecifiedField(){
-        final var update = new Update().set( "roles", List.of( Role.SUPPORT_MEMBER ) );
+        final var update = new Update().set( "roles", List.of( "support_member" ) );
         usersRepository.updateUser( "333", update );
-        Assertions.assertEquals( List.of( Role.SUPPORT_MEMBER ), usersRepository.findUsersById( "333" ).get().getRoles() );
+        Assertions.assertEquals( List.of( "support_member" ), usersRepository.findUsersById( "333" ).get().getRoles() );
     }
 
     @Test
