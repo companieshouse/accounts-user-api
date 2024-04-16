@@ -57,8 +57,6 @@ public class InterceptorTests {
     @BeforeEach
     public void setup() {
 
-        // supervisor.add( Role.SUPERVISOR );
-
         final var eminem = new Users();
         eminem.setId( "111" );
         eminem.setLocale( "GB_en" );
