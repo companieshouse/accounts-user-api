@@ -1,9 +1,4 @@
-
-
 package uk.gov.companieshouse.accounts.user.configuration;
-
-import java.util.ArrayList;
-import java.util.Collections;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
@@ -13,7 +8,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import uk.gov.companieshouse.accounts.user.AccountsUserServiceApplication;
 import uk.gov.companieshouse.accounts.user.interceptor.EricAuthorisedKeyPrivilegesInterceptor;
 import uk.gov.companieshouse.accounts.user.interceptor.LoggingInterceptor;
-import uk.gov.companieshouse.api.interceptor.InternalUserInterceptor;
 import uk.gov.companieshouse.api.interceptor.RolePermissionInterceptor;
 
 @Configuration
@@ -63,12 +57,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
 
     private void addEricInterceptors( final InterceptorRegistry registry){
         registry.addInterceptor(
-                new EricAuthorisedKeyPrivilegesInterceptor(
-                        new ArrayList<>(0),
-                        Collections.singletonList("oauth2"),
-                        new InternalUserInterceptor(
-                                AccountsUserServiceApplication.applicationNameSpace)
-                )
+                new EricAuthorisedKeyPrivilegesInterceptor()
         )
         .addPathPatterns(WILDCARD)
         .excludePathPatterns(HEALTH_ENDPOINT, INTERNAL_USERS_ENDPOINTS)
