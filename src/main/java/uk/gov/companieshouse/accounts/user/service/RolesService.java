@@ -1,10 +1,7 @@
 package uk.gov.companieshouse.accounts.user.service;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
@@ -33,11 +30,7 @@ public class RolesService {
 
     public Roles getRoles(){
     
-       List<Role> rolesFromDatabase = userRolesRepository
-                            .findAll()
-                            .stream()
-                            .map(rolesDtoDaoMapper::daoToDto)
-                            .toList();
+       List<Role> rolesFromDatabase = userRolesRepository.findAll().stream().map(rolesDtoDaoMapper::daoToDto).toList();
 
         Roles roles = new Roles();
         roles.addAll(rolesFromDatabase);
@@ -69,12 +62,13 @@ public class RolesService {
         return success;
     }
 
-    public int editRole(final String roleId, final PermissionsList permissions){
+    public boolean editRole(final String roleId, final PermissionsList permissions){
+        boolean success = false;
         if (userRolesRepository.existsById(roleId)){
             final var permissionsSet = new HashSet<>( permissions );
             final var update = new Update().set( "permissions", permissionsSet );
-            return userRolesRepository.updateRole( roleId, update);
+            success = userRolesRepository.updateRole( roleId, update) == 1;
         }
-        return 0;
+        return success;
     }
 }

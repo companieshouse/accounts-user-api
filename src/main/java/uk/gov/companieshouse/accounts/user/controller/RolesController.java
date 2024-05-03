@@ -91,9 +91,9 @@ public class RolesController implements RolesInterface {
             throw new BadRequestRuntimeException(PLEASE_CHECK_THE_REQUEST_AND_TRY_AGAIN);
         }
 
-        int recordsUpdated = rolesService.editRole(roleId, updatedPermissions);
+        boolean roleUpdated = rolesService.editRole(roleId, updatedPermissions);
 
-        if (recordsUpdated > 0 ) {
+        if (roleUpdated) {
             LOG.debug(String.format("%s: Successfully updated the role '%s'",
             xRequestId,
             roleId));
