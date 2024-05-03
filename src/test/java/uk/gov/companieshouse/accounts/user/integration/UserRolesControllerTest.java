@@ -15,9 +15,9 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 import uk.gov.companieshouse.accounts.user.configuration.InterceptorConfig;
-import uk.gov.companieshouse.accounts.user.models.UserRoles;
+import uk.gov.companieshouse.accounts.user.models.UserRole;
 import uk.gov.companieshouse.accounts.user.models.Users;
-import uk.gov.companieshouse.accounts.user.repositories.UserRolesRepository;
+import uk.gov.companieshouse.accounts.user.repositories.RolesRepository;
 import uk.gov.companieshouse.accounts.user.repositories.UsersRepository;
 
 import java.time.LocalDateTime;
@@ -50,7 +50,7 @@ public class UserRolesControllerTest {
     UsersRepository usersRepository;
 
     @Autowired
-    UserRolesRepository userRolesRepository;
+    RolesRepository userRolesRepository;
 
     @MockBean
     InterceptorConfig interceptorConfig;
@@ -114,21 +114,21 @@ public class UserRolesControllerTest {
 
         usersRepository.insert( List.of( eminem, theRock, harleyQuinn, harryPotter ) );
 
-        UserRoles supervisor1 = new UserRoles();
+        UserRole supervisor1 = new UserRole();
         supervisor1.setId("supervisor");
 
-        UserRoles badosUser = new UserRoles();
+        UserRole badosUser = new UserRole();
         badosUser.setId("bados_user");
 
 
-        UserRoles restrictedWord = new UserRoles();
+        UserRole restrictedWord = new UserRole();
         restrictedWord.setId("restricted_word");
 
 
-        UserRoles supportMember = new UserRoles();
+        UserRole supportMember = new UserRole();
         supportMember.setId("support-member");
 
-        UserRoles csiSupport = new UserRoles();
+        UserRole csiSupport = new UserRole();
         csiSupport.setId("csi_support");
 
         userRolesRepository.insert(List.of(supervisor1,badosUser,restrictedWord,supportMember,csiSupport));
@@ -299,7 +299,7 @@ public class UserRolesControllerTest {
 
     @AfterEach
     public void after() {
-        mongoTemplate.dropCollection(UserRoles.class);
+        mongoTemplate.dropCollection(UserRole.class);
         mongoTemplate.dropCollection( Users.class );
     }
 

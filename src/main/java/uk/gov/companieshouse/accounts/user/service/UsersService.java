@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.gov.companieshouse.accounts.user.exceptions.BadRequestRuntimeException;
 import uk.gov.companieshouse.accounts.user.mapper.UsersDtoDaoMapper;
 import uk.gov.companieshouse.accounts.user.models.Users;
-import uk.gov.companieshouse.accounts.user.repositories.UserRolesRepository;
+import uk.gov.companieshouse.accounts.user.repositories.RolesRepository;
 import uk.gov.companieshouse.accounts.user.repositories.UsersRepository;
 import uk.gov.companieshouse.api.accounts.user.model.RolesList;
 import uk.gov.companieshouse.api.accounts.user.model.User;
@@ -24,13 +24,13 @@ public class UsersService {
 
     private final UsersRepository usersRepository;
 
-    private final UserRolesRepository userRolesRepository;
+    private final RolesRepository userRolesRepository;
     private final UsersDtoDaoMapper usersDtoDaoMapper;
 
     @Value("${database.limit:50}")
     private int limit;
 
-    public UsersService(UsersRepository usersRepository, UserRolesRepository userRolesRepository, UsersDtoDaoMapper usersDtoDaoMapper) {
+    public UsersService(UsersRepository usersRepository, RolesRepository userRolesRepository, UsersDtoDaoMapper usersDtoDaoMapper) {
         this.usersRepository = usersRepository;
         this.userRolesRepository = userRolesRepository;
         this.usersDtoDaoMapper = usersDtoDaoMapper;

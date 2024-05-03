@@ -10,9 +10,9 @@ import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import uk.gov.companieshouse.accounts.user.exceptions.BadRequestRuntimeException;
-import uk.gov.companieshouse.accounts.user.models.UserRoles;
+import uk.gov.companieshouse.accounts.user.models.UserRole;
 import uk.gov.companieshouse.accounts.user.models.Users;
-import uk.gov.companieshouse.accounts.user.repositories.UserRolesRepository;
+import uk.gov.companieshouse.accounts.user.repositories.RolesRepository;
 import uk.gov.companieshouse.accounts.user.repositories.UsersRepository;
 import uk.gov.companieshouse.accounts.user.service.UsersService;
 import uk.gov.companieshouse.api.accounts.user.model.RolesList;
@@ -42,7 +42,7 @@ public class UsersServiceTest {
     UsersService usersService;
 
     @Autowired
-    UserRolesRepository userRolesRepository;
+    RolesRepository userRolesRepository;
 
     @BeforeEach
     void setup(){
@@ -101,21 +101,21 @@ public class UsersServiceTest {
 
         usersRepository.insert( List.of( eminem, theRock, harleyQuinn, harryPotter ) );
 
-        UserRoles supervisor1 = new UserRoles();
+        UserRole supervisor1 = new UserRole();
         supervisor1.setId("supervisor");
 
-        UserRoles badosUser = new UserRoles();
+        UserRole badosUser = new UserRole();
         badosUser.setId("bados_user");
 
 
-        UserRoles restrictedWord = new UserRoles();
+        UserRole restrictedWord = new UserRole();
         restrictedWord.setId("restricted_word");
 
 
-        UserRoles supportMember = new UserRoles();
+        UserRole supportMember = new UserRole();
         supportMember.setId("support_member");
 
-        UserRoles csiSupport = new UserRoles();
+        UserRole csiSupport = new UserRole();
         csiSupport.setId("csi_support");
 
         userRolesRepository.insert(List.of(supervisor1,badosUser,restrictedWord,supportMember,csiSupport));
@@ -226,7 +226,7 @@ public class UsersServiceTest {
 
     @AfterEach
     public void after() {
-        mongoTemplate.dropCollection(UserRoles.class);
+        mongoTemplate.dropCollection(UserRole.class);
         mongoTemplate.dropCollection( Users.class );
     }
 
