@@ -44,20 +44,20 @@ public class RolesController implements RolesInterface {
         }
 
         boolean roleAdded = rolesService.addRole(role);
-
+ 
         if (roleAdded) {
             LOG.debug(String.format("%s: Successfully added role %s",
             xRequestId,
             role.getId()));
-            return new ResponseEntity<>(HttpStatus.OK );                    
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT );                    
         } else {
             LOG.debug( String.format( "%s: Unable to add the new role",xRequestId, role.getId()) );
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT );        
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST );        
         }            
     }
 
     @Override
-    public ResponseEntity<Void> deleteRole(@Pattern(regexp = "^[a-zA-Z]*$") String roleId,
+    public ResponseEntity<Void> deleteRole(@Pattern(regexp = "^[a-zA-Z-]*$") String roleId,
             @Pattern(regexp = "[0-9A-Za-z-_]{8,32}") final String xRequestId) {
        
         LOG.debug(String.format( "%s: Attempting to delete the '%s' role", xRequestId, roleId));
@@ -74,15 +74,15 @@ public class RolesController implements RolesInterface {
             xRequestId,
             roleId));
     
-            return new ResponseEntity<>(HttpStatus.OK );                    
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);                    
         } else {
             LOG.debug( String.format( "%s: Unable to delete the role '%s'",xRequestId, roleId));
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT );        
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST );        
         }   
     }
 
     @Override
-    public ResponseEntity<Void> editRole(@Pattern(regexp = "^[a-zA-Z]*$") String roleId, @Valid PermissionsList updatedPermissions,
+    public ResponseEntity<Void> editRole(@Pattern(regexp = "^[a-zA-Z-]*$") String roleId, @Valid PermissionsList updatedPermissions,
             @Pattern(regexp = "[0-9A-Za-z-_]{8,32}") final String xRequestId) {
         LOG.debug(String.format( "%s: Attempting to update the permissions for the role '%s'", xRequestId, roleId));
 
@@ -100,7 +100,7 @@ public class RolesController implements RolesInterface {
             return new ResponseEntity<>(HttpStatus.OK );                    
         } else {
             LOG.debug( String.format( "%s: Unable to update the role '%s'", xRequestId,roleId) );
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT );        
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST );        
         }
     }
 
@@ -122,7 +122,7 @@ public class RolesController implements RolesInterface {
             
         } else {
             LOG.debug( String.format( "%s: Unable to get any roles",xRequestId) );
-            return new ResponseEntity<>(new Roles(), HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(new Roles(), HttpStatus.BAD_REQUEST);
 
         }
     }

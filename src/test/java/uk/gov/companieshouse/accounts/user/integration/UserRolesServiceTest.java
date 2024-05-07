@@ -108,10 +108,7 @@ public class UserRolesServiceTest {
         assertEquals("admin", role.getId());
         assertTrue(rolesService.getRoles().getFirst().getPermissions().containsAll(List.of("permission99")));
     }    
-
-    
-
-
+ 
     @Test
     @DisplayName("Deleting a role")
     void deleteRole(){

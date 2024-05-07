@@ -73,7 +73,7 @@ public class RolesControllerTest {
     @DisplayName("Get all roles using the controller")
     @Test
     void getAllRoles() throws Exception {
-        String responseBody = mockMvc.perform( get( "/admin/roles" )
+        String responseBody = mockMvc.perform( get( "/internal/admin/roles" )
             .header("X-Request-Id", "theId123") )
             .andExpect(status().isOk())
         .andReturn()
@@ -100,11 +100,11 @@ public class RolesControllerTest {
         final var objectMapper = new ObjectMapper();
         final var restrictedWordJson = objectMapper.writeValueAsString( restrictedWord );
 
-         mockMvc.perform( put( "/admin/roles/add" )
+         mockMvc.perform( put( "/internal/admin/roles/add" )
             .header("X-Request-Id", "theId123")
             .contentType( "application/json" )
             .content( restrictedWordJson ) )
-            .andExpect( status().isOk());
+            .andExpect( status().isNoContent());
 
         Assertions.assertTrue(rolesRepository.existsById( restrictedWord.getId()));
     }
@@ -113,9 +113,9 @@ public class RolesControllerTest {
     @Test
     void deleteingARoleFromTheDatabase() throws Exception {
 
-         mockMvc.perform( put( "/admin/roles/admin/delete" )
+         mockMvc.perform( put( "/internal/admin/roles/admin/delete" )
             .header("X-Request-Id", "theId123") )
-            .andExpect(status().isOk())
+            .andExpect(status().isNoContent())
             .andReturn()
             .getResponse()
             .getContentAsString();
@@ -133,7 +133,7 @@ public class RolesControllerTest {
         final var objectMapper = new ObjectMapper();
         final var restrictedWordJson = objectMapper.writeValueAsString( permissions );        
 
-         mockMvc.perform( put( "/admin/roles/admin/edit" )
+         mockMvc.perform( put( "/internal//admin/roles/admin/edit" )
             .header("X-Request-Id", "theId123")
             .contentType( "application/json" )
             .content( restrictedWordJson ) )

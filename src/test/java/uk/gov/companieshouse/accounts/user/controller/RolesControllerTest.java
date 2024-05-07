@@ -79,7 +79,7 @@ public class RolesControllerTest {
 
         Mockito.doReturn(roles).when(rolesService).getRoles(); 
 
-        String responseBody = mockMvc.perform( get( "/admin/roles" )
+        String responseBody = mockMvc.perform( get( "/internal/admin/roles" )
             .header("X-Request-Id", "theId123") )
             .andExpect(status().isOk())
             .andReturn()
@@ -98,9 +98,9 @@ public class RolesControllerTest {
 
         Mockito.doReturn(new Roles()).when(rolesService).getRoles(); 
 
-        String responseBody = mockMvc.perform( get( "/admin/roles" )
+        String responseBody = mockMvc.perform( get( "/internal/admin/roles" )
             .header("X-Request-Id", "theId123") )
-            .andExpect(status().is(204))
+            .andExpect(status().isBadRequest())
             .andReturn()
             .getResponse()
             .getContentAsString();
@@ -126,24 +126,20 @@ public class RolesControllerTest {
         final var objectMapper = new ObjectMapper();
         final var restrictedWordJson = objectMapper.writeValueAsString( restrictedWord );
 
-         mockMvc.perform( put( "/admin/roles/add" )
+         mockMvc.perform( put( "/internal/admin/roles/add" )
             .header("X-Request-Id", "theId123")
             .contentType( "application/json" )
             .content( restrictedWordJson ) )
-            .andExpect( status().isOk());
+            .andExpect( status().isNoContent());
     }
 
     @DisplayName("Adding a new role to the databse - empty fields")
     @Test
     void addNewRoleToDatabaseEmptyFields() throws Exception {
 
-        Role restrictedWord = new Role();
         when(rolesService.addRole(any())).thenReturn(true);
 
-        final var objectMapper = new ObjectMapper();
-        final var restrictedWordJson = objectMapper.writeValueAsString( restrictedWord );
-
-         mockMvc.perform( put( "/admin/roles/add" )
+        mockMvc.perform( put( "/internal/admin/roles/add" )
             .header("X-Request-Id", "theId123")
             .contentType( "application/json" )
             .content( new byte[0] ) )
@@ -165,11 +161,11 @@ public class RolesControllerTest {
         final var objectMapper = new ObjectMapper();
         final var restrictedWordJson = objectMapper.writeValueAsString( restrictedWord );
 
-         mockMvc.perform( put( "/admin/roles/add" )
+         mockMvc.perform( put( "/internal/admin/roles/add" )
             .header("X-Request-Id", "theId123")
             .contentType( "application/json" )
             .content( restrictedWordJson ) )
-            .andExpect( status().is(204));
+            .andExpect(status().isBadRequest());
     }
 
     @DisplayName("Deleting a role from the databse - malformed request")
@@ -178,7 +174,7 @@ public class RolesControllerTest {
 
         when(rolesService.deleteRole(any())).thenReturn(true);
 
-         mockMvc.perform( put( "/admin/roles/^/delete" )
+         mockMvc.perform( put( "/internal/admin/roles/^/delete" )
             .header("X-Request-Id", "theId123") )
             .andExpect(status().isBadRequest());
     }
@@ -189,9 +185,9 @@ public class RolesControllerTest {
 
         when(rolesService.deleteRole(any())).thenReturn(false);
 
-         mockMvc.perform( put( "/admin/roles/admin/delete" )
+         mockMvc.perform( put( "/internal/admin/roles/admin/delete" )
             .header("X-Request-Id", "theId123") )
-            .andExpect(status().is(204))
+            .andExpect(status().isBadRequest())
             .andReturn()
             .getResponse()
             .getContentAsString();
@@ -203,9 +199,9 @@ public class RolesControllerTest {
 
         when(rolesService.deleteRole(any())).thenReturn(true);
 
-         mockMvc.perform( put( "/admin/roles/admin/delete" )
+         mockMvc.perform( put( "/internal/admin/roles/admin/delete" )
             .header("X-Request-Id", "theId123") )
-            .andExpect(status().isOk())
+            .andExpect(status().isNoContent())
             .andReturn()
             .getResponse()
             .getContentAsString();
@@ -219,15 +215,15 @@ public class RolesControllerTest {
         permissions.add("permission99");
 
         final var objectMapper = new ObjectMapper();
-        final var restrictedWordJson = objectMapper.writeValueAsString( permissions );        
+        final var permissionsJson = objectMapper.writeValueAsString( permissions );        
 
-        when(rolesService.editRole(any(),any())).thenReturn(0);
+        when(rolesService.editRole(any(),any())).thenReturn(false);
 
-         mockMvc.perform( put( "/admin/roles/admin/edit" )
+         mockMvc.perform( put( "/internal/admin/roles/admin/edit" )
             .header("X-Request-Id", "theId123")
             .contentType( "application/json" )
-            .content( restrictedWordJson ) )
-            .andExpect( status().is(204));
+            .content( permissionsJson ) )
+            .andExpect( status().isBadRequest());
     }    
 
     @DisplayName("Modifying the permissions for a role - permissions not proided")
@@ -237,14 +233,14 @@ public class RolesControllerTest {
         PermissionsList permissions = new PermissionsList();
 
         final var objectMapper = new ObjectMapper();
-        final var restrictedWordJson = objectMapper.writeValueAsString( permissions );        
+        final var permissionJson = objectMapper.writeValueAsString( permissions );        
 
-        when(rolesService.editRole(any(),any())).thenReturn(1);
+        when(rolesService.editRole(any(),any())).thenReturn(true);
 
-         mockMvc.perform( put( "/admin/roles/admin/edit" )
+         mockMvc.perform( put( "/internal/admin/roles/admin/edit" )
             .header("X-Request-Id", "theId123")
             .contentType( "application/json" )
-            .content(restrictedWordJson ) )
+            .content(permissionJson ) )
             .andExpect( status().isBadRequest());
     } 
 
@@ -256,14 +252,14 @@ public class RolesControllerTest {
         permissions.add("permission99");
 
         final var objectMapper = new ObjectMapper();
-        final var restrictedWordJson = objectMapper.writeValueAsString( permissions );        
+        final var permissionsJson = objectMapper.writeValueAsString( permissions );        
 
-        when(rolesService.editRole(any(),any())).thenReturn(1);
+        when(rolesService.editRole(any(),any())).thenReturn(true);
 
-         mockMvc.perform( put( "/admin/roles/admin/edit" )
+         mockMvc.perform( put( "/internal/admin/roles/admin/edit" )
             .header("X-Request-Id", "theId123")
             .contentType( "application/json" )
-            .content( restrictedWordJson ) )
+            .content( permissionsJson ) )
             .andExpect( status().isOk());
     }  
 
@@ -275,14 +271,14 @@ public class RolesControllerTest {
         permissions.add("permission99");
 
         final var objectMapper = new ObjectMapper();
-        final var restrictedWordJson = objectMapper.writeValueAsString( permissions );        
+        final var permissionsJson = objectMapper.writeValueAsString( permissions );        
 
-        when(rolesService.editRole(any(),any())).thenReturn(1);
+        when(rolesService.editRole(any(),any())).thenReturn(false);
 
-         mockMvc.perform( put( "/admin/roles/^/edit" )
+         mockMvc.perform( put( "/internal/admin/roles/^/edit" )
             .header("X-Request-Id", "theId123")
             .contentType( "application/json" )
-            .content(restrictedWordJson) )
+            .content(permissionsJson) )
             .andExpect(status().isBadRequest());
     }      
 }

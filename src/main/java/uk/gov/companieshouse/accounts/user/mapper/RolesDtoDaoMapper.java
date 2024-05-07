@@ -11,5 +11,6 @@ import uk.gov.companieshouse.api.accounts.user.model.Role;
 public interface RolesDtoDaoMapper {
 
     Role daoToDto(UserRole userRoles);  
+    
     UserRole dtoToDao(Role role);
 }

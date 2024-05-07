@@ -1,7 +1,5 @@
 package uk.gov.companieshouse.accounts.user.configuration;
 
-import java.util.List;
-
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -21,7 +19,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
 
     private static final String INTERNAL_USERS_ENDPOINTS = "/internal/users/**";
 
-    private static final String ADMIN_ROLE_ENDPOINTS = "/admin/roles/**";
+    private static final String ADMIN_ROLE_ENDPOINTS = "/internal/admin/roles/**";
 
     private static final String WILDCARD = "/**";
     public InterceptorConfig( final LoggingInterceptor loggingInterceptor) {
