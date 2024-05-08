@@ -2,6 +2,8 @@ package uk.gov.companieshouse.accounts.user.service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
@@ -30,7 +32,10 @@ public class RolesService {
 
     public Roles getRoles(){
     
-       List<Role> rolesFromDatabase = userRolesRepository.findAll().stream().map(rolesDtoDaoMapper::daoToDto).toList();
+       List<Role> rolesFromDatabase = userRolesRepository
+                                            .findAll()
+                                            .stream()
+                                            .map(rolesDtoDaoMapper::daoToDto).collect(Collectors.toList());
 
         Roles roles = new Roles();
         roles.addAll(rolesFromDatabase);
