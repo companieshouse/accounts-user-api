@@ -147,7 +147,6 @@ public class InterceptorTests {
                .andExpect(status().is(HttpServletResponse.SC_UNAUTHORIZED));
     }
 
-
     @Test
     void internalUserSearchMissingInternlDataPrivileges() throws Exception {
         mockMvc.perform( 
@@ -179,7 +178,7 @@ public class InterceptorTests {
                         .header("X-Request-Id", "theId123")
                         .header("ERIC-Identity", "123")
                         .header("ERIC-Identity-Type", "oauth2") 
-                        .header("ERIC-Authorised-Roles", "/admin/search")
+                        .header("ERIC-Authorised-Roles", "/admin/user/search")
                     )
                         .andExpect(status().isOk())
                         .andReturn()

@@ -105,6 +105,7 @@ public class UserRolesControllerTest {
         mockMvc.perform( get( "/users/{user_id}/roles", "$" ).header( "X-Request-Id", "theId123" ) )
                 .andExpect( status().isBadRequest() );
     }
+    
     @Test
     void getUserRolesWithNonexistentUserIDReturnsNotFound() throws Exception {
         mockMvc.perform( get( "/users/roles").header("X-Request-Id", "theId123") ).

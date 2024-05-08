@@ -5,7 +5,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import uk.gov.companieshouse.accounts.user.AccountsUserServiceApplication;
+import static uk.gov.companieshouse.accounts.user.AccountsUserServiceApplication.applicationNameSpace;
 import uk.gov.companieshouse.accounts.user.interceptor.EricAuthorisedKeyPrivilegesInterceptor;
 import uk.gov.companieshouse.accounts.user.interceptor.LoggingInterceptor;
 import uk.gov.companieshouse.api.interceptor.RolePermissionInterceptor;
@@ -19,7 +19,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
 
     private static final String INTERNAL_USERS_ENDPOINTS = "/internal/users/**";
 
-    private static final String HEALTH_ENDPOINT = "/accounts-user-api/healthcheck";
+    private static final String ADMIN_ROLE_ENDPOINTS = "/internal/admin/roles/**";
 
     private static final String WILDCARD = "/**";
     public InterceptorConfig( final LoggingInterceptor loggingInterceptor) {
@@ -36,7 +36,8 @@ public class InterceptorConfig implements WebMvcConfigurer {
     public void addInterceptors(@NonNull final InterceptorRegistry registry) {
         addLoggingInterceptor(registry);
         addEricInterceptors(registry);
-        addInternlUserAdminSearchInterceptor(registry);
+        addRolePermissionInterceptor(registry, INTERNAL_USERS_ENDPOINTS, "/admin/user/search");
+        addRolePermissionInterceptor(registry, ADMIN_ROLE_ENDPOINTS, "/admin/roles");
     }
 
     /**
@@ -45,22 +46,18 @@ public class InterceptorConfig implements WebMvcConfigurer {
      * @param registry The spring interceptor registry
      */
     private void addLoggingInterceptor( final InterceptorRegistry registry) {
-        registry.addInterceptor(loggingInterceptor);
+        registry.addInterceptor(loggingInterceptor)
+        .addPathPatterns(WILDCARD);
     }
      
-    private void addInternlUserAdminSearchInterceptor( final InterceptorRegistry registry){
-        registry.addInterceptor(new RolePermissionInterceptor(AccountsUserServiceApplication.applicationNameSpace, "/admin/search"))
-            .addPathPatterns(WILDCARD)
-            .excludePathPatterns(HEALTH_ENDPOINT, USERS_ENDPOINTS)
-            .order(1);
+    private void addRolePermissionInterceptor(final InterceptorRegistry registry, final String path, final String permission){
+        registry.addInterceptor(new RolePermissionInterceptor(applicationNameSpace, permission))
+        .addPathPatterns(path);
     }
 
     private void addEricInterceptors( final InterceptorRegistry registry){
         registry.addInterceptor(
                 new EricAuthorisedKeyPrivilegesInterceptor()
-        )
-        .addPathPatterns(WILDCARD)
-        .excludePathPatterns(HEALTH_ENDPOINT, INTERNAL_USERS_ENDPOINTS)
-        .order(2);
-    }              
+        ).addPathPatterns(USERS_ENDPOINTS);
+    }
 }

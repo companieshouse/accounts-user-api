@@ -19,7 +19,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.companieshouse.accounts.user.exceptions.BadRequestRuntimeException;
 import uk.gov.companieshouse.accounts.user.mapper.UsersDtoDaoMapper;
 import uk.gov.companieshouse.accounts.user.models.Users;
-import uk.gov.companieshouse.accounts.user.repositories.UserRolesRepository;
+import uk.gov.companieshouse.accounts.user.repositories.RolesRepository;
 import uk.gov.companieshouse.accounts.user.repositories.UsersRepository;
 import uk.gov.companieshouse.api.accounts.user.model.RolesList;
 import uk.gov.companieshouse.api.accounts.user.model.User;
@@ -44,7 +44,7 @@ public class UsersServiceTest {
     UsersRepository usersRepository;
 
     @Mock
-    UserRolesRepository userRolesRepository;
+    RolesRepository userRolesRepository;
 
     @InjectMocks
     UsersService usersService;
