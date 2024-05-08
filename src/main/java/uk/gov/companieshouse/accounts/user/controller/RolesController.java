@@ -34,7 +34,7 @@ public class RolesController implements RolesInterface {
     @Override
     public ResponseEntity<Void> addRole(@Valid Role role, @Pattern(regexp = "[0-9A-Za-z-_]{8,32}") final String xRequestId) {
         
-        LOG.debug( String.format( "%s: Attempting to add the new role '%s'", xRequestId, role.getId()));
+        LOG.info( String.format( "%s: Attempting to add the new role '%s'", xRequestId, role.getId()));
 
         if(Objects.isNull(role.getId()) || Objects.isNull(role.getPermissions()) 
         || role.getId().isEmpty()|| role.getPermissions().isEmpty()){
@@ -60,7 +60,7 @@ public class RolesController implements RolesInterface {
     public ResponseEntity<Void> deleteRole(@Pattern(regexp = "^[a-zA-Z-]*$") String roleId,
             @Pattern(regexp = "[0-9A-Za-z-_]{8,32}") final String xRequestId) {
        
-        LOG.debug(String.format( "%s: Attempting to delete the '%s' role", xRequestId, roleId));
+        LOG.info(String.format( "%s: Attempting to delete the '%s' role", xRequestId, roleId));
 
         if(Objects.isNull(roleId)){
             LOG.error(String.format("%s: A role_id was not provided.", xRequestId));
@@ -84,7 +84,7 @@ public class RolesController implements RolesInterface {
     @Override
     public ResponseEntity<Void> editRole(@Pattern(regexp = "^[a-zA-Z-]*$") String roleId, @Valid PermissionsList updatedPermissions,
             @Pattern(regexp = "[0-9A-Za-z-_]{8,32}") final String xRequestId) {
-        LOG.debug(String.format( "%s: Attempting to update the permissions for the role '%s'", xRequestId, roleId));
+        LOG.info(String.format( "%s: Attempting to update the permissions for the role '%s'", xRequestId, roleId));
 
         if(Objects.isNull(updatedPermissions) || updatedPermissions.isEmpty()){
             LOG.error(String.format("%s: A new setp of permissions were not provided.", xRequestId));
@@ -106,9 +106,7 @@ public class RolesController implements RolesInterface {
 
     @Override
     public ResponseEntity<Roles> getRoles(@Pattern(regexp = "[0-9A-Za-z-_]{8,32}") final String xRequestId) {
-        LOG.debug( 
-            String.format( "%s: Attempting to get all roles", xRequestId)
-        );
+        LOG.trace(String.format( "%s: Attempting to get all roles", xRequestId));
 
         Roles  roles = rolesService.getRoles();
 
