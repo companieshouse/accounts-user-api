@@ -147,7 +147,6 @@ public class InterceptorTests {
                .andExpect(status().is(HttpServletResponse.SC_UNAUTHORIZED));
     }
 
-
     @Test
     void internalUserSearchMissingInternlDataPrivileges() throws Exception {
         mockMvc.perform( 

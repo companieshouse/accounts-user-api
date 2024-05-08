@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.web.servlet.MockMvc;
@@ -52,7 +51,7 @@ public class RolesControllerTest {
     @Autowired
     RolesRepository rolesRepository;
 
-    @MockBean
+    @Autowired
     InterceptorConfig interceptorConfig;
 
     @BeforeEach
@@ -74,7 +73,10 @@ public class RolesControllerTest {
     @Test
     void getAllRoles() throws Exception {
         String responseBody = mockMvc.perform( get( "/internal/admin/roles" )
-            .header("X-Request-Id", "theId123") )
+                .header("X-Request-Id", "theId123") 
+                .header("ERIC-Identity", "123")                
+                .header("ERIC-Identity-Type", "oauth2") 
+                .header("ERIC-Authorised-Roles", "/admin/roles"))
             .andExpect(status().isOk())
         .andReturn()
         .getResponse()
@@ -101,10 +103,13 @@ public class RolesControllerTest {
         final var restrictedWordJson = objectMapper.writeValueAsString( restrictedWord );
 
          mockMvc.perform( put( "/internal/admin/roles/add" )
-            .header("X-Request-Id", "theId123")
+            .header("X-Request-Id", "theId123") 
+            .header("ERIC-Identity", "123")                
+            .header("ERIC-Identity-Type", "oauth2") 
+            .header("ERIC-Authorised-Roles", "/admin/roles")            
             .contentType( "application/json" )
-            .content( restrictedWordJson ) )
-            .andExpect( status().isNoContent());
+            .content(restrictedWordJson ))
+            .andExpect(status().isNoContent());
 
         Assertions.assertTrue(rolesRepository.existsById( restrictedWord.getId()));
     }
@@ -114,7 +119,10 @@ public class RolesControllerTest {
     void deleteingARoleFromTheDatabase() throws Exception {
 
          mockMvc.perform( put( "/internal/admin/roles/admin/delete" )
-            .header("X-Request-Id", "theId123") )
+            .header("X-Request-Id", "theId123") 
+            .header("ERIC-Identity", "123")                
+            .header("ERIC-Identity-Type", "oauth2") 
+            .header("ERIC-Authorised-Roles", "/admin/roles"))
             .andExpect(status().isNoContent())
             .andReturn()
             .getResponse()
@@ -135,12 +143,28 @@ public class RolesControllerTest {
 
          mockMvc.perform( put( "/internal//admin/roles/admin/edit" )
             .header("X-Request-Id", "theId123")
-            .contentType( "application/json" )
-            .content( restrictedWordJson ) )
-            .andExpect( status().isOk());
+            .header("ERIC-Identity", "123")                
+            .header("ERIC-Identity-Type", "oauth2") 
+            .header("ERIC-Authorised-Roles", "/admin/roles")            
+            .contentType( "application/json")
+            .content(restrictedWordJson ))
+            .andExpect(status().isOk());
 
         Assertions.assertTrue(rolesRepository.findById( "admin").get().getPermissions().contains("permission99"));
     }    
+
+    @DisplayName("Modifying the permissions using the wrong authorised role")
+    @Test
+    void modifyThePermissionsForARoleNotAuthorised() throws Exception {
+
+         mockMvc.perform( put( "/internal//admin/roles/admin/edit" )
+            .header("X-Request-Id", "theId123")
+            .header("ERIC-Identity", "123")                
+            .header("ERIC-Identity-Type", "oauth2") 
+            .header("ERIC-Authorised-Roles", "/admin/user/search")
+            .contentType( "application/json"))
+            .andExpect(status().isForbidden());
+    } 
 
     @AfterEach
     public void after() {

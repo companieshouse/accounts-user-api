@@ -5,7 +5,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import uk.gov.companieshouse.accounts.user.AccountsUserServiceApplication;
+import static uk.gov.companieshouse.accounts.user.AccountsUserServiceApplication.applicationNameSpace;
 import uk.gov.companieshouse.accounts.user.interceptor.EricAuthorisedKeyPrivilegesInterceptor;
 import uk.gov.companieshouse.accounts.user.interceptor.LoggingInterceptor;
 import uk.gov.companieshouse.api.interceptor.RolePermissionInterceptor;
@@ -36,7 +36,8 @@ public class InterceptorConfig implements WebMvcConfigurer {
     public void addInterceptors(@NonNull final InterceptorRegistry registry) {
         addLoggingInterceptor(registry);
         addEricInterceptors(registry);
-        addInternlUserAdminSearchInterceptor(registry);
+        addRolePermissionInterceptor(registry, INTERNAL_USERS_ENDPOINTS, "/admin/search");
+        addRolePermissionInterceptor(registry, ADMIN_ROLE_ENDPOINTS, "/admin/roles");
     }
 
     /**
@@ -49,16 +50,14 @@ public class InterceptorConfig implements WebMvcConfigurer {
         .addPathPatterns(WILDCARD);
     }
      
-    private void addInternlUserAdminSearchInterceptor( final InterceptorRegistry registry){
-        registry.addInterceptor(new RolePermissionInterceptor(AccountsUserServiceApplication.applicationNameSpace, "/admin/search"))
-        .addPathPatterns(INTERNAL_USERS_ENDPOINTS, ADMIN_ROLE_ENDPOINTS);
+    private void addRolePermissionInterceptor(final InterceptorRegistry registry, final String path, final String permission){
+        registry.addInterceptor(new RolePermissionInterceptor(applicationNameSpace, permission))
+        .addPathPatterns(path);
     }
 
     private void addEricInterceptors( final InterceptorRegistry registry){
         registry.addInterceptor(
                 new EricAuthorisedKeyPrivilegesInterceptor()
         ).addPathPatterns(USERS_ENDPOINTS);
-
-
-    }     
+    }
 }
