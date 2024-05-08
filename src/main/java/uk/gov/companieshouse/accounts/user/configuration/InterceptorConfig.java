@@ -36,7 +36,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
     public void addInterceptors(@NonNull final InterceptorRegistry registry) {
         addLoggingInterceptor(registry);
         addEricInterceptors(registry);
-        addRolePermissionInterceptor(registry, INTERNAL_USERS_ENDPOINTS, "/admin/search");
+        addRolePermissionInterceptor(registry, INTERNAL_USERS_ENDPOINTS, "/admin/user/search");
         addRolePermissionInterceptor(registry, ADMIN_ROLE_ENDPOINTS, "/admin/roles");
     }
 
