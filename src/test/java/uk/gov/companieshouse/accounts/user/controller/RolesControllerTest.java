@@ -2,6 +2,7 @@ package uk.gov.companieshouse.accounts.user.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -111,6 +112,46 @@ public class RolesControllerTest {
         Assertions.assertEquals( 0, roles.size() );
     }
 
+    @DisplayName("Adding a new role to the databse - No Permissions - Bad request thrown")
+    @Test
+    void addNewRoleToDatabaseNoPermissions() throws Exception {
+
+        Role restrictedWord = new Role();
+        restrictedWord.setId("restrictedWord");
+
+        when(rolesService.addRole(any())).thenReturn(true);
+
+        final var objectMapper = new ObjectMapper();
+        final var restrictedWordJson = objectMapper.writeValueAsString( restrictedWord );
+
+         mockMvc.perform( put( "/internal/admin/roles/add" )
+            .header("X-Request-Id", "theId123")
+            .contentType( "application/json" )
+            .content( restrictedWordJson ) )
+            .andExpect( status().isBadRequest());
+    }
+
+    @DisplayName("Adding a new role to the databse - No Role ID - Bad request thrown")
+    @Test
+    void addNewRoleToDatabaseNoRoleId() throws Exception {
+
+        Role restrictedWord = new Role();
+        PermissionsList permissions = new PermissionsList();
+        permissions.add("permission99");
+        restrictedWord.setPermissions(permissions);
+
+        when(rolesService.addRole(any())).thenReturn(true);
+
+        final var objectMapper = new ObjectMapper();
+        final var restrictedWordJson = objectMapper.writeValueAsString( restrictedWord );
+
+         mockMvc.perform( put( "/internal/admin/roles/add" )
+            .header("X-Request-Id", "theId123")
+            .contentType( "application/json" )
+            .content( restrictedWordJson ) )
+            .andExpect( status().isBadRequest());
+    }
+
     @DisplayName("Adding a new role to the databse")
     @Test
     void addNewRoleToDatabase() throws Exception {
@@ -174,7 +215,7 @@ public class RolesControllerTest {
 
         when(rolesService.deleteRole(any())).thenReturn(true);
 
-         mockMvc.perform( put( "/internal/admin/roles/^/delete" )
+         mockMvc.perform( delete( "/internal/admin/roles/^/delete" )
             .header("X-Request-Id", "theId123") )
             .andExpect(status().isBadRequest());
     }
@@ -185,7 +226,7 @@ public class RolesControllerTest {
 
         when(rolesService.deleteRole(any())).thenReturn(false);
 
-         mockMvc.perform( put( "/internal/admin/roles/admin/delete" )
+         mockMvc.perform( delete( "/internal/admin/roles/supervisor/delete" )
             .header("X-Request-Id", "theId123") )
             .andExpect(status().isBadRequest())
             .andReturn()
@@ -199,7 +240,7 @@ public class RolesControllerTest {
 
         when(rolesService.deleteRole(any())).thenReturn(true);
 
-         mockMvc.perform( put( "/internal/admin/roles/admin/delete" )
+         mockMvc.perform( delete( "/internal/admin/roles/supervisor/delete" )
             .header("X-Request-Id", "theId123") )
             .andExpect(status().isNoContent())
             .andReturn()

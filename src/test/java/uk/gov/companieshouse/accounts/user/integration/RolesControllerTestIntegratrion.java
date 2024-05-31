@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.accounts.user.integration;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -36,7 +37,7 @@ import uk.gov.companieshouse.api.accounts.user.model.Role;
 @SpringBootTest
 @Testcontainers
 @Tag("integration-test")
-public class RolesControllerTest {
+public class RolesControllerTestIntegratrion {
 
     @Container
     @ServiceConnection
@@ -118,7 +119,7 @@ public class RolesControllerTest {
     @Test
     void deleteingARoleFromTheDatabase() throws Exception {
 
-         mockMvc.perform( put( "/internal/admin/roles/admin/delete" )
+         mockMvc.perform( delete( "/internal/admin/roles/admin/delete" )
             .header("X-Request-Id", "theId123") 
             .header("ERIC-Identity", "123")                
             .header("ERIC-Identity-Type", "oauth2") 
