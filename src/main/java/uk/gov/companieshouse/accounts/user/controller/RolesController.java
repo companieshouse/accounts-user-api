@@ -57,7 +57,7 @@ public class RolesController implements RolesInterface {
     }
 
     @Override
-    public ResponseEntity<Void> deleteRole(@Pattern(regexp = "^[a-zA-Z-]*$") String roleId,
+    public ResponseEntity<Void> deleteRole(@Pattern(regexp = "[0-9A-Za-z-_]{1,256}") String roleId,
             @Pattern(regexp = "[0-9A-Za-z-_]{8,32}") final String xRequestId) {
        
         LOG.info(String.format( "%s: Attempting to delete the '%s' role", xRequestId, roleId));
@@ -82,7 +82,7 @@ public class RolesController implements RolesInterface {
     }
 
     @Override
-    public ResponseEntity<Void> editRole(@Pattern(regexp = "^[a-zA-Z-]*$") String roleId, @Valid PermissionsList updatedPermissions,
+    public ResponseEntity<Void> editRole(@Pattern(regexp = "[0-9A-Za-z-_]{1,256}") String roleId, @Valid PermissionsList updatedPermissions,
             @Pattern(regexp = "[0-9A-Za-z-_]{8,32}") final String xRequestId) {
         LOG.info(String.format( "%s: Attempting to update the permissions for the role '%s'", xRequestId, roleId));
 
