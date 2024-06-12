@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -124,7 +125,7 @@ public class RolesControllerTest {
         final var objectMapper = new ObjectMapper();
         final var restrictedWordJson = objectMapper.writeValueAsString( restrictedWord );
 
-         mockMvc.perform( put( "/internal/admin/roles/add" )
+         mockMvc.perform( post( "/internal/admin/roles/add" )
             .header("X-Request-Id", "theId123")
             .contentType( "application/json" )
             .content( restrictedWordJson ) )
@@ -145,7 +146,7 @@ public class RolesControllerTest {
         final var objectMapper = new ObjectMapper();
         final var restrictedWordJson = objectMapper.writeValueAsString( restrictedWord );
 
-         mockMvc.perform( put( "/internal/admin/roles/add" )
+         mockMvc.perform( post( "/internal/admin/roles/add" )
             .header("X-Request-Id", "theId123")
             .contentType( "application/json" )
             .content( restrictedWordJson ) )
@@ -167,7 +168,7 @@ public class RolesControllerTest {
         final var objectMapper = new ObjectMapper();
         final var restrictedWordJson = objectMapper.writeValueAsString( restrictedWord );
 
-         mockMvc.perform( put( "/internal/admin/roles/add" )
+         mockMvc.perform( post( "/internal/admin/roles/add" )
             .header("X-Request-Id", "theId123")
             .contentType( "application/json" )
             .content( restrictedWordJson ) )
@@ -180,7 +181,7 @@ public class RolesControllerTest {
 
         when(rolesService.addRole(any())).thenReturn(true);
 
-        mockMvc.perform( put( "/internal/admin/roles/add" )
+        mockMvc.perform( post( "/internal/admin/roles/add" )
             .header("X-Request-Id", "theId123")
             .contentType( "application/json" )
             .content( new byte[0] ) )
@@ -202,7 +203,7 @@ public class RolesControllerTest {
         final var objectMapper = new ObjectMapper();
         final var restrictedWordJson = objectMapper.writeValueAsString( restrictedWord );
 
-         mockMvc.perform( put( "/internal/admin/roles/add" )
+         mockMvc.perform( post( "/internal/admin/roles/add" )
             .header("X-Request-Id", "theId123")
             .contentType( "application/json" )
             .content( restrictedWordJson ) )
