@@ -21,7 +21,10 @@ public class InterceptorConfig implements WebMvcConfigurer {
 
     private static final String ADMIN_ROLE_ENDPOINTS = "/internal/admin/roles/**";
 
+    private static final String USER_SEARCH_ENDPOINT = "/users/search";
+
     private static final String WILDCARD = "/**";
+    
     public InterceptorConfig( final LoggingInterceptor loggingInterceptor) {
         this.loggingInterceptor = loggingInterceptor;
     }
@@ -38,6 +41,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
         addEricInterceptors(registry);
         addRolePermissionInterceptor(registry, INTERNAL_USERS_ENDPOINTS, "/admin/user/search");
         addRolePermissionInterceptor(registry, ADMIN_ROLE_ENDPOINTS, "/admin/roles");
+        addRolePermissionInterceptor(registry, USER_SEARCH_ENDPOINT, "/admin/user/search");
     }
 
     /**
@@ -58,6 +62,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
     private void addEricInterceptors( final InterceptorRegistry registry){
         registry.addInterceptor(
                 new EricAuthorisedKeyPrivilegesInterceptor()
-        ).addPathPatterns(USERS_ENDPOINTS);
+        ).addPathPatterns(USERS_ENDPOINTS)
+        .excludePathPatterns(USER_SEARCH_ENDPOINT);
     }
 }
