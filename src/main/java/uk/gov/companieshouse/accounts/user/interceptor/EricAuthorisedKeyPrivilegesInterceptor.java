@@ -1,15 +1,17 @@
 package uk.gov.companieshouse.accounts.user.interceptor;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.apache.commons.lang.ArrayUtils;
-import uk.gov.companieshouse.accounts.user.AccountsUserServiceApplication;
-import uk.gov.companieshouse.api.interceptor.InternalUserInterceptor;
-import uk.gov.companieshouse.logging.Logger;
-import uk.gov.companieshouse.logging.LoggerFactory;
-
 import java.io.IOException;
 import java.util.Optional;
+
+import org.apache.commons.lang.ArrayUtils;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import uk.gov.companieshouse.accounts.user.AccountsUserServiceApplication;
+import uk.gov.companieshouse.api.interceptor.InternalUserInterceptor;
+import uk.gov.companieshouse.api.util.security.AuthorisationUtil;
+import uk.gov.companieshouse.logging.Logger;
+import uk.gov.companieshouse.logging.LoggerFactory;
 
 public class EricAuthorisedKeyPrivilegesInterceptor extends InternalUserInterceptor {
 
@@ -21,7 +23,10 @@ public class EricAuthorisedKeyPrivilegesInterceptor extends InternalUserIntercep
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
-        if ( super.preHandle( request, response, handler ) ) {
+
+        if (AuthorisationUtil.isOauth2User(request) && AuthorisationUtil.getAuthorisedRoles(request).contains("/admin/user/roles")) {
+            return true;
+        } else if ( super.preHandle( request, response, handler ) ) {
             final var privileges =
             Optional.ofNullable( request.getHeader("ERIC-Authorised-Key-Privileges") )
                     .map(s -> s.split(","))

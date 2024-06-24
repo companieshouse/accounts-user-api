@@ -16,9 +16,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
     private final LoggingInterceptor loggingInterceptor;
     
     private static final String USERS_ENDPOINTS = "/users/**";
-
     private static final String INTERNAL_USERS_ENDPOINTS = "/internal/users/**";
-
     private static final String ADMIN_ROLE_ENDPOINTS = "/internal/admin/roles/**";
 
     private static final String WILDCARD = "/**";

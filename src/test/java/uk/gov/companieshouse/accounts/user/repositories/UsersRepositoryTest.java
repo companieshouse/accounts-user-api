@@ -188,12 +188,12 @@ public class UsersRepositoryTest {
         Assertions.assertEquals(2, multipleUsers.size());
         
         Assertions.assertTrue(multipleUsers.stream()
-                                            .map(Users::getDisplayName).allMatch(user -> (user.equals("Harry Potter")) || (user.equals("Harley Quinn"))));
+                                             .map(Users::getDisplayName).allMatch(user -> (user.equals("Harry Potter")) || (user.equals("Harley Quinn"))));
     }
 
     @Test
     void findUsersWithRole(){
-        List<UserRole> roles = usersRepository.findByRolesContaining("restricted_word");
+        List<Users> roles = usersRepository.findUsersByRolesContaining("restricted_word");
         assertEquals(2, roles.size());
     }
     

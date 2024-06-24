@@ -9,7 +9,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import uk.gov.companieshouse.accounts.user.models.UserRole;
 import uk.gov.companieshouse.accounts.user.models.Users;
 
 @Repository
@@ -25,6 +24,6 @@ public interface UsersRepository extends MongoRepository<Users, String> {
     @Query( "{ 'id': ?0 }" )
     int updateUser( String userId, Update update );
 
-    List<UserRole> findByRolesContaining(String role);
+    List<Users> findUsersByRolesContaining(String role);
 }
 
