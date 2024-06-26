@@ -12,7 +12,10 @@ import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import uk.gov.companieshouse.accounts.user.models.OneLoginDataDao;
+import uk.gov.companieshouse.accounts.user.models.UserRole;
 import uk.gov.companieshouse.accounts.user.models.Users;
+
+import static org.junit.Assert.assertEquals;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -46,7 +49,7 @@ public class UsersRepositoryTest {
         eminem.setSurname( "Mathers" );
         eminem.setDisplayName( "Eminem" );
         eminem.setEmail( "eminem@rap.com" );
-        eminem.setRoles( List.of("supervisor") );
+        eminem.setRoles( List.of("supervisor", "restricted_word") );
         eminem.setCreated( LocalDateTime.now().minusDays( 1 ) );
         eminem.setUpdated( LocalDateTime.now() );
 
@@ -185,7 +188,13 @@ public class UsersRepositoryTest {
         Assertions.assertEquals(2, multipleUsers.size());
         
         Assertions.assertTrue(multipleUsers.stream()
-                                            .map(Users::getDisplayName).allMatch(user -> (user.equals("Harry Potter")) || (user.equals("Harley Quinn"))));
+                                             .map(Users::getDisplayName).allMatch(user -> (user.equals("Harry Potter")) || (user.equals("Harley Quinn"))));
     }
 
+    @Test
+    void findUsersWithRole(){
+        List<Users> roles = usersRepository.findUsersByRolesContaining("restricted_word");
+        assertEquals(2, roles.size());
+    }
+    
 }

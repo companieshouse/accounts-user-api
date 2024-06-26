@@ -24,5 +24,6 @@ public interface UsersRepository extends MongoRepository<Users, String> {
     @Query( "{ 'id': ?0 }" )
     int updateUser( String userId, Update update );
 
+    List<Users> findUsersByRolesContaining(String role);
 }
 
