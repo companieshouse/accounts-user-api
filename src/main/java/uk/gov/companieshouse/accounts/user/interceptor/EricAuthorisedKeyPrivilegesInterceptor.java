@@ -1,6 +1,8 @@
 package uk.gov.companieshouse.accounts.user.interceptor;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -10,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import uk.gov.companieshouse.accounts.user.AccountsUserServiceApplication;
 import uk.gov.companieshouse.api.interceptor.InternalUserInterceptor;
 import uk.gov.companieshouse.api.util.security.AuthorisationUtil;
+import uk.gov.companieshouse.api.util.security.RequestUtils;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
@@ -24,7 +27,16 @@ public class EricAuthorisedKeyPrivilegesInterceptor extends InternalUserIntercep
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
 
-        if (AuthorisationUtil.isOauth2User(request) && AuthorisationUtil.getAuthorisedRoles(request).contains("/admin/user/roles")) {
+        List<String> authorisedRoles = new ArrayList<>();
+        if (RequestUtils.getRequestHeader(request, "ERIC-Authorised-Roles") != null) {
+            authorisedRoles = AuthorisationUtil.getAuthorisedRoles(request);
+        }
+        
+        String identities = AuthorisationUtil.getAuthorisedIdentityType(request);
+
+        LOG.info(String.format("The authorised roles are: %s and identities are: %s", authorisedRoles, identities));
+
+        if (AuthorisationUtil.isOauth2User(request) && authorisedRoles.contains("/admin/user/roles")) {
             return true;
         } else if ( super.preHandle( request, response, handler ) ) {
             final var privileges =
