@@ -19,6 +19,8 @@ This API provides access to user account information and related functionalities
 - **Responses:**
     - `200`: Success. Returns the user resource.
     - `400`: Bad request. The request body has errors.
+    - `401`: Unauthorized. OAuth token not used.
+    - `403`: Forbidden. User does not have the required permission.
     - `500`: Internal Server Error.
 - **Security:**
     - API Key authentication is required for accessing the endpoints. Provide the API Key in the `Authorization` header.
@@ -33,6 +35,8 @@ This API provides access to user account information and related functionalities
 - **Responses:**
     - `200`: Success. Returns an array of user resources.
     - `400`: Bad request. The request body has errors.
+    - `401`: Unauthorized. OAuth token not used.
+    - `403`: Forbidden. User does not have the required permission.    
     - `500`: Internal Server Error.
 - **Security:**
     - API Key authentication is required for accessing the endpoints. Provide the API Key in the `Authorization` header.    
@@ -47,6 +51,8 @@ This API provides access to user account information and related functionalities
 - **Responses:**
     - `200`: Success. Returns an array of user roles.
     - `400`: Bad request. The request body has errors.
+    - `401`: Unauthorized. OAuth token not used.
+    - `403`: Forbidden. User does not have the required permission.    
     - `500`: Internal Server Error.
 - **Security:**
     - API Key authentication is required for accessing the endpoints. Provide the API Key in the `Authorization` header.
@@ -63,6 +69,8 @@ This API provides access to user account information and related functionalities
 - **Responses:**
     - `201`: Success. User roles have been set.
     - `400`: Bad request. The request body has errors.
+    - `401`: Unauthorized. OAuth token not used.
+     - `403`: Forbidden. User does not have the required permission.   
     - `500`: Internal Server Error.
 - **Security:**
     - API Key authentication is required for accessing the endpoints. Provide the API Key in the `Authorization` header.
@@ -78,6 +86,8 @@ This API provides access to user account information and related functionalities
 - **Responses:**
     - `200`: Success. Returns an array of user resources.
     - `400`: Bad request. The request body has errors.
+    - `401`: Unauthorized. OAuth token not used.
+    - `403`: Forbidden. User does not have the required permission.    
     - `500`: Internal Server Error.
 - **Security:**
     - OAuth2 authentication is required for accessing the endpoints.
@@ -91,6 +101,8 @@ This API provides access to user account information and related functionalities
 - **Responses:**
     - `200`: Success. Returns an array of Roles resources.
     - `400`: Bad request. The request body has errors.
+    - `401`: Unauthorized. OAuth token not used.
+    - `403`: Forbidden. User does not have the required permission.    
     - `500`: Internal Server Error.
 - **Security:**
     - OAuth2 authentication is required for accessing the endpoints.
@@ -106,6 +118,8 @@ This API provides access to user account information and related functionalities
 - **Responses:**
     - `201`: Success. Adds the new Role to the database.
     - `400`: Bad request. The request body has errors.
+    - `401`: Unauthorized. OAuth token not used.
+    - `403`: Forbidden. User does not have the required permission.    
     - `500`: Internal Server Error.
 - **Security:**
     - OAuth2 authentication is required for accessing the endpoints.
@@ -120,7 +134,7 @@ This API provides access to user account information and related functionalities
 - **Request Body:**
     - `PermissionList` : The permissions to added to the specified Role.
 - **Responses:**
-    - `201`: Success. Role is successfully updated.
+    - `200`: Success. Role is successfully updated.
     - `400`: Bad request. The request body has errors.
     - `500`: Internal Server Error.
 - **Security:**
@@ -134,8 +148,26 @@ This API provides access to user account information and related functionalities
     - `X-Request-Id` (header): A unique identifier for the request.
     - `role_id` (path parameter, required): The role to be deleted from the database.
 - **Responses:**
-    - `201`: Success. Role is successfully deleted.
+    - `204`: Success. Role is successfully deleted.
     - `400`: Bad request. The request body has errors.
+    - `401`: Unauthorized. OAuth token not used.
+    - `403`: Forbidden. User does not have the required permission.    
+    - `500`: Internal Server Error.
+- **Security:**
+    - OAuth2 authentication is required for accessing the endpoints.
+
+### 6. Get a user based on there UserId
+- **Endpoint:** `/internal/users/{user_id}`
+- **Method:** GET
+- **Description:** Searches for the user with the matching user_id.
+- **Parameters:**
+    - `user_id` (path parameter, required): The users unique ID.
+    - `X-Request-Id` (header): A unique identifier for the request.
+- **Responses:**
+    - `200`: Success. Returns the matched user resource.
+    - `400`: Bad request. The request body has errors.
+    - `401`: Unauthorized. OAuth token not used.
+    - `403`: Forbidden. User does not have the required permission.    
     - `500`: Internal Server Error.
 - **Security:**
     - OAuth2 authentication is required for accessing the endpoints.
@@ -148,6 +180,3 @@ This API provides access to user account information and related functionalities
 - Errors are returned with appropriate HTTP status codes and error messages.
 
 For detailed information on request and response schemas, please refer to the API documentation. [High Level Design](https://companieshouse.atlassian.net/wiki/spaces/IDV/pages/4471619599/High+Level+Design+V3#API-Spec)
-
-
-
