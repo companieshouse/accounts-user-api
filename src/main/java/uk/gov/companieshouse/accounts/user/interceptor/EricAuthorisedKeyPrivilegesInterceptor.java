@@ -46,5 +46,4 @@ public class EricAuthorisedKeyPrivilegesInterceptor extends InternalUserIntercep
         }
         return false;
     }
-
 }
