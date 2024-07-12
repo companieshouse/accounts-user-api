@@ -1,5 +1,5 @@
 environment = "staging"
-aws_profile = "development-eu-west-2"
+aws_profile = "staging-eu-west-2"
 
 # service configs
 #use_set_environment_files = true
