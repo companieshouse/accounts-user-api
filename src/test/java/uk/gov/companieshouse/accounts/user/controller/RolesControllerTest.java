@@ -28,6 +28,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import uk.gov.companieshouse.accounts.user.configuration.InterceptorConfig;
 import uk.gov.companieshouse.accounts.user.models.UserRole;
 import uk.gov.companieshouse.accounts.user.service.RolesService;
+import uk.gov.companieshouse.accounts.user.service.UsersService;
 import uk.gov.companieshouse.api.accounts.user.model.PermissionsList;
 import uk.gov.companieshouse.api.accounts.user.model.Role;
 import uk.gov.companieshouse.api.accounts.user.model.Roles;
@@ -40,7 +41,10 @@ public class RolesControllerTest {
     public MockMvc mockMvc;
 
     @MockBean
-    RolesService  rolesService;
+    RolesService rolesService;
+
+    @MockBean
+    UsersService usersService;
 
     @MockBean
     InterceptorConfig interceptorConfig;
@@ -113,7 +117,7 @@ public class RolesControllerTest {
         Assertions.assertEquals( 0, roles.size() );
     }
 
-    @DisplayName("Adding a new role to the databse - No Permissions - Bad request thrown")
+    @DisplayName("Adding a new role to the database - No Permissions - Bad request thrown")
     @Test
     void addNewRoleToDatabaseNoPermissions() throws Exception {
 

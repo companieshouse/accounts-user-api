@@ -36,7 +36,7 @@ import uk.gov.companieshouse.api.accounts.user.model.User;
 @SpringBootTest
 @Testcontainers
 @Tag("integration-test")
-public class InterceptorTests {
+class InterceptorTests {
 
     @Container
     @ServiceConnection
@@ -104,7 +104,7 @@ public class InterceptorTests {
     }
 
     @Test
-    void userSearchCorretPrivileges() throws Exception {
+    void userSearchCorrectPrivileges() throws Exception {
         final var responseBody =
         mockMvc.perform( 
                     get( "/users/search?user_email=harley.quinn@gotham.city" )
@@ -127,7 +127,7 @@ public class InterceptorTests {
     }
 
     @Test
-    void userSearchInternlNoPrivileges() throws Exception {
+    void userSearchInternalNoPrivileges() throws Exception {
         mockMvc.perform( 
                     get( "/users/search?user_email=harley.quinn@gotham.city" )
                         .header("X-Request-Id", "theId123")
@@ -136,7 +136,7 @@ public class InterceptorTests {
     }
 
     @Test
-    void userSearchInternlPrivilegesOnly() throws Exception {
+    void userSearchInternalPrivilegesOnly() throws Exception {
         mockMvc.perform( 
                     get( "/users/search?user_email=harley.quinn@gotham.city" )
                         .header("X-Request-Id", "theId123")
@@ -148,7 +148,7 @@ public class InterceptorTests {
     }
 
     @Test
-    void internalUserSearchMissingInternlDataPrivileges() throws Exception {
+    void internalUserSearchMissingInternalDataPrivileges() throws Exception {
         mockMvc.perform( 
                     get( "/internal/users/search?partial_email=harley.quinn@gotham.city" )
                         .header("X-Request-Id", "theId123")

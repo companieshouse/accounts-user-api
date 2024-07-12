@@ -18,7 +18,9 @@ public class InterceptorConfig implements WebMvcConfigurer {
     private static final String USERS_ENDPOINTS = "/users/**";
     private static final String INTERNAL_USERS_ENDPOINTS = "/internal/users/**";
     private static final String ADMIN_ROLE_ENDPOINTS = "/internal/admin/roles/**";
-
+    private static final String INTERNAL_GET_USER_RECORD_ENDPOINT = "/internal/admin/users/**";
+    private static final String ADMIN_USER_SEARCH_PERMISSION = "/admin/user/search";
+    
     private static final String WILDCARD = "/**";
     public InterceptorConfig( final LoggingInterceptor loggingInterceptor) {
         this.loggingInterceptor = loggingInterceptor;
@@ -34,7 +36,8 @@ public class InterceptorConfig implements WebMvcConfigurer {
     public void addInterceptors(@NonNull final InterceptorRegistry registry) {
         addLoggingInterceptor(registry);
         addEricInterceptors(registry);
-        addRolePermissionInterceptor(registry, INTERNAL_USERS_ENDPOINTS, "/admin/user/search");
+        addRolePermissionInterceptor(registry, INTERNAL_GET_USER_RECORD_ENDPOINT,ADMIN_USER_SEARCH_PERMISSION );
+        addRolePermissionInterceptor(registry, INTERNAL_USERS_ENDPOINTS, ADMIN_USER_SEARCH_PERMISSION);
         addRolePermissionInterceptor(registry, ADMIN_ROLE_ENDPOINTS, "/admin/roles");
     }
 
