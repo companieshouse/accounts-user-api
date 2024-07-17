@@ -40,8 +40,7 @@ public class RolesController implements RolesInterface {
         
         LOG.info( String.format( "%s: Attempting to add the new role '%s'", xRequestId, role.getId()));
 
-        if(Objects.isNull(role.getId()) || Objects.isNull(role.getPermissions()) 
-        || role.getId().isEmpty()|| role.getPermissions().isEmpty()){
+        if(Objects.isNull(role.getId()) || role.getId().isEmpty()){
 
             LOG.error(String.format("%s: An incomplete role was provided.", xRequestId));
             throw new BadRequestRuntimeException(PLEASE_CHECK_THE_REQUEST_AND_TRY_AGAIN);
@@ -89,11 +88,6 @@ public class RolesController implements RolesInterface {
     public ResponseEntity<Void> editRole(@Pattern(regexp = "[0-9A-Za-z-_]{1,256}") String roleId, @Valid PermissionsList updatedPermissions,
             @Pattern(regexp = "[0-9A-Za-z-_]{8,32}") final String xRequestId) {
         LOG.info(String.format( "%s: Attempting to update the permissions for the role '%s'", xRequestId, roleId));
-
-        if(Objects.isNull(updatedPermissions) || updatedPermissions.isEmpty()){
-            LOG.error(String.format("%s: A new set of permissions were not provided.", xRequestId));
-            throw new BadRequestRuntimeException(PLEASE_CHECK_THE_REQUEST_AND_TRY_AGAIN);
-        }
 
         boolean roleUpdated = rolesService.editRole(roleId, updatedPermissions);
 
