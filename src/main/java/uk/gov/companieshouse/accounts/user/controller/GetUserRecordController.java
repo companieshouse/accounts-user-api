@@ -57,7 +57,7 @@ public class GetUserRecordController implements GetUserRecordInterface {
         return new ResponseEntity<>( user, HttpStatus.OK );
     }
 
-    @GetMapping("/profile")
+    @GetMapping("/user/profile")
     @ResponseBody  //Spring will transform ResponseEntity body into JSON
     public ResponseEntity<Object> getUserProfile(HttpServletRequest request) {
         Map<String,Object> userProfile = new HashMap<>();
