@@ -112,7 +112,7 @@ public class RolesControllerTestIntegratrion {
             .header("ERIC-Authorised-Roles", "/admin/roles")            
             .contentType( "application/json" )
             .content(restrictedWordJson ))
-            .andExpect(status().isCreated());
+            .andExpect(status().isNoContent());
 
         Assertions.assertTrue(rolesRepository.existsById( restrictedWord.getId()));
     }
@@ -151,7 +151,7 @@ public class RolesControllerTestIntegratrion {
             .header("ERIC-Authorised-Roles", "/admin/roles")            
             .contentType( "application/json")
             .content(restrictedWordJson ))
-            .andExpect(status().isNoContent());
+            .andExpect(status().isOk());
 
         Assertions.assertTrue(rolesRepository.findById( "admin").get().getPermissions().contains("permission99"));
     }    

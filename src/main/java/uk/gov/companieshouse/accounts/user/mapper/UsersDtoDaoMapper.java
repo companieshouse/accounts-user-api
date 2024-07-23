@@ -19,6 +19,4 @@ public interface UsersDtoDaoMapper {
     @Mapping(source = "created", target =   "created", qualifiedByName = "offsetDateTimeToDateTime")
     @Mapping(source = "userId", target = "id")
     Users dtoToDao(User user);
-
-
 }

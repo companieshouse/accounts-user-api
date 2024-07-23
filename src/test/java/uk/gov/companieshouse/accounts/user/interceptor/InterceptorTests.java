@@ -24,6 +24,8 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import jakarta.servlet.http.HttpServletResponse;
 import uk.gov.companieshouse.accounts.user.configuration.InterceptorConfig;
@@ -119,7 +121,7 @@ class InterceptorTests {
                .getResponse()
                .getContentAsString();
 
-        final var objectMapper = new ObjectMapper();
+        final var objectMapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
         final var users = objectMapper.readValue(responseBody, new TypeReference<List<User>>(){} );
 
         Assertions.assertEquals( 1, users.size() );
@@ -185,11 +187,11 @@ class InterceptorTests {
                         .getResponse()
                         .getContentAsString();
          
-                 final var objectMapper = new ObjectMapper();
-                 final var users = objectMapper.readValue(responseBody, new TypeReference<List<User>>(){} );
-         
-                 Assertions.assertEquals( 1, users.size() );
-                 Assertions.assertEquals( "Harley Quinn", users.get(0).getDisplayName() );
+        final var objectMapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
+        final var users = objectMapper.readValue(responseBody, new TypeReference<List<User>>(){} );
+
+        Assertions.assertEquals( 1, users.size() );
+        Assertions.assertEquals( "Harley Quinn", users.get(0).getDisplayName() );
 
     }
 
@@ -197,5 +199,4 @@ class InterceptorTests {
     public void after() {
         mongoTemplate.dropCollection( Users.class );
     }
-
 }

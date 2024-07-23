@@ -35,7 +35,7 @@ import uk.gov.companieshouse.api.accounts.user.model.Roles;
 
 @Tag("unit-test")
 @WebMvcTest(RolesController.class)
-public class RolesControllerTest {
+class RolesControllerTest {
 
     @Autowired
     public MockMvc mockMvc;
@@ -98,7 +98,7 @@ public class RolesControllerTest {
         Assertions.assertEquals( 2, returnedRoles.size() );
     }
 
-    @DisplayName("Get all roles using the controller - empty databasw")
+    @DisplayName("Get all roles using the controller - empty database")
     @Test
     void getAllRolesEmptyDatabase() throws Exception {
 
@@ -133,7 +133,7 @@ public class RolesControllerTest {
             .header("X-Request-Id", "theId123")
             .contentType( "application/json" )
             .content( restrictedWordJson ) )
-            .andExpect( status().isCreated());
+            .andExpect( status().isNoContent());
     }
 
     @DisplayName("Adding a new role to the database - No Role ID - Bad request thrown")
@@ -287,7 +287,7 @@ public class RolesControllerTest {
             .header("X-Request-Id", "theId123")
             .contentType( "application/json" )
             .content(permissionJson ) )
-            .andExpect( status().isNoContent());
+            .andExpect( status().isOk());
     } 
 
     @DisplayName("Modifying the permissions for a role")
