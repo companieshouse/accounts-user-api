@@ -1,6 +1,9 @@
 package uk.gov.companieshouse.accounts.user.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,7 +102,7 @@ public class GetUserRecordControllerTest {
                 .getResponse()
                 .getContentAsString();
 
-        final var objectMapper = new ObjectMapper();
+        final var objectMapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
         final var user = objectMapper.readValue( responseBody, User.class );
 
         Assertions.assertEquals( "Harley Quinn", user.getDisplayName() );
