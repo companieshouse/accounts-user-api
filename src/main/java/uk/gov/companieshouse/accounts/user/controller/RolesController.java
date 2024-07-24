@@ -52,7 +52,7 @@ public class RolesController implements RolesInterface {
             LOG.debug(String.format("%s: Successfully added role %s",
             xRequestId,
             role.getId()));
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT );                    
+            return new ResponseEntity<>(HttpStatus.CREATED);                    
         } else {
             LOG.debug( String.format( "%s: Unable to add the new role",xRequestId, role.getId()) );
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST );        
@@ -95,7 +95,7 @@ public class RolesController implements RolesInterface {
             LOG.debug(String.format("%s: Successfully updated the role '%s'",
             xRequestId,
             roleId));
-            return new ResponseEntity<>(HttpStatus.OK );                    
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT );                    
         } else {
             LOG.debug( String.format( "%s: Unable to update the role '%s'", xRequestId,roleId) );
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST );        
