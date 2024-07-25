@@ -33,6 +33,9 @@ public class GetUserRecordController implements GetUserRecordInterface {
     private static final String LOCALE = "locale";
     private static final String SCOPE = "scope";
     private static final String PERMISSIONS = "permissions";
+    private static final String PRIVATE_BETA_USER = "private_beta_user";
+    private static final String ONE_LOGIN_DATA = "one_login_data";
+    private static final String USER_ID = "user_id";
 
     public GetUserRecordController(UsersService usersService) {
         this.usersService = usersService;
@@ -70,10 +73,19 @@ public class GetUserRecordController implements GetUserRecordInterface {
                 return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND).body(new HashMap<>(Map.of("error", "Cannot locate account")));
             }
 
+            final var userOptional = usersService.fetchUser(userDetails.getUserID());
+            if (userOptional == null){
+                LOG.error("User not found");
+                return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND).body(new HashMap<>(Map.of("error", "Cannot locate user")));
+            }
+            final var user = userOptional.get();
+
             userProfile.put(FORENAME, userDetails.getForename());
             userProfile.put(SURNAME, userDetails.getSurname());
             userProfile.put(EMAIL, userDetails.getEmail());
             userProfile.put(ID, userDetails.getUserID());
+            userProfile.put(PRIVATE_BETA_USER, user.getIsPrivateBetaUser());
+            userProfile.put(ONE_LOGIN_DATA, user.getHasLinkedOneLogin());
             userProfile.put(LOCALE, "GB_en");  //Locale is always GB_en
             userProfile.put(SCOPE, oauthAuthorisation.getRequestedScope());
             userProfile.put(PERMISSIONS, oauthAuthorisation.getPermissions());
@@ -84,5 +96,4 @@ public class GetUserRecordController implements GetUserRecordInterface {
         }
         return ResponseEntity.status(HttpServletResponse.SC_OK).body(userProfile);
     }
-
 }

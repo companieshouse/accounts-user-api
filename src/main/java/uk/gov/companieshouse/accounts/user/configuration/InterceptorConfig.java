@@ -8,12 +8,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import static uk.gov.companieshouse.accounts.user.AccountsUserServiceApplication.applicationNameSpace;
 import uk.gov.companieshouse.accounts.user.interceptor.EricAuthorisedKeyPrivilegesInterceptor;
 import uk.gov.companieshouse.accounts.user.interceptor.LoggingInterceptor;
+import uk.gov.companieshouse.accounts.user.interceptor.Oauth2AuthorizationInterceptor;
 import uk.gov.companieshouse.api.interceptor.RolePermissionInterceptor;
 
 @Configuration
 public class InterceptorConfig implements WebMvcConfigurer {
 
     private final LoggingInterceptor loggingInterceptor;
+    private Oauth2AuthorizationInterceptor oauth2AuthorizationInterceptor;
+    public static final String USER_PROFILE = "/user/profile";
     
     private static final String USERS_ENDPOINTS = "/users/**";
     private static final String INTERNAL_USERS_ENDPOINTS = "/internal/users/**";
@@ -22,8 +25,9 @@ public class InterceptorConfig implements WebMvcConfigurer {
     private static final String ADMIN_USER_SEARCH_PERMISSION = "/admin/user/search";
     
     private static final String WILDCARD = "/**";
-    public InterceptorConfig( final LoggingInterceptor loggingInterceptor) {
+    public InterceptorConfig( final LoggingInterceptor loggingInterceptor, final Oauth2AuthorizationInterceptor oauth2AuthorizationInterceptor) {
         this.loggingInterceptor = loggingInterceptor;
+        this.oauth2AuthorizationInterceptor = oauth2AuthorizationInterceptor;
     }
 
     /**
@@ -39,6 +43,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
         addRolePermissionInterceptor(registry, INTERNAL_GET_USER_RECORD_ENDPOINT,ADMIN_USER_SEARCH_PERMISSION );
         addRolePermissionInterceptor(registry, INTERNAL_USERS_ENDPOINTS, ADMIN_USER_SEARCH_PERMISSION);
         addRolePermissionInterceptor(registry, ADMIN_ROLE_ENDPOINTS, "/admin/roles");
+        addOauth2AuthorizationInterceptor(registry);
     }
 
     /**
@@ -60,5 +65,13 @@ public class InterceptorConfig implements WebMvcConfigurer {
         registry.addInterceptor(
                 new EricAuthorisedKeyPrivilegesInterceptor()
         ).addPathPatterns(USERS_ENDPOINTS);
+    }
+    /**
+     * Interceptor for validating calls from ERIC to authenticate keys/tokens
+     *
+     * @param registry The spring interceptor registry
+     */
+    private void addOauth2AuthorizationInterceptor(InterceptorRegistry registry) {
+        registry.addInterceptor(oauth2AuthorizationInterceptor).addPathPatterns(USER_PROFILE);
     }
 }
