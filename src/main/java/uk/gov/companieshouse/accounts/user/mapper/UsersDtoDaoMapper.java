@@ -3,7 +3,6 @@ package uk.gov.companieshouse.accounts.user.mapper;
 import org.json.JSONObject;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
 import org.mapstruct.Named;
 import uk.gov.companieshouse.accounts.user.models.OneLoginDataDao;
 import uk.gov.companieshouse.accounts.user.models.Users;
@@ -15,7 +14,9 @@ public interface UsersDtoDaoMapper {
     @Mapping(source = "id", target = "userId")
     @Mapping(source = "privateBetaUser", target = "isPrivateBetaUser")
     @Mapping(source = "created", target =   "created", qualifiedByName = "localDateTimeToOffsetDateTime")
-    @Mapping(source = "oneLoginData", target = "hasLinkedOneLogin", qualifiedByName = "isValidOneLoginData")
+    @Mapping(target = "hasLinkedOneLogin",
+            expression = "java(java.util.Objects.nonNull(users.getOneLoginData()))")
+//    @Mapping(source = "oneLoginData", target = "hasLinkedOneLogin", qualifiedByName = "isValidOneLoginData")
     User daoToDto(Users users);
 
     @Mapping(source = "created", target =   "created", qualifiedByName = "offsetDateTimeToDateTime")
