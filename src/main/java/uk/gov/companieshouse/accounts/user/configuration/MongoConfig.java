@@ -8,6 +8,9 @@ import org.springframework.data.mongodb.core.mapping.event.ValidatingMongoEventL
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -26,6 +29,4 @@ public class MongoConfig {
     public DateTimeProvider dateTimeProvider() {
         return () -> Optional.of(LocalDateTime.now());
     }
-
-
 }

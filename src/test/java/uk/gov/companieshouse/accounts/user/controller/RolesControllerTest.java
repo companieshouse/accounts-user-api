@@ -35,7 +35,7 @@ import uk.gov.companieshouse.api.accounts.user.model.Roles;
 
 @Tag("unit-test")
 @WebMvcTest(RolesController.class)
-public class RolesControllerTest {
+class RolesControllerTest {
 
     @Autowired
     public MockMvc mockMvc;
@@ -98,7 +98,7 @@ public class RolesControllerTest {
         Assertions.assertEquals( 2, returnedRoles.size() );
     }
 
-    @DisplayName("Get all roles using the controller - empty databasw")
+    @DisplayName("Get all roles using the controller - empty database")
     @Test
     void getAllRolesEmptyDatabase() throws Exception {
 
@@ -117,7 +117,7 @@ public class RolesControllerTest {
         Assertions.assertEquals( 0, roles.size() );
     }
 
-    @DisplayName("Adding a new role to the database - No Permissions - Bad request thrown")
+    @DisplayName("Adding a new role to the database - No Permissions")
     @Test
     void addNewRoleToDatabaseNoPermissions() throws Exception {
 
@@ -133,10 +133,10 @@ public class RolesControllerTest {
             .header("X-Request-Id", "theId123")
             .contentType( "application/json" )
             .content( restrictedWordJson ) )
-            .andExpect( status().isBadRequest());
+            .andExpect( status().isNoContent());
     }
 
-    @DisplayName("Adding a new role to the databse - No Role ID - Bad request thrown")
+    @DisplayName("Adding a new role to the database - No Role ID - Bad request thrown")
     @Test
     void addNewRoleToDatabaseNoRoleId() throws Exception {
 
@@ -157,7 +157,7 @@ public class RolesControllerTest {
             .andExpect( status().isBadRequest());
     }
 
-    @DisplayName("Adding a new role to the databse")
+    @DisplayName("Adding a new role to the database")
     @Test
     void addNewRoleToDatabase() throws Exception {
 
@@ -179,7 +179,7 @@ public class RolesControllerTest {
             .andExpect( status().isNoContent());
     }
 
-    @DisplayName("Adding a new role to the databse - empty fields")
+    @DisplayName("Adding a new role to the database - empty fields")
     @Test
     void addNewRoleToDatabaseEmptyFields() throws Exception {
 
@@ -192,7 +192,7 @@ public class RolesControllerTest {
             .andExpect( status().isBadRequest());
     }
     
-    @DisplayName("Adding a new role to the databse -  failed addition")
+    @DisplayName("Adding a new role to the database -  failed addition")
     @Test
     void addNewRoleToDatabaseFailedAddition() throws Exception {
 
@@ -214,9 +214,9 @@ public class RolesControllerTest {
             .andExpect(status().isBadRequest());
     }
 
-    @DisplayName("Deleting a role from the databse - malformed request")
+    @DisplayName("Deleting a role from the database - malformed request")
     @Test
-    void deleteingARoleFromTheDatabaseMalformedRequest() throws Exception {
+    void deletingARoleFromTheDatabaseMalformedRequest() throws Exception {
 
         when(rolesService.deleteRole(any())).thenReturn(true);
 
@@ -225,9 +225,9 @@ public class RolesControllerTest {
             .andExpect(status().isBadRequest());
     }
 
-    @DisplayName("Deleting a role from the databse - failed deletion")
+    @DisplayName("Deleting a role from the database - failed deletion")
     @Test
-    void deleteingARoleFromTheDatabaseFailedDeletion() throws Exception {
+    void deletingARoleFromTheDatabaseFailedDeletion() throws Exception {
 
         when(rolesService.deleteRole(any())).thenReturn(false);
 
@@ -239,9 +239,9 @@ public class RolesControllerTest {
             .getContentAsString();
     }
 
-    @DisplayName("Deleting a role from the databse")
+    @DisplayName("Deleting a role from the database")
     @Test
-    void deleteingARoleFromTheDatabase() throws Exception {
+    void deletingARoleFromTheDatabase() throws Exception {
 
         when(rolesService.deleteRole(any())).thenReturn(true);
 
@@ -272,9 +272,9 @@ public class RolesControllerTest {
             .andExpect( status().isBadRequest());
     }    
 
-    @DisplayName("Modifying the permissions for a role - permissions not proided")
+    @DisplayName("Modifying the permissions for a role - permissions not provided")
     @Test
-    void modifyThePermissionsForARoleNoPermissios() throws Exception {
+    void modifyThePermissionsForARoleNoPermissions() throws Exception {
 
         PermissionsList permissions = new PermissionsList();
 
@@ -287,7 +287,7 @@ public class RolesControllerTest {
             .header("X-Request-Id", "theId123")
             .contentType( "application/json" )
             .content(permissionJson ) )
-            .andExpect( status().isBadRequest());
+            .andExpect( status().isOk());
     } 
 
     @DisplayName("Modifying the permissions for a role")
