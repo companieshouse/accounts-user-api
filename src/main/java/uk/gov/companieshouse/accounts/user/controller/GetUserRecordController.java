@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.companieshouse.accounts.user.AccountsUserServiceApplication;
 import uk.gov.companieshouse.accounts.user.models.Oauth2AuthorisationsDao;
@@ -34,8 +33,8 @@ public class GetUserRecordController implements GetUserRecordInterface {
     private static final String SCOPE = "scope";
     private static final String PERMISSIONS = "permissions";
     private static final String PRIVATE_BETA_USER = "private_beta_user";
-    private static final String ONE_LOGIN_DATA = "one_login_data";
-    private static final String USER_ID = "user_id";
+    private static final String ACCOUNT_TYPE = "account_type";
+    private static final String ERROR = "error";
 
     public GetUserRecordController(UsersService usersService) {
         this.usersService = usersService;
@@ -61,7 +60,6 @@ public class GetUserRecordController implements GetUserRecordInterface {
     }
 
     @GetMapping("/user/profile")
-    @ResponseBody  //Spring will transform ResponseEntity body into JSON
     public ResponseEntity<Object> getUserProfile(HttpServletRequest request) {
         Map<String,Object> userProfile = new HashMap<>();
         try {
@@ -70,13 +68,13 @@ public class GetUserRecordController implements GetUserRecordInterface {
             UserDetailsDao userDetails = oauthAuthorisation.getUserDetails();
             if (userDetails == null){
                 LOG.error("User Details not found");
-                return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND).body(new HashMap<>(Map.of("error", "Cannot locate account")));
+                return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND).body(new HashMap<>(Map.of(ERROR, "Cannot locate account")));
             }
 
             final var userOptional = usersService.fetchUser(userDetails.getUserID());
-            if (userOptional == null){
+            if (userOptional.isEmpty()){
                 LOG.error("User not found");
-                return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND).body(new HashMap<>(Map.of("error", "Cannot locate user")));
+                return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND).body(new HashMap<>(Map.of(ERROR, "Cannot locate user")));
             }
             final var user = userOptional.get();
 
@@ -85,14 +83,14 @@ public class GetUserRecordController implements GetUserRecordInterface {
             userProfile.put(EMAIL, userDetails.getEmail());
             userProfile.put(ID, userDetails.getUserID());
             userProfile.put(PRIVATE_BETA_USER, user.getIsPrivateBetaUser());
-            userProfile.put(ONE_LOGIN_DATA, user.getHasLinkedOneLogin());
+            userProfile.put(ACCOUNT_TYPE, Boolean.TRUE.equals(user.getHasLinkedOneLogin()) ? "onelogin" : "companies_house");
             userProfile.put(LOCALE, "GB_en");  //Locale is always GB_en
             userProfile.put(SCOPE, oauthAuthorisation.getRequestedScope());
             userProfile.put(PERMISSIONS, oauthAuthorisation.getPermissions());
 
         } catch (Exception e) { //Can not use normal process for any uncaught errors of showing error page. Need to send response
             LOG.errorRequest(request, e.getMessage());
-            return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).body(new HashMap<>(Map.of("error", "Error locating account")));
+            return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).body(new HashMap<>(Map.of(ERROR, "Error locating account")));
         }
         return ResponseEntity.status(HttpServletResponse.SC_OK).body(userProfile);
     }

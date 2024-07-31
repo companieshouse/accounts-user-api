@@ -71,7 +71,7 @@ class UserProfileTest {
         userprofile.put("scope", "https://account.companieshouse.gov.uk/user.write-full");
         userprofile.put("permissions", new HashMap<>());
         userprofile.put("private_beta_user", true);
-        userprofile.put("one_login_data", true);
+        userprofile.put("account_type", "onelogin");
 
         var user = mock(User.class);
         when(usersService.fetchUser(any())).thenReturn((Optional.of(user)));
@@ -110,7 +110,7 @@ class UserProfileTest {
         userprofile.put("scope", "https://account.companieshouse.gov.uk/user.write-full");
         userprofile.put("permissions", new HashMap<>());
         userprofile.put("private_beta_user", true);
-        userprofile.put("one_login_data", false);
+        userprofile.put("account_type", "companies_house");
 
         var user = mock(User.class);
         when(usersService.fetchUser(any())).thenReturn((Optional.of(user)));
