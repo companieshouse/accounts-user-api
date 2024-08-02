@@ -109,7 +109,7 @@ public class Oauth2AuthorizationInterceptor implements HandlerInterceptor, Reque
         // if (tokenType == null || token == null || !"Bearer".equals(tokenType)) {
         if (token == null) {
             logger.trace("Invalid or no authorization header provided");
-            response.addHeader(WWW_AUTHENTICATE, "Bearer error='invalid_token' error-desc='Invalid or no authorization header provided' realm='https://account.companieshouse.gov.uk'");
+            response.addHeader(WWW_AUTHENTICATE, "Bearer error='invalid_token' error-desc='Invalid or no authorization header provided' realm='https://identity.company-information.service.gov.uk'");
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, INVALID_AUTHORIZATION_HEADER);
             return false;
         }
@@ -120,14 +120,14 @@ public class Oauth2AuthorizationInterceptor implements HandlerInterceptor, Reque
         if (oad == null) {
             logger.traceRequest(request, "No authorisation document found for token",
                     new HashMap<>(Map.of("token", token)));
-            response.addHeader(WWW_AUTHENTICATE, "Bearer error='invalid_token' error-desc='Invalid or no authorization header provided' realm='https://account.companieshouse.gov.uk'");
+            response.addHeader(WWW_AUTHENTICATE, "Bearer error='invalid_token' error-desc='Invalid or no authorization header provided' realm='https://identity.company-information.service.gov.uk'");
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, INVALID_AUTHORIZATION_HEADER);
             return false;
         }
 
         if (oad.getTokenValidUntil() < LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)) {
             logger.traceRequest(request, "Token expired", null);
-            response.addHeader(WWW_AUTHENTICATE, "Bearer error='expired_token' error-desc='Access token has expired' realm='https://account.companieshouse.gov.uk'");
+            response.addHeader(WWW_AUTHENTICATE, "Bearer error='expired_token' error-desc='Access token has expired' realm='https://identity.company-information.service.gov.uk'");
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, INVALID_AUTHORIZATION_HEADER);
             return false;
         }

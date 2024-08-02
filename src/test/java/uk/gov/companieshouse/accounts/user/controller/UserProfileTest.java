@@ -139,6 +139,33 @@ class UserProfileTest {
     }
 
     @Test
+    @DisplayName("UserControllerTests - getUserProfile Optional NotFound")
+    void getUserProfileOptionalNotFound() {
+        var userDetails = new UserDetailsDao();
+        userDetails.setForename("Fred");
+        userDetails.setSurname("Bloggs");
+        userDetails.setEmail("email@email.com");
+        userDetails.setUserID("12345");
+
+        var oauthAuthorisation = new Oauth2AuthorisationsDao();
+        oauthAuthorisation.setUserDetails(userDetails);
+        oauthAuthorisation.setRequestedScope("https://account.companieshouse.gov.uk/user.write-full");
+        oauthAuthorisation.setPermissions(new HashMap<>());
+
+        request.setAttribute("oauth2_authorisation", oauthAuthorisation);
+
+        when(usersService.fetchUser(any())).thenReturn(Optional.empty());
+
+        Map<String, String> errorResponse = new HashMap<>(Map.of(
+                "error", "Cannot locate user"));
+
+        ResponseEntity<Object> responseEntity = controller.getUserProfile(request);
+
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+        assertEquals(errorResponse, responseEntity.getBody());
+    }
+
+    @Test
     @DisplayName("UserControllerTests - getUserProfileException")
     void getUserProfileException() {
         Map<String, String> errorResponse = new HashMap<>(Map.of(
