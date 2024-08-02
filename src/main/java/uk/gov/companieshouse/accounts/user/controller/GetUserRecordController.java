@@ -63,7 +63,7 @@ public class GetUserRecordController implements GetUserRecordInterface {
     public ResponseEntity<Object> getUserProfile(HttpServletRequest request) {
         Map<String,Object> userProfile = new HashMap<>();
         try {
-            // UserProfilePermissionInterceptor attaches to request
+            // Oauth2AuthorizationInterceptor attaches to request
             Oauth2AuthorisationsDao oauthAuthorisation = (Oauth2AuthorisationsDao) request.getAttribute("oauth2_authorisation");
             UserDetailsDao userDetails = oauthAuthorisation.getUserDetails();
             if (userDetails == null){

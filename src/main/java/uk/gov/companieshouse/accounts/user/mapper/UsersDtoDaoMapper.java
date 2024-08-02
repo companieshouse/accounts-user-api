@@ -25,10 +25,10 @@ public interface UsersDtoDaoMapper {
 
     @Named("isValidOneLoginData")
     default boolean isValidOneLoginData(OneLoginDataDao oneLoginData) {
-        JSONObject jsonObject = new JSONObject(oneLoginData);
+        var jsonObject = new JSONObject(oneLoginData);
 
         if (jsonObject.has("oneLoginUserId")) {
-            String userIdValue = jsonObject.getString("oneLoginUserId");
+            var userIdValue = jsonObject.getString("oneLoginUserId");
             return userIdValue != null && !userIdValue.isEmpty();
         } else {
             return false;

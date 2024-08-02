@@ -3,7 +3,6 @@ package uk.gov.companieshouse.accounts.user.interceptor;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
@@ -22,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.springframework.http.HttpHeaders.WWW_AUTHENTICATE;
+import static uk.gov.companieshouse.accounts.user.AccountsUserServiceApplication.applicationNameSpace;
 
 // Java implementation of CH::MojoX::Bridge::Authorisation::check_OAuth2
 @Component
@@ -30,8 +30,6 @@ public class Oauth2AuthorizationInterceptor implements HandlerInterceptor, Reque
     private static final String REQUEST_METHOD_OPTIONS = "OPTIONS";
     private static final String INVALID_AUTHORIZATION_HEADER = "invalid-authorization-header";
     private static final String ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
-    @Value("${spring.application.name}")
-    public static String applicationNameSpace;
     private static final Logger logger = LoggerFactory.getLogger(applicationNameSpace);
 
     OauthRepository oauthRepository;
@@ -68,7 +66,7 @@ public class Oauth2AuthorizationInterceptor implements HandlerInterceptor, Reque
 
             if (!authValue.endsWith(":")) {
                 logger.trace("Invalid username:password string");
-                response.addHeader(WWW_AUTHENTICATE, "Basic error='invalid_literal' error-desc='Invalid username:password string' realm='https://account.companieshouse.gov.uk'");
+                response.addHeader(WWW_AUTHENTICATE, "Basic error='invalid_literal' error-desc='Invalid username:password string' realm='https://identity.company-information.service.gov.uk'");
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, INVALID_AUTHORIZATION_HEADER);
                 return false;
             }
@@ -102,7 +100,7 @@ public class Oauth2AuthorizationInterceptor implements HandlerInterceptor, Reque
             token = paramToken;
         }
 
-        // Comment in perl code:
+        // Comment in account.ch.gov.uk perl code:
         // FIXME The www-authenticate response for read-only resource _could_ also be Basic in addition to Bearer
 
         // Perl code allows either Bearer token with (or without) access_token parameter or
@@ -136,7 +134,7 @@ public class Oauth2AuthorizationInterceptor implements HandlerInterceptor, Reque
 
         request.setAttribute(ACCESS_CONTROL_ALLOW_ORIGIN, request.getHeaders(HttpHeaders.ORIGIN));
 
-        //All checks passed, stash oauth2_authorisation and allow request to continue
+        //All checks passed, store oauth2_authorisation in the request and allow to continue
         request.setAttribute("oauth2_authorisation", oad);
         return true;
     }
