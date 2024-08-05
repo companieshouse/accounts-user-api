@@ -136,3 +136,9 @@ variable "eric_version" {
   type        = string
   description = "The version of the eric container to run."
 }
+
+variable "lb_listener_paths" {
+  type        = list(string)
+  description = "List of listener paths that are needed for each environment"
+  default     = ["/users/*", "/internal/users/*", "/internal/admin/*", "/user-profile"]
+}

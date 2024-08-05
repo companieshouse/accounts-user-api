@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 import uk.gov.companieshouse.accounts.user.configuration.InterceptorConfig;
 import uk.gov.companieshouse.accounts.user.models.Users;
+import uk.gov.companieshouse.accounts.user.repositories.OauthRepository;
 import uk.gov.companieshouse.accounts.user.service.UsersService;
 import uk.gov.companieshouse.api.accounts.user.model.RolesList;
 import uk.gov.companieshouse.api.accounts.user.model.User;
@@ -39,6 +40,9 @@ public class UserRolesControllerTest {
 
     @MockBean
     InterceptorConfig interceptorConfig;
+
+    @MockBean
+    OauthRepository oauthRepository;
 
     private User userEminem;
     private User userTheRock;

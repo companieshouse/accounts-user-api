@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import uk.gov.companieshouse.accounts.user.configuration.InterceptorConfig;
 import uk.gov.companieshouse.accounts.user.models.UserRole;
+import uk.gov.companieshouse.accounts.user.repositories.OauthRepository;
 import uk.gov.companieshouse.accounts.user.service.RolesService;
 import uk.gov.companieshouse.accounts.user.service.UsersService;
 import uk.gov.companieshouse.api.accounts.user.model.PermissionsList;
@@ -48,6 +49,9 @@ class RolesControllerTest {
 
     @MockBean
     InterceptorConfig interceptorConfig;
+
+    @MockBean
+    OauthRepository oauthRepository;
 
     UserRole supervisor = new UserRole();
     UserRole admin = new UserRole();
