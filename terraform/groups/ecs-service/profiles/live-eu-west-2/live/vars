@@ -1,0 +1,8 @@
+# service configs
+#use_set_environment_files = true
+log_level = "debug"
+
+lb_listener_paths = ["/users/*/roles", "/internal/users/*", "/internal/admin/roles*"]
+
+# Scheduled scaling of tasks
+service_autoscale_enabled  = true
