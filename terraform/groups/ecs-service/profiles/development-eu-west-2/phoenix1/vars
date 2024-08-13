@@ -4,4 +4,3 @@ aws_profile = "development-eu-west-2"
 # service configs
 #use_set_environment_files = true
 log_level = "debug"
-lb_listener_paths = ["/users/*", "/internal/users/*", "/internal/admin/*"]
