@@ -50,7 +50,7 @@ public class Oauth2AuthorizationInterceptor implements HandlerInterceptor, Reque
         }
 
         // Start of AccountChGovUk::Bridges::OAuth2ClientCheck::get_client_credentials()
-        var authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        var authHeader = request.getHeader("authorization");
 
         if (authHeader == null || authHeader.isBlank()) {
             logger.trace("no authorisation supplied");
