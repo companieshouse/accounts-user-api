@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Tag("unit-test")
 @WebMvcTest(UserRolesController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class UserRolesControllerTest {
+class UserRolesControllerTest {
 
     @Autowired
     public MockMvc mockMvc;

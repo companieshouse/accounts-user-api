@@ -8,17 +8,11 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import uk.gov.companieshouse.accounts.user.models.Oauth2AuthorisationsDao;
 import uk.gov.companieshouse.accounts.user.repositories.OauthRepository;
 
-import java.util.Map;
-
-import static java.util.Arrays.asList;
-
 /**
  * Interceptor that checks permission to access user profile.
  */
 @Component
 public class UserProfilePermissionInterceptor implements HandlerInterceptor {
-
-    private static final String READ_PERMISSION = "read";
 
     private final OauthRepository oauthRepository;
 

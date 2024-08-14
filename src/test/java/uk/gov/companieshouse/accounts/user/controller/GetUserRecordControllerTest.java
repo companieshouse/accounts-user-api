@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Tag("unit-test")
 @WebMvcTest(GetUserRecordController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class GetUserRecordControllerTest {
+class GetUserRecordControllerTest {
 
     @Autowired
     public MockMvc mockMvc;

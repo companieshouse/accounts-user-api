@@ -72,6 +72,6 @@ public class InterceptorConfig implements WebMvcConfigurer {
      * @param registry The spring interceptor registry
      */
     private void addUserProfileInterceptor(InterceptorRegistry registry) {
-        registry.addInterceptor(userProfilePermissionInterceptor).addPathPatterns("/user/profile");
+        registry.addInterceptor(userProfilePermissionInterceptor).addPathPatterns(USER_PROFILE);
     }
 }
