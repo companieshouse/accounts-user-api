@@ -140,5 +140,5 @@ variable "eric_version" {
 variable "lb_listener_paths" {
   type        = list(string)
   description = "List of listener paths that are needed for each environment"
-  default     = ["/users/*", "/internal/users/*", "/internal/admin/*", "/user/profile"]
+  default     = ["/users/*", "/internal/users/*", "/internal/admin/*", "/user-profile"]
 }
