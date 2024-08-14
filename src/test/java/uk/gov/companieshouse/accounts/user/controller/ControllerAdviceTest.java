@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,7 @@ import uk.gov.companieshouse.accounts.user.service.UsersService;
 
 @Tag("unit-test")
 @WebMvcTest( FindUserBasedOnEmailController.class )
+@AutoConfigureMockMvc(addFilters = false)
 class ControllerAdviceTest {
 
     @Autowired
