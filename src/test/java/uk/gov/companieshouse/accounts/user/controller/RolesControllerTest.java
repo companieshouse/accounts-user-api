@@ -180,7 +180,7 @@ class RolesControllerTest {
             .header("X-Request-Id", "theId123")
             .contentType( "application/json" )
             .content( restrictedWordJson ) )
-            .andExpect( status().isNoContent());
+            .andExpect( status().isCreated());
     }
 
     @DisplayName("Adding a new role to the database - empty fields")
@@ -310,7 +310,7 @@ class RolesControllerTest {
             .header("X-Request-Id", "theId123")
             .contentType( "application/json" )
             .content( permissionsJson ) )
-            .andExpect( status().isOk());
+            .andExpect( status().isNoContent());
     }  
 
     @DisplayName("Modifying the permissions for a role - malformed request")
