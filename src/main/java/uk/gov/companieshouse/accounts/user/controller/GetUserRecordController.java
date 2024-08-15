@@ -94,7 +94,7 @@ public class GetUserRecordController implements GetUserRecordInterface {
             userProfile.put(LOCALE, "GB_en");  //Locale is always GB_en
             userProfile.put(SCOPE, oauthAuthorisation.getRequestedScope());
             userProfile.put(PERMISSIONS, oauthAuthorisation.getPermissions());
-            userProfile.put(TOKEN_PERMISSIONS, oauthAuthorisation.getTokenPermissions());  // create, update
+            userProfile.put(TOKEN_PERMISSIONS, oauthAuthorisation.getTokenPermissions());
 
 
         } catch (Exception e) { //Can not use normal process for any uncaught errors of showing error page. Need to send response
