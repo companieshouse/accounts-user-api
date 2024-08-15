@@ -59,6 +59,7 @@ class UserProfileTest {
         oauthAuthorisation.setUserDetails(userDetails);
         oauthAuthorisation.setRequestedScope("https://account.companieshouse.gov.uk/user.write-full");
         oauthAuthorisation.setPermissions(new HashMap<>());
+        oauthAuthorisation.setTokenPermissions(new HashMap<>());
 
         request.setAttribute("oauth2_authorisation", oauthAuthorisation);
 
@@ -70,6 +71,7 @@ class UserProfileTest {
         userprofile.put("locale", "GB_en");
         userprofile.put("scope", "https://account.companieshouse.gov.uk/user.write-full");
         userprofile.put("permissions", new HashMap<>());
+        userprofile.put("token_permissions", new HashMap<>());
         userprofile.put("private_beta_user", true);
         userprofile.put("account_type", "onelogin");
 
@@ -78,7 +80,7 @@ class UserProfileTest {
         when(user.getIsPrivateBetaUser()).thenReturn(true);
         when(user.getHasLinkedOneLogin()).thenReturn(true);
 
-        var responseEntity = controller.getUserProfile(request);
+        var responseEntity = controller.getUserProfile(request, "X-Request-ID");
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(userprofile, responseEntity.getBody());
@@ -98,6 +100,7 @@ class UserProfileTest {
         oauthAuthorisation.setUserDetails(userDetails);
         oauthAuthorisation.setRequestedScope("https://account.companieshouse.gov.uk/user.write-full");
         oauthAuthorisation.setPermissions(new HashMap<>());
+        oauthAuthorisation.setTokenPermissions(new HashMap<>());
 
         request.setAttribute("oauth2_authorisation", oauthAuthorisation);
 
@@ -109,6 +112,7 @@ class UserProfileTest {
         userprofile.put("locale", "GB_en");
         userprofile.put("scope", "https://account.companieshouse.gov.uk/user.write-full");
         userprofile.put("permissions", new HashMap<>());
+        userprofile.put("token_permissions", new HashMap<>());
         userprofile.put("private_beta_user", true);
         userprofile.put("account_type", "companies_house");
 
@@ -117,7 +121,7 @@ class UserProfileTest {
         when(user.getIsPrivateBetaUser()).thenReturn(true);
         when(user.getHasLinkedOneLogin()).thenReturn(false);
 
-        var responseEntity = controller.getUserProfile(request);
+        var responseEntity = controller.getUserProfile(request, "X-Request-ID");
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(userprofile, responseEntity.getBody());
@@ -132,7 +136,7 @@ class UserProfileTest {
         Map<String, String> errorResponse = new HashMap<>(Map.of(
                 "error", "Cannot locate account"));
 
-        ResponseEntity<Object> responseEntity = controller.getUserProfile(request);
+        ResponseEntity<Object> responseEntity = controller.getUserProfile(request, "X-Request-ID");
 
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
         assertEquals(errorResponse, responseEntity.getBody());
@@ -159,7 +163,7 @@ class UserProfileTest {
         Map<String, String> errorResponse = new HashMap<>(Map.of(
                 "error", "Cannot locate user"));
 
-        ResponseEntity<Object> responseEntity = controller.getUserProfile(request);
+        ResponseEntity<Object> responseEntity = controller.getUserProfile(request, "X-Request-ID");
 
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
         assertEquals(errorResponse, responseEntity.getBody());
@@ -170,7 +174,7 @@ class UserProfileTest {
     void getUserProfileException() {
         Map<String, String> errorResponse = new HashMap<>(Map.of(
                 "error", "Error locating account"));
-        ResponseEntity<Object> responseEntity = controller.getUserProfile(request);
+        ResponseEntity<Object> responseEntity = controller.getUserProfile(request, "X-Request-ID");
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
         assertEquals(errorResponse, responseEntity.getBody());
