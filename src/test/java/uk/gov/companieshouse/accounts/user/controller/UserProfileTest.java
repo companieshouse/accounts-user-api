@@ -7,24 +7,24 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import uk.gov.companieshouse.accounts.user.models.Oauth2AuthorisationsDao;
-import uk.gov.companieshouse.accounts.user.models.UserDetailsDao;
 import uk.gov.companieshouse.accounts.user.service.UsersService;
 import uk.gov.companieshouse.api.accounts.user.model.User;
+import uk.gov.companieshouse.api.util.security.AuthorisationUtil;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,144 +36,150 @@ class UserProfileTest {
     @Mock
     UsersService usersService;
 
+    @Mock
+    private HttpServletRequest mockRequest;
+
     private HttpServletRequest request;
+
+    private String testUserId = "0123456789";
+    private String testForename = "Fred";
+    private String testSurname = "Bloggs";
+    private String testEmail = "tester@test.com";
+
+    private String testScope = "https://account.companieshouse.gov.uk/user.write-full";
+    private String COMPANIES_HOUSE = "companies_house";
+    private String ONELOGIN = "onelogin";
+
+    private User testUser = new User();
+    private Map<String, Object> expectedUserProfile = new HashMap<>();
 
     @BeforeEach
     void setUp() {
         request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
-    }
 
+        testUser.setUserId(testUserId);
+        testUser.setForename(testForename);
+        testUser.setSurname(testSurname);
+        testUser.setEmail(testEmail);
+        testUser.setIsPrivateBetaUser(false);
+
+        expectedUserProfile.put("forename", testForename);
+        expectedUserProfile.put("surname", testSurname);
+        expectedUserProfile.put("email", testEmail);
+        expectedUserProfile.put("id", testUserId);
+        expectedUserProfile.put("locale", "GB_en");
+        expectedUserProfile.put("scope", testScope);
+        expectedUserProfile.put("permissions", new HashMap<>());
+        expectedUserProfile.put("private_beta_user", false);
+        expectedUserProfile.put("account_type", COMPANIES_HOUSE);
+    }
 
     @Test
     @DisplayName("UserControllerTests - getUserProfileSuccess")
     void getUserProfileSuccess() {
 
-        var userDetails = new UserDetailsDao();
-        userDetails.setForename("Fred");
-        userDetails.setSurname("Bloggs");
-        userDetails.setEmail("email@email.com");
-        userDetails.setUserID("12345");
+        try (MockedStatic<AuthorisationUtil> authorisationUtil = Mockito.mockStatic(AuthorisationUtil.class)) {
+            authorisationUtil.when(() -> AuthorisationUtil.getAuthorisedIdentityType(mockRequest)).thenReturn("oauth2");
+            authorisationUtil.when(() -> AuthorisationUtil.getAuthorisedIdentity(mockRequest)).thenReturn(testUserId);
+            authorisationUtil.when(() -> AuthorisationUtil.getAuthorisedRoles(mockRequest)).thenReturn(new ArrayList<String>());
+            when(mockRequest.getHeader("eric-authorised-scope")).thenReturn(testScope);
 
-        var oauthAuthorisation = new Oauth2AuthorisationsDao();
-        oauthAuthorisation.setUserDetails(userDetails);
-        oauthAuthorisation.setRequestedScope("https://account.companieshouse.gov.uk/user.write-full");
-        oauthAuthorisation.setPermissions(new HashMap<>());
+            when(usersService.fetchUser(testUserId)).thenReturn((Optional.of(testUser)));
 
-        request.setAttribute("oauth2_authorisation", oauthAuthorisation);
+            var responseEntity = controller.getUserProfile(mockRequest);
 
-        Map<String, Object> userprofile = new HashMap<>();
-        userprofile.put("forename", "Fred");
-        userprofile.put("surname", "Bloggs");
-        userprofile.put("email", "email@email.com");
-        userprofile.put("id", "12345");
-        userprofile.put("locale", "GB_en");
-        userprofile.put("scope", "https://account.companieshouse.gov.uk/user.write-full");
-        userprofile.put("permissions", new HashMap<>());
-        userprofile.put("private_beta_user", true);
-        userprofile.put("account_type", "onelogin");
+            assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+            assertEquals(expectedUserProfile, responseEntity.getBody());
+        }
+    }
 
-        var user = mock(User.class);
-        when(usersService.fetchUser(any())).thenReturn((Optional.of(user)));
-        when(user.getIsPrivateBetaUser()).thenReturn(true);
-        when(user.getHasLinkedOneLogin()).thenReturn(true);
+    @Test
+    @DisplayName("UserControllerTests - getUserProfile Success with admin permissions")
+    void getUserProfileSuccessWithPermissions() {
 
-        var responseEntity = controller.getUserProfile(request);
+        var roles = new ArrayList<String>();
+        roles.add("admin/role-A");
+        roles.add("admin/role-B");
+        var permissions = new HashMap<>(Map.of("admin/role-A", 1, "admin/role-B", 1));
 
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(userprofile, responseEntity.getBody());
+        try (MockedStatic<AuthorisationUtil> authorisationUtil = Mockito.mockStatic(AuthorisationUtil.class)) {
+            authorisationUtil.when(() -> AuthorisationUtil.getAuthorisedIdentityType(mockRequest)).thenReturn("oauth2");
+            authorisationUtil.when(() -> AuthorisationUtil.getAuthorisedIdentity(mockRequest)).thenReturn(testUserId);
+            authorisationUtil.when(() -> AuthorisationUtil.getAuthorisedRoles(mockRequest)).thenReturn(roles);
+            when(mockRequest.getHeader("eric-authorised-scope")).thenReturn(testScope);
+
+            when(usersService.fetchUser(testUserId)).thenReturn((Optional.of(testUser)));
+
+            var responseEntity = controller.getUserProfile(mockRequest);
+
+            assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+            expectedUserProfile.put("permissions", permissions);
+            assertEquals(expectedUserProfile, responseEntity.getBody());
+        }
     }
 
     @Test
     @DisplayName("UserControllerTests - getUserProfileSuccessWithNullValue")
     void getUserProfileSuccessWithNullValue() {
-        Oauth2AuthorisationsDao oauthAuthorisation = new Oauth2AuthorisationsDao();
-        UserDetailsDao userDetails = new UserDetailsDao();
 
-        userDetails.setForename(null);
-        userDetails.setSurname(null);
-        userDetails.setEmail("email@email.com");
-        userDetails.setUserID("12345");
+        try (MockedStatic<AuthorisationUtil> authorisationUtil = Mockito.mockStatic(AuthorisationUtil.class)) {
+            authorisationUtil.when(() -> AuthorisationUtil.getAuthorisedIdentityType(mockRequest)).thenReturn("oauth2");
+            authorisationUtil.when(() -> AuthorisationUtil.getAuthorisedIdentity(mockRequest)).thenReturn(testUserId);
+            authorisationUtil.when(() -> AuthorisationUtil.getAuthorisedRoles(mockRequest)).thenReturn(new ArrayList<String>());
+            when(mockRequest.getHeader("eric-authorised-scope")).thenReturn(testScope);
 
-        oauthAuthorisation.setUserDetails(userDetails);
-        oauthAuthorisation.setRequestedScope("https://account.companieshouse.gov.uk/user.write-full");
-        oauthAuthorisation.setPermissions(new HashMap<>());
+            testUser.setForename(null);
+            testUser.setSurname(null);
+            testUser.setIsPrivateBetaUser(true);
+            testUser.setHasLinkedOneLogin(true);
+            when(usersService.fetchUser(testUserId)).thenReturn((Optional.of(testUser)));
 
-        request.setAttribute("oauth2_authorisation", oauthAuthorisation);
+            var responseEntity = controller.getUserProfile(mockRequest);
 
-        Map<String, Object> userprofile = new HashMap<>();
-        userprofile.put("forename", null);
-        userprofile.put("surname", null);
-        userprofile.put("email", "email@email.com");
-        userprofile.put("id", "12345");
-        userprofile.put("locale", "GB_en");
-        userprofile.put("scope", "https://account.companieshouse.gov.uk/user.write-full");
-        userprofile.put("permissions", new HashMap<>());
-        userprofile.put("private_beta_user", true);
-        userprofile.put("account_type", "companies_house");
-
-        var user = mock(User.class);
-        when(usersService.fetchUser(any())).thenReturn((Optional.of(user)));
-        when(user.getIsPrivateBetaUser()).thenReturn(true);
-        when(user.getHasLinkedOneLogin()).thenReturn(false);
-
-        var responseEntity = controller.getUserProfile(request);
-
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(userprofile, responseEntity.getBody());
+            assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+            expectedUserProfile.put("forename", null);
+            expectedUserProfile.put("surname", null);
+            expectedUserProfile.put("private_beta_user", true);
+            expectedUserProfile.put("account_type", ONELOGIN);
+            assertEquals(expectedUserProfile, responseEntity.getBody());
+        }
     }
 
     @Test
-    @DisplayName("UserControllerTests - getUserProfileNotFound")
-    void getUserProfileNotFound() {
-        Oauth2AuthorisationsDao oauthAuthorisation = new Oauth2AuthorisationsDao();
-        request.setAttribute("oauth2_authorisation", oauthAuthorisation);
+    @DisplayName("UserControllerTests - getUserProfile wrong identity type")
+    void getUserProfileWrongIdentityType() {
 
-        Map<String, String> errorResponse = new HashMap<>(Map.of(
-                "error", "Cannot locate account"));
+        try (MockedStatic<AuthorisationUtil> authorisationUtil = Mockito.mockStatic(AuthorisationUtil.class)) {
+            authorisationUtil.when(() -> AuthorisationUtil.getAuthorisedIdentityType(mockRequest)).thenReturn("apikey");
 
-        ResponseEntity<Object> responseEntity = controller.getUserProfile(request);
+            Map<String, String> errorResponse = new HashMap<>(Map.of(
+                    "error", "wrong identity type"));
 
-        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
-        assertEquals(errorResponse, responseEntity.getBody());
+            ResponseEntity<Object> responseEntity = controller.getUserProfile(mockRequest);
+
+            assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+            assertEquals(errorResponse, responseEntity.getBody());
+        }
     }
 
     @Test
     @DisplayName("UserControllerTests - getUserProfile Optional NotFound")
     void getUserProfileOptionalNotFound() {
-        var userDetails = new UserDetailsDao();
-        userDetails.setForename("Fred");
-        userDetails.setSurname("Bloggs");
-        userDetails.setEmail("email@email.com");
-        userDetails.setUserID("12345");
 
-        var oauthAuthorisation = new Oauth2AuthorisationsDao();
-        oauthAuthorisation.setUserDetails(userDetails);
-        oauthAuthorisation.setRequestedScope("https://account.companieshouse.gov.uk/user.write-full");
-        oauthAuthorisation.setPermissions(new HashMap<>());
+        try (MockedStatic<AuthorisationUtil> authorisationUtil = Mockito.mockStatic(AuthorisationUtil.class)) {
+            authorisationUtil.when(() -> AuthorisationUtil.getAuthorisedIdentityType(mockRequest)).thenReturn("oauth2");
+            authorisationUtil.when(() -> AuthorisationUtil.getAuthorisedIdentity(mockRequest)).thenReturn(testUserId);
+            authorisationUtil.when(() -> AuthorisationUtil.getAuthorisedRoles(mockRequest)).thenReturn(new ArrayList<String>());
 
-        request.setAttribute("oauth2_authorisation", oauthAuthorisation);
+            when(usersService.fetchUser(testUserId)).thenReturn((Optional.empty()));
 
-        when(usersService.fetchUser(any())).thenReturn(Optional.empty());
+            var responseEntity = controller.getUserProfile(mockRequest);
 
-        Map<String, String> errorResponse = new HashMap<>(Map.of(
-                "error", "Cannot locate user"));
-
-        ResponseEntity<Object> responseEntity = controller.getUserProfile(request);
-
-        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
-        assertEquals(errorResponse, responseEntity.getBody());
+            assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+            Map<String, String> errorResponse = new HashMap<>(Map.of(
+                    "error", "Cannot locate user"));
+            assertEquals(errorResponse, responseEntity.getBody());
+        }
     }
-
-    @Test
-    @DisplayName("UserControllerTests - getUserProfileException")
-    void getUserProfileException() {
-        Map<String, String> errorResponse = new HashMap<>(Map.of(
-                "error", "Error locating account"));
-        ResponseEntity<Object> responseEntity = controller.getUserProfile(request);
-
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
-        assertEquals(errorResponse, responseEntity.getBody());
-    }
-
 }

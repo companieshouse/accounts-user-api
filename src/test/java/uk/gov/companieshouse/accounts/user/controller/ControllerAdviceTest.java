@@ -17,7 +17,6 @@ import org.springframework.web.client.HttpServerErrorException;
 import uk.gov.companieshouse.accounts.user.configuration.InterceptorConfig;
 import uk.gov.companieshouse.accounts.user.exceptions.InternalServerErrorRuntimeException;
 import uk.gov.companieshouse.accounts.user.exceptions.NotFoundRuntimeException;
-import uk.gov.companieshouse.accounts.user.repositories.OauthRepository;
 import uk.gov.companieshouse.accounts.user.service.UsersService;
 
 @Tag("unit-test")
@@ -32,9 +31,6 @@ class ControllerAdviceTest {
 
     @MockBean
     InterceptorConfig interceptorConfig;
-
-    @MockBean
-    OauthRepository oauthRepository;
 
     @BeforeEach
     void setup() {

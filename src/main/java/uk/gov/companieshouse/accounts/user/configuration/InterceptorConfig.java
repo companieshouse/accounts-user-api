@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.accounts.user.configuration;
 
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -8,26 +9,27 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import static uk.gov.companieshouse.accounts.user.AccountsUserServiceApplication.applicationNameSpace;
 import uk.gov.companieshouse.accounts.user.interceptor.EricAuthorisedKeyPrivilegesInterceptor;
 import uk.gov.companieshouse.accounts.user.interceptor.LoggingInterceptor;
-import uk.gov.companieshouse.accounts.user.interceptor.Oauth2AuthorizationInterceptor;
 import uk.gov.companieshouse.api.interceptor.RolePermissionInterceptor;
+import uk.gov.companieshouse.api.interceptor.TokenPermissionsInterceptor;
 
 @Configuration
+@ComponentScan("uk.gov.companieshouse.api.interceptor")
 public class InterceptorConfig implements WebMvcConfigurer {
 
     private final LoggingInterceptor loggingInterceptor;
-    private Oauth2AuthorizationInterceptor oauth2AuthorizationInterceptor;
+    private final TokenPermissionsInterceptor tokenPermissionsInterceptor;
     public static final String USER_PROFILE = "/user/profile";
-    
+
     private static final String USERS_ENDPOINTS = "/users/**";
     private static final String INTERNAL_USERS_ENDPOINTS = "/internal/users/**";
     private static final String ADMIN_ROLE_ENDPOINTS = "/internal/admin/roles/**";
     private static final String INTERNAL_GET_USER_RECORD_ENDPOINT = "/internal/admin/users/**";
     private static final String ADMIN_USER_SEARCH_PERMISSION = "/admin/user/search";
-    
+
     private static final String WILDCARD = "/**";
-    public InterceptorConfig( final LoggingInterceptor loggingInterceptor, final Oauth2AuthorizationInterceptor oauth2AuthorizationInterceptor) {
+    public InterceptorConfig( final LoggingInterceptor loggingInterceptor, final TokenPermissionsInterceptor tokenPermissionsInterceptor) {
         this.loggingInterceptor = loggingInterceptor;
-        this.oauth2AuthorizationInterceptor = oauth2AuthorizationInterceptor;
+        this.tokenPermissionsInterceptor = tokenPermissionsInterceptor;
     }
 
     /**
@@ -43,7 +45,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
         addRolePermissionInterceptor(registry, INTERNAL_GET_USER_RECORD_ENDPOINT,ADMIN_USER_SEARCH_PERMISSION );
         addRolePermissionInterceptor(registry, INTERNAL_USERS_ENDPOINTS, ADMIN_USER_SEARCH_PERMISSION);
         addRolePermissionInterceptor(registry, ADMIN_ROLE_ENDPOINTS, "/admin/roles");
-        addOauth2AuthorizationInterceptor(registry);
+        addTokenPermissionsInterceptor(registry);
     }
 
     /**
@@ -55,7 +57,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
         registry.addInterceptor(loggingInterceptor)
         .addPathPatterns(WILDCARD);
     }
-     
+
     private void addRolePermissionInterceptor(final InterceptorRegistry registry, final String path, final String permission){
         registry.addInterceptor(new RolePermissionInterceptor(applicationNameSpace, permission))
         .addPathPatterns(path);
@@ -71,7 +73,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
      *
      * @param registry The spring interceptor registry
      */
-    private void addOauth2AuthorizationInterceptor(InterceptorRegistry registry) {
-        registry.addInterceptor(oauth2AuthorizationInterceptor).addPathPatterns(USER_PROFILE);
+    private void addTokenPermissionsInterceptor(InterceptorRegistry registry) {
+        registry.addInterceptor(tokenPermissionsInterceptor).addPathPatterns(USER_PROFILE);
     }
 }
