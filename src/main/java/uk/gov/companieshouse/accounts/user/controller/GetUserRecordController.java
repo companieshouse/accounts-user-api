@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.companieshouse.accounts.user.AccountsUserServiceApplication;
 import uk.gov.companieshouse.accounts.user.service.UsersService;
@@ -16,6 +17,8 @@ import uk.gov.companieshouse.logging.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static uk.gov.companieshouse.accounts.user.controller.ControllerAdvice.X_REQUEST_ID;
 
 @RestController
 public class GetUserRecordController implements GetUserRecordInterface {
@@ -31,6 +34,8 @@ public class GetUserRecordController implements GetUserRecordInterface {
     private static final String LOCALE = "locale";
     private static final String SCOPE = "scope";
     private static final String PERMISSIONS = "permissions";
+    private static final String TOKEN_PERMISSIONS = "token_permissions";
+
     private static final String PRIVATE_BETA_USER = "private_beta_user";
     private static final String ACCOUNT_TYPE = "account_type";
     private static final String ERROR = "error";
@@ -59,7 +64,9 @@ public class GetUserRecordController implements GetUserRecordInterface {
     }
 
     @GetMapping("/user/profile")
-    public ResponseEntity<Object> getUserProfile(HttpServletRequest request) {
+    public ResponseEntity<Object> getUserProfile(HttpServletRequest request,
+                                                 @RequestHeader(value = X_REQUEST_ID, required = false) String xRequestId) {
+        LOG.debugContext(xRequestId,"Get User Profile", null);
         Map<String,Object> userProfile = new HashMap<>();
         try {
             if (!"oauth2".equals(AuthorisationUtil.getAuthorisedIdentityType(request))) {
@@ -69,7 +76,7 @@ public class GetUserRecordController implements GetUserRecordInterface {
 
             final var userOptional = usersService.fetchUser(userId);
             if (userOptional.isEmpty()){
-                LOG.error("User not found");
+                LOG.errorContext(xRequestId, "User Details not found", null,null);
                 return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND).body(new HashMap<>(Map.of(ERROR, "Cannot locate user")));
             }
             final var user = userOptional.get();
@@ -92,9 +99,10 @@ public class GetUserRecordController implements GetUserRecordInterface {
                 }
             }
             userProfile.put(PERMISSIONS, permissions);
+            userProfile.put(TOKEN_PERMISSIONS, oauthAuthorisation.getTokenPermissions());
 
         } catch (Exception e) { //Can not use normal process for any uncaught errors of showing error page. Need to send response
-            LOG.errorRequest(request, e.getMessage());
+            LOG.errorContext(xRequestId, e, null);
             return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).body(new HashMap<>(Map.of(ERROR, e.getMessage())));
         }
         return ResponseEntity.status(HttpServletResponse.SC_OK).body(userProfile);
