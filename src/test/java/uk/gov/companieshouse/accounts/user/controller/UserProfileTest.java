@@ -36,7 +36,7 @@ class UserProfileTest {
     @Mock
     private HttpServletRequest mockRequest;
 
-    private String xRequestId = "X-Request-Id";
+    private final String xRequestId = "X-Request-Id";
 
     private final String testUserId = "0123456789";
     private final String testForename = "Fred";
@@ -47,8 +47,8 @@ class UserProfileTest {
     private final String COMPANIES_HOUSE = "companies_house";
     private final String ONELOGIN = "onelogin";
 
-    private User testUser = new User();
-    private Map<String, Object> expectedUserProfile = new HashMap<>();
+    private final User testUser = new User();
+    private final Map<String, Object> expectedUserProfile = new HashMap<>();
 
     @BeforeEach
     void setUp() {
@@ -74,10 +74,13 @@ class UserProfileTest {
     @DisplayName("UserControllerTests - getUserProfileSuccess")
     void getUserProfileSuccess() {
 
+        var roles = new ArrayList<String>();
+        roles.add("");
+
         try (MockedStatic<AuthorisationUtil> authorisationUtil = Mockito.mockStatic(AuthorisationUtil.class)) {
             authorisationUtil.when(() -> AuthorisationUtil.getAuthorisedIdentityType(mockRequest)).thenReturn("oauth2");
             authorisationUtil.when(() -> AuthorisationUtil.getAuthorisedIdentity(mockRequest)).thenReturn(testUserId);
-            authorisationUtil.when(() -> AuthorisationUtil.getAuthorisedRoles(mockRequest)).thenReturn(new ArrayList<String>());
+            authorisationUtil.when(() -> AuthorisationUtil.getAuthorisedRoles(mockRequest)).thenReturn(roles);
             when(mockRequest.getHeader("eric-authorised-scope")).thenReturn(testScope);
             when(mockRequest.getHeader("eric-authorised-token-permissions")).thenReturn("user-profile=read");
 
