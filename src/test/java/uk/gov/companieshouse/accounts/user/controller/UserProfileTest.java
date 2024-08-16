@@ -12,9 +12,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import uk.gov.companieshouse.accounts.user.service.UsersService;
 import uk.gov.companieshouse.api.accounts.user.model.User;
 import uk.gov.companieshouse.api.util.security.AuthorisationUtil;
@@ -39,25 +36,22 @@ class UserProfileTest {
     @Mock
     private HttpServletRequest mockRequest;
 
-    private HttpServletRequest request;
+    private String xRequestId = "X-Request-Id";
 
-    private String testUserId = "0123456789";
-    private String testForename = "Fred";
-    private String testSurname = "Bloggs";
-    private String testEmail = "tester@test.com";
+    private final String testUserId = "0123456789";
+    private final String testForename = "Fred";
+    private final String testSurname = "Bloggs";
+    private final String testEmail = "tester@test.com";
 
-    private String testScope = "https://account.companieshouse.gov.uk/user.write-full";
-    private String COMPANIES_HOUSE = "companies_house";
-    private String ONELOGIN = "onelogin";
+    private final String testScope = "https://account.companieshouse.gov.uk/user.write-full";
+    private final String COMPANIES_HOUSE = "companies_house";
+    private final String ONELOGIN = "onelogin";
 
     private User testUser = new User();
     private Map<String, Object> expectedUserProfile = new HashMap<>();
 
     @BeforeEach
     void setUp() {
-        request = new MockHttpServletRequest();
-        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
-
         testUser.setUserId(testUserId);
         testUser.setForename(testForename);
         testUser.setSurname(testSurname);
@@ -71,6 +65,7 @@ class UserProfileTest {
         expectedUserProfile.put("locale", "GB_en");
         expectedUserProfile.put("scope", testScope);
         expectedUserProfile.put("permissions", new HashMap<>());
+        expectedUserProfile.put("token_permissions", new HashMap<>(Map.of("user-profile", "read")));
         expectedUserProfile.put("private_beta_user", false);
         expectedUserProfile.put("account_type", COMPANIES_HOUSE);
     }
@@ -84,10 +79,11 @@ class UserProfileTest {
             authorisationUtil.when(() -> AuthorisationUtil.getAuthorisedIdentity(mockRequest)).thenReturn(testUserId);
             authorisationUtil.when(() -> AuthorisationUtil.getAuthorisedRoles(mockRequest)).thenReturn(new ArrayList<String>());
             when(mockRequest.getHeader("eric-authorised-scope")).thenReturn(testScope);
+            when(mockRequest.getHeader("eric-authorised-token-permissions")).thenReturn("user-profile=read");
 
             when(usersService.fetchUser(testUserId)).thenReturn((Optional.of(testUser)));
 
-            var responseEntity = controller.getUserProfile(mockRequest);
+            var responseEntity = controller.getUserProfile(mockRequest, xRequestId);
 
             assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
             assertEquals(expectedUserProfile, responseEntity.getBody());
@@ -108,10 +104,11 @@ class UserProfileTest {
             authorisationUtil.when(() -> AuthorisationUtil.getAuthorisedIdentity(mockRequest)).thenReturn(testUserId);
             authorisationUtil.when(() -> AuthorisationUtil.getAuthorisedRoles(mockRequest)).thenReturn(roles);
             when(mockRequest.getHeader("eric-authorised-scope")).thenReturn(testScope);
+            when(mockRequest.getHeader("eric-authorised-token-permissions")).thenReturn("user-profile=read");
 
             when(usersService.fetchUser(testUserId)).thenReturn((Optional.of(testUser)));
 
-            var responseEntity = controller.getUserProfile(mockRequest);
+            var responseEntity = controller.getUserProfile(mockRequest, xRequestId);
 
             assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
             expectedUserProfile.put("permissions", permissions);
@@ -128,6 +125,7 @@ class UserProfileTest {
             authorisationUtil.when(() -> AuthorisationUtil.getAuthorisedIdentity(mockRequest)).thenReturn(testUserId);
             authorisationUtil.when(() -> AuthorisationUtil.getAuthorisedRoles(mockRequest)).thenReturn(new ArrayList<String>());
             when(mockRequest.getHeader("eric-authorised-scope")).thenReturn(testScope);
+            when(mockRequest.getHeader("eric-authorised-token-permissions")).thenReturn("user-profile=read");
 
             testUser.setForename(null);
             testUser.setSurname(null);
@@ -135,7 +133,7 @@ class UserProfileTest {
             testUser.setHasLinkedOneLogin(true);
             when(usersService.fetchUser(testUserId)).thenReturn((Optional.of(testUser)));
 
-            var responseEntity = controller.getUserProfile(mockRequest);
+            var responseEntity = controller.getUserProfile(mockRequest, xRequestId);
 
             assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
             expectedUserProfile.put("forename", null);
@@ -156,7 +154,7 @@ class UserProfileTest {
             Map<String, String> errorResponse = new HashMap<>(Map.of(
                     "error", "wrong identity type"));
 
-            ResponseEntity<Object> responseEntity = controller.getUserProfile(mockRequest);
+            ResponseEntity<Object> responseEntity = controller.getUserProfile(mockRequest, xRequestId);
 
             assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
             assertEquals(errorResponse, responseEntity.getBody());
@@ -174,7 +172,7 @@ class UserProfileTest {
 
             when(usersService.fetchUser(testUserId)).thenReturn((Optional.empty()));
 
-            var responseEntity = controller.getUserProfile(mockRequest);
+            var responseEntity = controller.getUserProfile(mockRequest, xRequestId);
 
             assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
             Map<String, String> errorResponse = new HashMap<>(Map.of(

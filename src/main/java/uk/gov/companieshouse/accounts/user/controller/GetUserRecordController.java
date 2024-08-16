@@ -8,13 +8,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.companieshouse.accounts.user.AccountsUserServiceApplication;
+import uk.gov.companieshouse.accounts.user.exceptions.InternalServerErrorRuntimeException;
 import uk.gov.companieshouse.accounts.user.service.UsersService;
 import uk.gov.companieshouse.api.accounts.user.api.GetUserRecordInterface;
 import uk.gov.companieshouse.api.accounts.user.model.User;
 import uk.gov.companieshouse.api.util.security.AuthorisationUtil;
+import uk.gov.companieshouse.api.util.security.Permission;
+import uk.gov.companieshouse.api.util.security.TokenPermissions;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -70,7 +75,7 @@ public class GetUserRecordController implements GetUserRecordInterface {
         Map<String,Object> userProfile = new HashMap<>();
         try {
             if (!"oauth2".equals(AuthorisationUtil.getAuthorisedIdentityType(request))) {
-                throw new RuntimeException("wrong identity type");
+                throw new InternalServerErrorRuntimeException("wrong identity type");
             }
             var userId = AuthorisationUtil.getAuthorisedIdentity(request);
 
@@ -99,12 +104,26 @@ public class GetUserRecordController implements GetUserRecordInterface {
                 }
             }
             userProfile.put(PERMISSIONS, permissions);
-            userProfile.put(TOKEN_PERMISSIONS, oauthAuthorisation.getTokenPermissions());
+
+            userProfile.put(TOKEN_PERMISSIONS, getTokenPermissions(request));
 
         } catch (Exception e) { //Can not use normal process for any uncaught errors of showing error page. Need to send response
             LOG.errorContext(xRequestId, e, null);
             return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).body(new HashMap<>(Map.of(ERROR, e.getMessage())));
         }
         return ResponseEntity.status(HttpServletResponse.SC_OK).body(userProfile);
+    }
+
+    private HashMap<String, String> getTokenPermissions(HttpServletRequest request) {
+        // Get token permissions from ERIC
+        var tokenPermissionsString = request.getHeader("eric-authorised-token-permissions");
+        var tokenPermissions = tokenPermissionsString.split(" ");
+
+        var tokenPermissionMap = new HashMap<String, String>();
+        for (String permission : tokenPermissions ) {
+            var keyValue = permission.split("=");
+            tokenPermissionMap.put(keyValue[0], keyValue[1]);
+        }
+        return tokenPermissionMap;
     }
 }
