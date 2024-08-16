@@ -137,7 +137,7 @@ class RolesControllerTest {
             .header("X-Request-Id", "theId123")
             .contentType( "application/json" )
             .content( restrictedWordJson ) )
-            .andExpect( status().isNoContent());
+            .andExpect( status().isCreated());
     }
 
     @DisplayName("Adding a new role to the database - No Role ID - Bad request thrown")
@@ -291,7 +291,7 @@ class RolesControllerTest {
             .header("X-Request-Id", "theId123")
             .contentType( "application/json" )
             .content(permissionJson ) )
-            .andExpect( status().isOk());
+            .andExpect( status().isNoContent());
     } 
 
     @DisplayName("Modifying the permissions for a role")
