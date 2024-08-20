@@ -27,7 +27,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import uk.gov.companieshouse.accounts.user.configuration.InterceptorConfig;
 import uk.gov.companieshouse.accounts.user.models.UserRole;
-import uk.gov.companieshouse.accounts.user.repositories.OauthRepository;
 import uk.gov.companieshouse.accounts.user.service.RolesService;
 import uk.gov.companieshouse.accounts.user.service.UsersService;
 import uk.gov.companieshouse.api.accounts.user.model.PermissionsList;
@@ -49,9 +48,6 @@ class RolesControllerTest {
 
     @MockBean
     InterceptorConfig interceptorConfig;
-
-    @MockBean
-    OauthRepository oauthRepository;
 
     UserRole supervisor = new UserRole();
     UserRole admin = new UserRole();
@@ -137,7 +133,7 @@ class RolesControllerTest {
             .header("X-Request-Id", "theId123")
             .contentType( "application/json" )
             .content( restrictedWordJson ) )
-            .andExpect( status().isNoContent());
+            .andExpect( status().isCreated());
     }
 
     @DisplayName("Adding a new role to the database - No Role ID - Bad request thrown")
@@ -291,7 +287,7 @@ class RolesControllerTest {
             .header("X-Request-Id", "theId123")
             .contentType( "application/json" )
             .content(permissionJson ) )
-            .andExpect( status().isOk());
+            .andExpect( status().isNoContent());
     } 
 
     @DisplayName("Modifying the permissions for a role")

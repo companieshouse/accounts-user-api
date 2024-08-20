@@ -22,19 +22,22 @@ import uk.gov.companieshouse.accounts.user.repositories.UsersRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
 @SpringBootTest
 @Testcontainers
 @Tag("integration-test")
-public class UserRolesControllerTest {
+class UserRolesControllerTest {
 
     @Container
     @ServiceConnection
@@ -296,6 +299,32 @@ public class UserRolesControllerTest {
                         .contentType( "application/json" )
                        )
                 .andExpect( status().isBadRequest() );    }
+
+
+    @Test
+    void getUserProfile() throws Exception {
+
+        mockMvc.perform( get( "/user/profile" )
+                        .header( "eric-identity-type", "oauth2" )
+                        .header( "eric-identity", "111" )
+                        .header( "eric-authorised-roles", "" )
+                        .header( "eric-authorised-scope", "test-scope" )
+                        .header( "eric-authorised-token-permissions", "user-profile=read" )
+                )
+                .andExpect( status().isOk())
+                .andExpect( jsonPath("$.forename").value("Marshall"))
+                .andExpect( jsonPath("$.surname").value("Mathers"))
+                .andExpect( jsonPath("$.email").value("eminem@rap.com"))
+                .andExpect( jsonPath("$.id").value("111"))
+                .andExpect( jsonPath("$.locale").value("GB_en"))
+                .andExpect( jsonPath("$.scope").value("test-scope"))
+                .andExpect( jsonPath("$.permissions").value(""))
+                .andExpect( jsonPath("$.token_permissions").value(new HashMap<>(Map.of("user-profile", "read"))))
+                .andExpect( jsonPath("$.private_beta_user").value(false))
+                .andExpect( jsonPath("$.account_type").value("companies_house"))
+        ;
+
+    }
 
     @AfterEach
     public void after() {
