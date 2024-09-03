@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.aot.DisabledInAotMode;
+
 import uk.gov.companieshouse.accounts.user.models.OneLoginDataDao;
 import uk.gov.companieshouse.accounts.user.models.Users;
 import uk.gov.companieshouse.api.accounts.user.model.RolesList;
@@ -16,6 +18,7 @@ import java.util.List;
 
 @SpringBootTest
 @Tag("unit-test")
+@DisabledInAotMode
 public class UsersDtoDaoMapperTest {
 
     @Autowired

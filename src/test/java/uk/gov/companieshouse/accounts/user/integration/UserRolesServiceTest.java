@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.test.context.aot.DisabledInAotMode;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -30,6 +31,7 @@ import uk.gov.companieshouse.api.accounts.user.model.Roles;
 @SpringBootTest
 @Testcontainers(parallel = true)
 @Tag("integration-test")
+@DisabledInAotMode
 public class UserRolesServiceTest {
 
     @Container
@@ -92,7 +94,7 @@ public class UserRolesServiceTest {
         rolesService.addRole(admin);
         assertEquals(2, rolesService.getRoles().size());
 
-        Role role = rolesService.getRoles().getFirst();
+        Role role = (Role) rolesService.getRoles().getFirst();
         assertEquals("admin", role.getId());
         assertTrue(rolesService.getRoles().getFirst().getPermissions().containsAll(List.of("permission1","permission2")));
     }
@@ -104,7 +106,7 @@ public class UserRolesServiceTest {
         adminPermissions.add("permission99");
         rolesService.editRole("admin", adminPermissions);
 
-        Role role = rolesService.getRoles().getFirst();
+        Role role = (Role) rolesService.getRoles().getFirst();
         assertEquals("admin", role.getId());
         assertTrue(rolesService.getRoles().getFirst().getPermissions().containsAll(List.of("permission99")));
     }    

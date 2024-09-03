@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.aot.DisabledInAotMode;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.client.HttpServerErrorException;
 import uk.gov.companieshouse.accounts.user.configuration.InterceptorConfig;
@@ -20,6 +21,7 @@ import uk.gov.companieshouse.accounts.user.exceptions.NotFoundRuntimeException;
 import uk.gov.companieshouse.accounts.user.service.UsersService;
 
 @Tag("unit-test")
+@DisabledInAotMode
 @WebMvcTest( FindUserBasedOnEmailController.class )
 class ControllerAdviceTest {
 

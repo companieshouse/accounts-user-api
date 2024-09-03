@@ -8,6 +8,7 @@ import org.springframework.data.domain.Limit;
 import org.springframework.data.mongodb.UncategorizedMongoDbException;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.test.context.aot.DisabledInAotMode;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -24,6 +25,8 @@ import java.util.Objects;
 
 @SpringBootTest
 @Testcontainers(parallel = true)
+@DisabledInAotMode
+
 @Tag("integration-test")
 public class UsersRepositoryTest {
 

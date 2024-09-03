@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.data.mongodb.UncategorizedMongoDbException;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.test.context.aot.DisabledInAotMode;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -25,6 +26,7 @@ import java.util.Objects;
 
 @SpringBootTest
 @Testcontainers(parallel = true)
+@DisabledInAotMode
 @Tag("integration-test")
 public class UsersServiceTest {
 

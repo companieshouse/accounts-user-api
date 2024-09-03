@@ -1,3 +1,4 @@
+
 package uk.gov.companieshouse.accounts.user.service;
 
 import org.bson.Document;
@@ -15,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Limit;
 import org.springframework.data.mongodb.UncategorizedMongoDbException;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.test.context.aot.DisabledInAotMode;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.companieshouse.accounts.user.exceptions.BadRequestRuntimeException;
 import uk.gov.companieshouse.accounts.user.mapper.UsersDtoDaoMapper;
@@ -34,6 +36,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@DisabledInAotMode
 @Tag("unit-test")
 public class UsersServiceTest {
 

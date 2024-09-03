@@ -119,7 +119,6 @@ public class RolesController implements RolesInterface {
         } else {
             LOG.debug( String.format( "%s: Unable to get any roles",xRequestId) );
             return new ResponseEntity<>(new Roles(), HttpStatus.BAD_REQUEST);
-
         }
     }
 
