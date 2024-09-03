@@ -5,7 +5,6 @@ This API grants access to user account information and associated functionalitie
 
 For more detailed information and related Confluence pages, refer to the following:
 
-
 - [LLD](https://companieshouse.atlassian.net/wiki/spaces/IDV/pages/4443963495/accounts-user-api+LLD)
 - [HLD](https://companieshouse.atlassian.net/wiki/spaces/IDV/pages/4441571350/accounts-user-api+API+HLD)
 - [API Specification](https://companieshouse.atlassian.net/wiki/spaces/IDV/pages/4441571350/accounts-user-api+API+HLD)
@@ -74,7 +73,3 @@ For further details, please refer to the documentation and associated resources.
 - [API Model Specification](docs/common-api-libraries-open-api.md)
 
 - [Common API Library Usage README](docs/common-api-libraries-readme.md)
-
-
-
-
