@@ -4,4 +4,4 @@ environment = "live"
 aws_profile = "live-eu-west-2"
 log_level = "info"
 
-lb_listener_paths = ["/users/*/roles", "/internal/users/*", "/internal/admin/*"]
+lb_listener_paths = ["/users/*/roles", "/internal/users/*", "/internal/admin/*", "/user/profile"]
