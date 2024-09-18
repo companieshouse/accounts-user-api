@@ -97,9 +97,10 @@
                     <plugin>
                         <groupId>org.springframework.boot</groupId>
                         <artifactId>spring-boot-maven-plugin</artifactId>
+                        <version>3.3.3</version>
                         <configuration>
-                            <image>
-                                <builder>paketobuildpacks/builder-jammy-tiny:latest</builder>
+                            <image> 
+                            <name>416670754337.dkr.ecr.eu-west-2.amazonaws.com/accounts-user-api</name>
                                 <env>
                                     <BP_NATIVE_IMAGE>true</BP_NATIVE_IMAGE>
                                 </env>
@@ -443,5 +444,4 @@
             </plugins>
         </pluginManagement>
     </build>
-
 </project>
