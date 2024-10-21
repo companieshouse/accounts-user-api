@@ -2,5 +2,3 @@
 environment = "livesbox"
 aws_profile = "live-eu-west-2"
 log_level = "info"
-
-lb_listener_paths = ["/users/*", "/internal/users/*", "/internal/admin/*", "/user/profile"]
