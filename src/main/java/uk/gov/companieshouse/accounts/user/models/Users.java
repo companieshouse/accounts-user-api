@@ -50,6 +50,13 @@ public class Users implements Serializable {
     @Field("private_beta_user")
     private boolean privateBetaUser;
 
+    @Field("one_login_link_removed_by")
+    private String oneLoginLinkRemovedBy;
+
+    @Field("one_login_link_removed_at")
+    private LocalDateTime oneLoginLinkRemovedAt;
+
+    private String etag;
 
     public String getId() {
         return id;
@@ -140,6 +147,30 @@ public class Users implements Serializable {
         this.privateBetaUser = privateBetaUser;
     }
 
+    public String getOneLoginLinkRemovedBy() {
+        return oneLoginLinkRemovedBy;
+    }
+
+    public void setOneLoginLinkRemovedBy(String oneLoginLinkRemovedBy) {
+        this.oneLoginLinkRemovedBy = oneLoginLinkRemovedBy;
+    }
+
+    public LocalDateTime getOneLoginLinkRemovedAt() {
+        return oneLoginLinkRemovedAt;
+    }
+
+    public void setOneLoginLinkRemovedAt(LocalDateTime oneLoginLinkRemovedAt) {
+        this.oneLoginLinkRemovedAt = oneLoginLinkRemovedAt;
+    }
+
+    public String getEtag() {
+        return etag;
+    }
+
+    public void setEtag(String etag) {
+        this.etag = etag;
+    }
+
     @Override
     public String toString() {
         return "Users{" +
@@ -154,6 +185,9 @@ public class Users implements Serializable {
                 ", updated=" + updated +
                 ", oneLoginData=" + oneLoginData +
                 ", privateBetaUser=" + privateBetaUser +
+                ", oneLoginLinkRemovedBy=" + oneLoginLinkRemovedBy +
+                ", oneLoginLinkRemovedAt=" + oneLoginLinkRemovedAt +
+                ", etag=" + etag +
                 '}';
     }
 }

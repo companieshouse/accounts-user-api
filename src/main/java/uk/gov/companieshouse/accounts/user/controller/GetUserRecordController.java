@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
-import uk.gov.companieshouse.accounts.user.AccountsUserServiceApplication;
 import uk.gov.companieshouse.accounts.user.exceptions.InternalServerErrorRuntimeException;
 import uk.gov.companieshouse.accounts.user.service.UsersService;
 import uk.gov.companieshouse.api.accounts.user.api.GetUserRecordInterface;
@@ -20,13 +19,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static uk.gov.companieshouse.accounts.user.controller.ControllerAdvice.X_REQUEST_ID;
+import static uk.gov.companieshouse.accounts.user.util.StaticPropertyUtil.APPLICATION_NAMESPACE;
 
 @RestController
 public class GetUserRecordController implements GetUserRecordInterface {
 
     private final UsersService usersService;
 
-    private static final Logger LOG = LoggerFactory.getLogger(AccountsUserServiceApplication.applicationNameSpace);
+    private static final Logger LOG = LoggerFactory.getLogger(APPLICATION_NAMESPACE);
 
     private static final String FORENAME = "forename";
     private static final String SURNAME = "surname";

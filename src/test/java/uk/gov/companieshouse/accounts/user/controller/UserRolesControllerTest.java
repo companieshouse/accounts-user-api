@@ -14,6 +14,7 @@ import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 import uk.gov.companieshouse.accounts.user.configuration.InterceptorConfig;
 import uk.gov.companieshouse.accounts.user.models.Users;
 import uk.gov.companieshouse.accounts.user.service.UsersService;
+import uk.gov.companieshouse.accounts.user.util.StaticPropertyUtil;
 import uk.gov.companieshouse.api.accounts.user.model.RolesList;
 import uk.gov.companieshouse.api.accounts.user.model.User;
 
@@ -32,13 +33,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class UserRolesControllerTest {
 
     @Autowired
-    public MockMvc mockMvc;
+    private MockMvc mockMvc;
 
     @MockBean
-    UsersService usersService;
+    private UsersService usersService;
 
     @MockBean
-    InterceptorConfig interceptorConfig;
+    private InterceptorConfig interceptorConfig;
+
+    @MockBean
+    private StaticPropertyUtil staticPropertyUtil;
 
     private User userEminem;
     private User userTheRock;

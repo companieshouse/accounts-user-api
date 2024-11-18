@@ -1,9 +1,10 @@
 package uk.gov.companieshouse.accounts.user.controller;
 
+import static uk.gov.companieshouse.accounts.user.util.StaticPropertyUtil.APPLICATION_NAMESPACE;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-import uk.gov.companieshouse.accounts.user.AccountsUserServiceApplication;
 import uk.gov.companieshouse.accounts.user.exceptions.BadRequestRuntimeException;
 import uk.gov.companieshouse.accounts.user.exceptions.NotFoundRuntimeException;
 import uk.gov.companieshouse.accounts.user.service.UsersService;
@@ -21,7 +22,7 @@ public class UserRolesController implements UserRolesInterface {
     public static final String PLEASE_CHECK_THE_REQUEST_AND_TRY_AGAIN = "Please check the request and try again";
     private final UsersService usersService;
 
-    private static final Logger LOG = LoggerFactory.getLogger(AccountsUserServiceApplication.applicationNameSpace);
+    private static final Logger LOG = LoggerFactory.getLogger(APPLICATION_NAMESPACE);
 
     public UserRolesController(UsersService usersService) {
         this.usersService = usersService;
