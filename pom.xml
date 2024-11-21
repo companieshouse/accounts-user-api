@@ -27,7 +27,6 @@
         <api-security-java-version>2.0.4</api-security-java-version>
         <org.mapstruct.version>1.6.0.Beta1</org.mapstruct.version>
         <api-helper-java.version>3.0.1</api-helper-java.version>
-        <sonar-maven-plugin.version>3.10.0.2594</sonar-maven-plugin.version>
     </properties>
     <profiles>
         <profile>
