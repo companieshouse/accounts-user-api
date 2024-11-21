@@ -5,7 +5,7 @@
     <parent>
         <groupId>uk.gov.companieshouse</groupId>
         <artifactId>companies-house-parent</artifactId>
-        <version>2.1.8</version> <!-- lookup parent from repository -->
+        <version>2.1.9</version> <!-- lookup parent from repository -->
     </parent>
     <artifactId>accounts-user-api</artifactId>
     <version>unversioned</version>
@@ -27,7 +27,6 @@
         <api-security-java-version>2.0.4</api-security-java-version>
         <org.mapstruct.version>1.6.0.Beta1</org.mapstruct.version>
         <api-helper-java.version>3.0.1</api-helper-java.version>
-        <versions-maven-plugin.version>2.16.2</versions-maven-plugin.version>
     </properties>
     <profiles>
         <profile>
@@ -245,11 +244,6 @@
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>versions-maven-plugin</artifactId>
-                <version>${versions-maven-plugin.version}</version>
             </plugin>
         </plugins>
     </build>
