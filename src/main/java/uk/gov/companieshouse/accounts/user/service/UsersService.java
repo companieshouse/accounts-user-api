@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.accounts.user.service;
 
-import static uk.gov.companieshouse.GenerateEtagUtil.generateEtag;
 import static uk.gov.companieshouse.accounts.user.util.StaticPropertyUtil.APPLICATION_NAMESPACE;
 
 import java.time.LocalDateTime;
@@ -98,8 +97,7 @@ public class UsersService {
         final var update = new Update()
                 .unset( "one_login_data" )
                 .set( "one_login_link_removed_by", unlinkedByUserId )
-                .set( "one_login_link_removed_at", LocalDateTime.now() )
-                .set( "etag", generateEtag() );
+                .set( "one_login_link_removed_at", LocalDateTime.now() );
 
         final var numRecordsUpdated = usersRepository.updateUser( targetUserId, update );
         if ( numRecordsUpdated == 0 ){

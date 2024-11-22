@@ -26,7 +26,6 @@
         <api-sdk-manager-java-library.version>3.0.5</api-sdk-manager-java-library.version>
         <api-security-java-version>2.0.4</api-security-java-version>
         <org.mapstruct.version>1.6.0.Beta1</org.mapstruct.version>
-        <api-helper-java.version>3.0.1</api-helper-java.version>
     </properties>
     <profiles>
         <profile>
@@ -93,11 +92,6 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
             <version>6.1.12</version>
-        </dependency>
-        <dependency>
-            <groupId>uk.gov.companieshouse</groupId>
-            <artifactId>api-helper-java</artifactId>
-            <version>${api-helper-java.version}</version>
         </dependency>
 
         <!-- Test dependencies -->

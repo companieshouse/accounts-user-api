@@ -76,7 +76,6 @@ class OneloginControllerTest {
         Assertions.assertNull( updatedUserDao.getOneLoginData() );
         Assertions.assertEquals( requestingUserId, updatedUserDao.getOneLoginLinkRemovedBy() );
         Assertions.assertNotNull( updatedUserDao.getOneLoginLinkRemovedAt() );
-        Assertions.assertNotNull( updatedUserDao.getEtag() );
     }
 
     @Test
@@ -112,7 +111,6 @@ class OneloginControllerTest {
         Assertions.assertEquals( originalUserDao.getOneLoginData(), updatedUserDao.getOneLoginData() );
         Assertions.assertEquals( originalUserDao.getOneLoginLinkRemovedBy(), updatedUserDao.getOneLoginLinkRemovedBy() );
         Assertions.assertEquals( localDateTimeToNormalisedString( originalUserDao.getOneLoginLinkRemovedAt() ), localDateTimeToNormalisedString( updatedUserDao.getOneLoginLinkRemovedAt() ) );
-        Assertions.assertEquals( originalUserDao.getEtag(), updatedUserDao.getEtag() );
     }
 
     @Test
@@ -148,7 +146,6 @@ class OneloginControllerTest {
         Assertions.assertEquals( originalUserDao.getOneLoginData().getOneLoginUserId(), updatedUserDao.getOneLoginData().getOneLoginUserId() );
         Assertions.assertEquals( originalUserDao.getOneLoginLinkRemovedBy(), updatedUserDao.getOneLoginLinkRemovedBy() );
         Assertions.assertEquals( originalUserDao.getOneLoginLinkRemovedAt(), updatedUserDao.getOneLoginLinkRemovedAt() );
-        Assertions.assertEquals( originalUserDao.getEtag(), updatedUserDao.getEtag() );
     }
 
     static Stream<Arguments> badRequestTestData(){

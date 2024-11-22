@@ -56,8 +56,6 @@ public class Users implements Serializable {
     @Field("one_login_link_removed_at")
     private LocalDateTime oneLoginLinkRemovedAt;
 
-    private String etag;
-
     public String getId() {
         return id;
     }
@@ -163,14 +161,6 @@ public class Users implements Serializable {
         this.oneLoginLinkRemovedAt = oneLoginLinkRemovedAt;
     }
 
-    public String getEtag() {
-        return etag;
-    }
-
-    public void setEtag(String etag) {
-        this.etag = etag;
-    }
-
     @Override
     public String toString() {
         return "Users{" +
@@ -187,7 +177,6 @@ public class Users implements Serializable {
                 ", privateBetaUser=" + privateBetaUser +
                 ", oneLoginLinkRemovedBy=" + oneLoginLinkRemovedBy +
                 ", oneLoginLinkRemovedAt=" + oneLoginLinkRemovedAt +
-                ", etag=" + etag +
                 '}';
     }
 }

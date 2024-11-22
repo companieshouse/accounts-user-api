@@ -1,10 +1,8 @@
 package uk.gov.companieshouse.accounts.user.common;
 
-import static uk.gov.companieshouse.GenerateEtagUtil.generateEtag;
 import static uk.gov.companieshouse.accounts.user.common.ParsingUtils.localDateTimeToOffsetDateTime;
 
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -12,13 +10,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.annotation.DateTimeFormat.ISO;
-import uk.gov.companieshouse.accounts.user.mapper.UsersDtoDaoMapper;
-import uk.gov.companieshouse.accounts.user.mapper.UsersDtoDaoMapperImpl;
 import uk.gov.companieshouse.accounts.user.models.OneLoginDataDao;
 import uk.gov.companieshouse.accounts.user.models.Users;
-import uk.gov.companieshouse.api.accounts.user.model.Roles;
 import uk.gov.companieshouse.api.accounts.user.model.RolesList;
 import uk.gov.companieshouse.api.accounts.user.model.User;
 
@@ -68,7 +61,6 @@ public class TestDataManager {
             usersDao.setRoles( List.of( "admin-role-1" ) );
             usersDao.setOneLoginLinkRemovedBy( "CEOUSER001" );
             usersDao.setOneLoginLinkRemovedAt( LocalDateTime.now() );
-            usersDao.setEtag( generateEtag() );
 
             return usersDao;
         };

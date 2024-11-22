@@ -252,7 +252,6 @@ public class UsersServiceTest {
         Assertions.assertNull( updatedUserDao.getOneLoginData() );
         Assertions.assertEquals( "111", updatedUserDao.getOneLoginLinkRemovedBy() );
         Assertions.assertNotNull( updatedUserDao.getOneLoginLinkRemovedAt() );
-        Assertions.assertNotNull( updatedUserDao.getEtag() );
     }
 
     @AfterEach
