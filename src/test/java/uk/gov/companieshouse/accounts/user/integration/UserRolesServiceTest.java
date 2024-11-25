@@ -11,13 +11,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.testcontainers.containers.MongoDBContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import uk.gov.companieshouse.accounts.user.mapper.RolesDtoDaoMapper;
 import uk.gov.companieshouse.accounts.user.models.UserRole;
@@ -28,13 +26,9 @@ import uk.gov.companieshouse.api.accounts.user.model.Role;
 import uk.gov.companieshouse.api.accounts.user.model.Roles;
 
 @SpringBootTest
-@Testcontainers(parallel = true)
+@ExtendWith(MockitoExtension.class)
 @Tag("integration-test")
 public class UserRolesServiceTest {
-
-    @Container
-    @ServiceConnection
-    static MongoDBContainer container = new MongoDBContainer("mongo:6");
 
     @Autowired
     MongoTemplate mongoTemplate;

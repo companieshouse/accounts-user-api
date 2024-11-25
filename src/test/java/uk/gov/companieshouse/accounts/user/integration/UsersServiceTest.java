@@ -1,14 +1,12 @@
 package uk.gov.companieshouse.accounts.user.integration;
 
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.data.mongodb.UncategorizedMongoDbException;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.testcontainers.containers.MongoDBContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 import uk.gov.companieshouse.accounts.user.exceptions.BadRequestRuntimeException;
 import uk.gov.companieshouse.accounts.user.exceptions.InternalServerErrorRuntimeException;
 import uk.gov.companieshouse.accounts.user.models.OneLoginDataDao;
@@ -26,13 +24,9 @@ import java.util.List;
 import java.util.Objects;
 
 @SpringBootTest
-@Testcontainers(parallel = true)
+@ExtendWith(MockitoExtension.class)
 @Tag("integration-test")
 public class UsersServiceTest {
-
-    @Container
-    @ServiceConnection
-    static MongoDBContainer container = new MongoDBContainer("mongo:6");
 
     @Autowired
     MongoTemplate mongoTemplate;

@@ -3,17 +3,15 @@ package uk.gov.companieshouse.accounts.user.integration;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.web.servlet.MockMvc;
-import org.testcontainers.containers.MongoDBContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 import uk.gov.companieshouse.accounts.user.configuration.InterceptorConfig;
 import uk.gov.companieshouse.accounts.user.models.Users;
 import uk.gov.companieshouse.accounts.user.repositories.UsersRepository;
@@ -29,13 +27,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureMockMvc
 @SpringBootTest
-@Testcontainers
+@ExtendWith(MockitoExtension.class)
 @Tag("integration-test")
 public class FindRolesBasedOnUserIDControllerTest {
 
-    @Container
-    @ServiceConnection
-    static MongoDBContainer container = new MongoDBContainer("mongo:6");
     @Autowired
     MongoTemplate mongoTemplate;
     @Autowired

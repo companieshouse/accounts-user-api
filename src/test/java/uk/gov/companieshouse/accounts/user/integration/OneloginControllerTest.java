@@ -12,19 +12,17 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.testcontainers.containers.MongoDBContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 import uk.gov.companieshouse.accounts.user.common.TestDataManager;
 import uk.gov.companieshouse.accounts.user.models.Users;
 import uk.gov.companieshouse.accounts.user.repositories.UsersRepository;
@@ -32,13 +30,9 @@ import uk.gov.companieshouse.api.accounts.user.model.User;
 
 @AutoConfigureMockMvc
 @SpringBootTest
-@Testcontainers
+@ExtendWith( MockitoExtension.class )
 @Tag( "integration-test" )
 class OneloginControllerTest {
-
-    @Container
-    @ServiceConnection
-    static MongoDBContainer container = new MongoDBContainer("mongo:6");
 
     @Autowired
     private MongoTemplate mongoTemplate;
