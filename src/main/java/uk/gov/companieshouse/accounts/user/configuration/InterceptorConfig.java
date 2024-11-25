@@ -6,7 +6,9 @@ import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import static uk.gov.companieshouse.accounts.user.AccountsUserServiceApplication.applicationNameSpace;
+import static uk.gov.companieshouse.accounts.user.util.StaticPropertyUtil.APPLICATION_NAMESPACE;
+
+import uk.gov.companieshouse.accounts.user.interceptor.AdminUserRolePermissionInterceptor;
 import uk.gov.companieshouse.accounts.user.interceptor.EricAuthorisedKeyPrivilegesInterceptor;
 import uk.gov.companieshouse.accounts.user.interceptor.LoggingInterceptor;
 import uk.gov.companieshouse.api.interceptor.RolePermissionInterceptor;
@@ -23,7 +25,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
     private static final String USERS_ENDPOINTS = "/users/**";
     private static final String INTERNAL_USERS_ENDPOINTS = "/internal/users/**";
     private static final String ADMIN_ROLE_ENDPOINTS = "/internal/admin/roles/**";
-    private static final String INTERNAL_GET_USER_RECORD_ENDPOINT = "/internal/admin/users/**";
+    private static final String INTERNAL_ADMIN_USERS_ENDPOINTS = "/internal/admin/users/**";
     private static final String ADMIN_USER_SEARCH_PERMISSION = "/admin/user/search";
 
     private static final String WILDCARD = "/**";
@@ -42,7 +44,6 @@ public class InterceptorConfig implements WebMvcConfigurer {
     public void addInterceptors(@NonNull final InterceptorRegistry registry) {
         addLoggingInterceptor(registry);
         addEricInterceptors(registry);
-        addRolePermissionInterceptor(registry, INTERNAL_GET_USER_RECORD_ENDPOINT,ADMIN_USER_SEARCH_PERMISSION );
         addRolePermissionInterceptor(registry, INTERNAL_USERS_ENDPOINTS, ADMIN_USER_SEARCH_PERMISSION);
         addRolePermissionInterceptor(registry, ADMIN_ROLE_ENDPOINTS, "/admin/roles");
         addTokenPermissionsInterceptor(registry);
@@ -59,14 +60,13 @@ public class InterceptorConfig implements WebMvcConfigurer {
     }
 
     private void addRolePermissionInterceptor(final InterceptorRegistry registry, final String path, final String permission){
-        registry.addInterceptor(new RolePermissionInterceptor(applicationNameSpace, permission))
+        registry.addInterceptor(new RolePermissionInterceptor(APPLICATION_NAMESPACE, permission))
         .addPathPatterns(path);
     }
 
     private void addEricInterceptors( final InterceptorRegistry registry){
-        registry.addInterceptor(
-                new EricAuthorisedKeyPrivilegesInterceptor()
-        ).addPathPatterns(USERS_ENDPOINTS);
+        registry.addInterceptor( new EricAuthorisedKeyPrivilegesInterceptor() ).addPathPatterns( USERS_ENDPOINTS );
+        registry.addInterceptor( new AdminUserRolePermissionInterceptor() ).addPathPatterns( INTERNAL_ADMIN_USERS_ENDPOINTS );
     }
     /**
      * Interceptor for validating calls from ERIC to authenticate keys/tokens

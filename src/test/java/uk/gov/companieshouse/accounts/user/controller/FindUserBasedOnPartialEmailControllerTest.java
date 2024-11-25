@@ -13,6 +13,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.companieshouse.accounts.user.configuration.InterceptorConfig;
 import uk.gov.companieshouse.accounts.user.service.UsersService;
+import uk.gov.companieshouse.accounts.user.util.StaticPropertyUtil;
 import uk.gov.companieshouse.api.accounts.user.model.RolesList;
 import uk.gov.companieshouse.api.accounts.user.model.User;
 
@@ -27,13 +28,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class FindUserBasedOnPartialEmailControllerTest {
 
     @Autowired
-    public MockMvc mockMvc;
+    private MockMvc mockMvc;
 
     @MockBean
-    UsersService usersService;
+    private UsersService usersService;
 
     @MockBean
-    InterceptorConfig interceptorConfig;
+    private InterceptorConfig interceptorConfig;
+
+    @MockBean
+    private StaticPropertyUtil staticPropertyUtil;
 
     private User eminem;
     private User theRock;

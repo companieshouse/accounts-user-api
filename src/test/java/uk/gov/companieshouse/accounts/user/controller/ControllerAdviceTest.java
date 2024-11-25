@@ -18,6 +18,7 @@ import uk.gov.companieshouse.accounts.user.configuration.InterceptorConfig;
 import uk.gov.companieshouse.accounts.user.exceptions.InternalServerErrorRuntimeException;
 import uk.gov.companieshouse.accounts.user.exceptions.NotFoundRuntimeException;
 import uk.gov.companieshouse.accounts.user.service.UsersService;
+import uk.gov.companieshouse.accounts.user.util.StaticPropertyUtil;
 
 @Tag("unit-test")
 @WebMvcTest( FindUserBasedOnEmailController.class )
@@ -30,7 +31,10 @@ class ControllerAdviceTest {
     private UsersService usersService;
 
     @MockBean
-    InterceptorConfig interceptorConfig;
+    private InterceptorConfig interceptorConfig;
+
+    @MockBean
+    private StaticPropertyUtil staticPropertyUtil;
 
     @BeforeEach
     void setup() {

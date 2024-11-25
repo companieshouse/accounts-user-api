@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.accounts.user.controller;
 
+import static uk.gov.companieshouse.accounts.user.util.StaticPropertyUtil.APPLICATION_NAMESPACE;
+
 import java.util.Objects;
 
 import org.springframework.http.HttpStatus;
@@ -8,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
-import uk.gov.companieshouse.accounts.user.AccountsUserServiceApplication;
 import uk.gov.companieshouse.accounts.user.exceptions.BadRequestRuntimeException;
 import uk.gov.companieshouse.accounts.user.service.RolesService;
 import uk.gov.companieshouse.accounts.user.service.UsersService;
@@ -26,7 +27,7 @@ public class RolesController implements RolesInterface {
     private final RolesService rolesService;
     private final UsersService usersService;
 
-    private static final Logger LOG = LoggerFactory.getLogger(AccountsUserServiceApplication.applicationNameSpace);
+    private static final Logger LOG = LoggerFactory.getLogger(APPLICATION_NAMESPACE);
 
     public static final String PLEASE_CHECK_THE_REQUEST_AND_TRY_AGAIN = "Please check the request and try again";
 

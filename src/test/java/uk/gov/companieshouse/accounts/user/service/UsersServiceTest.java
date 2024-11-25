@@ -17,6 +17,7 @@ import org.springframework.data.mongodb.UncategorizedMongoDbException;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.companieshouse.accounts.user.exceptions.BadRequestRuntimeException;
+import uk.gov.companieshouse.accounts.user.exceptions.InternalServerErrorRuntimeException;
 import uk.gov.companieshouse.accounts.user.mapper.UsersDtoDaoMapper;
 import uk.gov.companieshouse.accounts.user.models.Users;
 import uk.gov.companieshouse.accounts.user.repositories.RolesRepository;
@@ -290,6 +291,38 @@ public class UsersServiceTest {
         Assertions.assertEquals(2, multipleUsers.size());
         Assertions.assertTrue(multipleUsers.stream()
                 .map(User::getDisplayName).allMatch(user -> (user.equals("Harry Potter")) || (user.equals("Harley Quinn"))));
+    }
+
+    @Test
+    void unlinkOneloginWithNullInputsThrowsIllegalArgumentException(){
+        Assertions.assertThrows( IllegalArgumentException.class, () -> usersService.unlinkOnelogin( null, "111" ) );
+        Assertions.assertThrows( IllegalArgumentException.class, () -> usersService.unlinkOnelogin( "333", null ) );
+    }
+
+    @Test
+    void unlinkOneloginWithMalformedOrNonexistentTargetUserIdThrowsInternalServerErrorRuntimeException(){
+        Assertions.assertThrows( InternalServerErrorRuntimeException.class, () -> usersService.unlinkOnelogin( "£££", "111" ) );
+        Assertions.assertThrows( InternalServerErrorRuntimeException.class, () -> usersService.unlinkOnelogin( "000", "111" ) );
+    }
+
+    @Test
+    void unlinkOneloginReturnsUpdatedUserRecord(){
+        Mockito.doReturn( 1 ).when( usersRepository ).updateUser( eq( "333" ), any( Update.class ) );
+        Mockito.doReturn( Optional.of( usersHarleyQuinn ) ).when( usersRepository ).findUsersById( "333" );
+        Mockito.doReturn( userHarleyQuinn ).when( usersDtoDaoMapper ).daoToDto( usersHarleyQuinn );
+
+        final var updatedUserDto = usersService.unlinkOnelogin( "333", "111" );
+
+        Assertions.assertEquals( "333", updatedUserDto.getUserId() );
+        Assertions.assertFalse( updatedUserDto.getHasLinkedOneLogin() );
+    }
+
+    @Test
+    void unlinkOneloginReturnsInternalServerErrorRuntimeExceptionWhenUpdatedUserRecordsCannotBeRetrieved(){
+        Mockito.doReturn( 1 ).when( usersRepository ).updateUser( eq( "333" ), any( Update.class ) );
+        Mockito.doReturn( Optional.empty() ).when( usersRepository ).findUsersById( "333" );
+
+        Assertions.assertThrows( InternalServerErrorRuntimeException.class, () -> usersService.unlinkOnelogin( "333", "111" ) );
     }
 
 }

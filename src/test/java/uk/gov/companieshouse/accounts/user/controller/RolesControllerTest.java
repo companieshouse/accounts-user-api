@@ -29,6 +29,7 @@ import uk.gov.companieshouse.accounts.user.configuration.InterceptorConfig;
 import uk.gov.companieshouse.accounts.user.models.UserRole;
 import uk.gov.companieshouse.accounts.user.service.RolesService;
 import uk.gov.companieshouse.accounts.user.service.UsersService;
+import uk.gov.companieshouse.accounts.user.util.StaticPropertyUtil;
 import uk.gov.companieshouse.api.accounts.user.model.PermissionsList;
 import uk.gov.companieshouse.api.accounts.user.model.Role;
 import uk.gov.companieshouse.api.accounts.user.model.Roles;
@@ -38,19 +39,22 @@ import uk.gov.companieshouse.api.accounts.user.model.Roles;
 class RolesControllerTest {
 
     @Autowired
-    public MockMvc mockMvc;
+    private MockMvc mockMvc;
 
     @MockBean
-    RolesService rolesService;
+    private RolesService rolesService;
 
     @MockBean
-    UsersService usersService;
+    private UsersService usersService;
 
     @MockBean
-    InterceptorConfig interceptorConfig;
+    private InterceptorConfig interceptorConfig;
 
-    UserRole supervisor = new UserRole();
-    UserRole admin = new UserRole();
+    @MockBean
+    private StaticPropertyUtil staticPropertyUtil;
+
+    private UserRole supervisor = new UserRole();
+    private UserRole admin = new UserRole();
 
     @BeforeEach
     public void setup() {

@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.accounts.user.interceptor;
 
+import static uk.gov.companieshouse.accounts.user.util.StaticPropertyUtil.APPLICATION_NAMESPACE;
+
 import java.io.IOException;
 import java.util.Optional;
 
@@ -7,7 +9,6 @@ import org.apache.commons.lang.ArrayUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import uk.gov.companieshouse.accounts.user.AccountsUserServiceApplication;
 import uk.gov.companieshouse.api.interceptor.InternalUserInterceptor;
 import uk.gov.companieshouse.api.util.security.AuthorisationUtil;
 import uk.gov.companieshouse.logging.Logger;
@@ -15,7 +16,7 @@ import uk.gov.companieshouse.logging.LoggerFactory;
 
 public class EricAuthorisedKeyPrivilegesInterceptor extends InternalUserInterceptor {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AccountsUserServiceApplication.applicationNameSpace);
+    private static final Logger LOG = LoggerFactory.getLogger(APPLICATION_NAMESPACE);
 
     public EricAuthorisedKeyPrivilegesInterceptor() {
         super();

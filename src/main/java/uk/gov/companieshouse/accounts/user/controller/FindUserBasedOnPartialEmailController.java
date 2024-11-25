@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.accounts.user.controller;
 
+import static uk.gov.companieshouse.accounts.user.util.StaticPropertyUtil.APPLICATION_NAMESPACE;
+
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -7,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-import uk.gov.companieshouse.accounts.user.AccountsUserServiceApplication;
 import uk.gov.companieshouse.accounts.user.exceptions.BadRequestRuntimeException;
 import uk.gov.companieshouse.accounts.user.service.UsersService;
 import uk.gov.companieshouse.api.accounts.user.api.FindUsersBasedOnAPartialEmailInterface;
@@ -21,7 +22,7 @@ public class FindUserBasedOnPartialEmailController implements FindUsersBasedOnAP
 
     private final UsersService usersService;
 
-    private static final Logger LOG = LoggerFactory.getLogger(AccountsUserServiceApplication.applicationNameSpace);
+    private static final Logger LOG = LoggerFactory.getLogger(APPLICATION_NAMESPACE);
 
     public FindUserBasedOnPartialEmailController(UsersService usersService) {
         this.usersService = usersService;

@@ -10,6 +10,8 @@ import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import uk.gov.companieshouse.accounts.user.exceptions.BadRequestRuntimeException;
+import uk.gov.companieshouse.accounts.user.exceptions.InternalServerErrorRuntimeException;
+import uk.gov.companieshouse.accounts.user.models.OneLoginDataDao;
 import uk.gov.companieshouse.accounts.user.models.UserRole;
 import uk.gov.companieshouse.accounts.user.models.Users;
 import uk.gov.companieshouse.accounts.user.repositories.RolesRepository;
@@ -78,6 +80,9 @@ public class UsersServiceTest {
         final var appealsTeam = new ArrayList<String>();
         appealsTeam.add( "APPEALS_TEAM" );
 
+        final var oneLoginData = new OneLoginDataDao();
+        oneLoginData.setOneLoginUserId( "OL333" );
+
         final var harleyQuinn = new Users();
         harleyQuinn.setId( "333" );
         harleyQuinn.setLocale( "GB_en" );
@@ -88,6 +93,7 @@ public class UsersServiceTest {
         harleyQuinn.setRoles( appealsTeam );
         harleyQuinn.setCreated( LocalDateTime.now().minusDays( 10 ) );
         harleyQuinn.setUpdated( LocalDateTime.now().minusDays( 5 ) );
+        harleyQuinn.setOneLoginData( oneLoginData );
 
         final var harryPotter = new Users();
         harryPotter.setId( "444" );
@@ -222,6 +228,30 @@ public class UsersServiceTest {
         var rolesList = new RolesList();
         rolesList.add("dummy");
         Assertions.assertThrows( BadRequestRuntimeException.class, () ->  usersService.setRoles( "333", rolesList ) );
+    }
+
+    @Test
+    void unlinkOneloginWithNullInputsThrowsIllegalArgumentException(){
+        Assertions.assertThrows( IllegalArgumentException.class, () -> usersService.unlinkOnelogin( null, "111" ) );
+        Assertions.assertThrows( IllegalArgumentException.class, () -> usersService.unlinkOnelogin( "333", null ) );
+    }
+
+    @Test
+    void unlinkOneloginWithMalformedOrNonexistentTargetUserIdThrowsInternalServerErrorRuntimeException(){
+        Assertions.assertThrows( InternalServerErrorRuntimeException.class, () -> usersService.unlinkOnelogin( "£££", "111" ) );
+        Assertions.assertThrows( InternalServerErrorRuntimeException.class, () -> usersService.unlinkOnelogin( "000", "111" ) );
+    }
+
+    @Test
+    void unlinkOneloginUpdatesUserRecord(){
+        final var updatedUserDto = usersService.unlinkOnelogin( "333", "111" );
+        final var updatedUserDao = usersRepository.findById( "333" ).get();
+
+        Assertions.assertEquals( "333", updatedUserDto.getUserId() );
+        Assertions.assertFalse( updatedUserDto.getHasLinkedOneLogin() );
+        Assertions.assertNull( updatedUserDao.getOneLoginData() );
+        Assertions.assertEquals( "111", updatedUserDao.getOneLoginLinkRemovedBy() );
+        Assertions.assertNotNull( updatedUserDao.getOneLoginLinkRemovedAt() );
     }
 
     @AfterEach
