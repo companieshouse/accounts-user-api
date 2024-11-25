@@ -43,7 +43,7 @@ public class RolesControllerTestIntegratrion {
 
     @Container
     @ServiceConnection
-    static MongoDBContainer container = new MongoDBContainer("mongo:5");
+    static MongoDBContainer container = new MongoDBContainer("mongo:6");
 
     @Autowired
     MongoTemplate mongoTemplate;
