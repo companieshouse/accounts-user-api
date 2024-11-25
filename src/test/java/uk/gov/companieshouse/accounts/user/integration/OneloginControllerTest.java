@@ -38,7 +38,7 @@ class OneloginControllerTest {
 
     @Container
     @ServiceConnection
-    static MongoDBContainer container = new MongoDBContainer("mongo:5");
+    static MongoDBContainer container = new MongoDBContainer("mongo:6");
 
     @Autowired
     private MongoTemplate mongoTemplate;
