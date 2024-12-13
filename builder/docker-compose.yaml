@@ -1,0 +1,52 @@
+---
+
+services:
+  mongo:
+    labels:
+      - chs.description=primary database storing Companies House data
+    image: docker.io/mongo:5
+    networks:
+      - chs
+    expose:
+      - 27017
+    ports:
+      - "27017:27017"
+    entrypoint: ["/usr/bin/mongod", "--bind_ip_all", "--replSet", "tilt-rs"]
+    healthcheck:
+      test: test $$(echo "rs.initiate({_id:'tilt-rs',members:[{_id:0,host:\"mongo:27017\"}]}).ok || rs.status().ok" | mongo --port 27017 --quiet) -eq 1
+      interval: 5s
+      timeout: 30s
+      start_period: 0s
+    volumes:
+      - mongo_data:/data/db:rw
+  accounts-user-api:
+    image: accounts-users-api:native
+    networks:
+      - chs
+    environment:
+      - MONGODB_DATABASE=account
+      - MONGODB_URL=mongodb://mongo
+      - LOG_LEVEL=DEBUG
+      - API_URL=http://api.chs.local:4001
+      - PAYMENTS_API_URL=http://api.chs.local:4001
+      - DOCUMENT_API_LOCAL_URL=http://document-api.devops1.aws.chdev.org
+      - CHS_API_KEY=0fec383d-6235-4a6f-9487-4857a8eb669b
+    expose:
+      - 8080
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/accounts-user-api/healthcheck || exit 1"]
+      interval: 20s
+      timeout: 10s
+      start_period: 60s
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+volumes:
+  mongo_data:
+
+networks:
+  chs:
+    name: chs

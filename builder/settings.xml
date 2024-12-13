@@ -1,0 +1,57 @@
+<settings   xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                                http://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+  <profiles>
+    <profile>
+      <id>mix</id>
+      <repositories>
+        <repository>
+          <id>central</id>
+          <name>Maven Central</name>
+          <url>https://repo1.maven.org/maven2/</url>
+        </repository>
+        <repository>
+          <id>cohocentral</id>
+          <name>Artifactory</name>
+          <url>http://repository.aws.chdev.org:8081/artifactory/virtual-release</url>
+
+        </repository>
+      </repositories>
+    </profile>
+  </profiles>
+
+  <mirrors>
+    <mirror>
+      <id>virtual-release</id>
+      <name>Artifactory</name>
+      <url>http://repository.aws.chdev.org:8081/artifactory/virtual-release</url>
+      <mirrorOf>cohocentral</mirrorOf>
+    </mirror>
+  </mirrors>
+
+  <proxies>
+    <proxy>
+      <id>https1</id>
+      <active>true</active>
+      <protocol>https</protocol>
+      <host>websenseproxy.internal.ch</host>
+      <port>8080</port>
+      <nonProxyHosts>*.internal.ch|*.orctel.internal|*.aws.chdev.org|*.vagrant</nonProxyHosts>
+    </proxy>
+    <proxy>
+      <id>http1</id>
+      <active>true</active>
+      <protocol>http</protocol>
+      <host>websenseproxy.internal.ch</host>
+      <port>8080</port>
+      <nonProxyHosts>*.internal.ch|*.orctel.internal|*.aws.chdev.org|*.vagrant</nonProxyHosts>
+    </proxy>
+  </proxies>
+
+  <activeProfiles>
+    <!--make the profile active all the time -->
+    <activeProfile>mix</activeProfile>
+  </activeProfiles>
+</settings>

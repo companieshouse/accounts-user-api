@@ -1,1 +1,0 @@
-[{"name":"helper","metadata":{"layer":"helper","names":["ca-certificates-helper"],"version":"3.8.6"},"buildpack":{"id":"paketo-buildpacks/ca-certificates","version":"3.8.6"}}]
