@@ -20,7 +20,10 @@ services:
     volumes:
       - mongo_data:/data/db:rw
   accounts-user-api:
+#    image: paketo-accounts-user-api # 416670754337.dkr.ecr.eu-west-2.amazonaws.com/accounts-user-api:latest
+#    image: 416670754337.dkr.ecr.eu-west-2.amazonaws.com/accounts-user-api:latest
     image: accounts-users-api:native
+
     networks:
       - chs
     environment:

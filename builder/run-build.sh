@@ -2,9 +2,9 @@
 
 source "$HOME/.sdkman/bin/sdkman-init.sh"
 sdk default java 21.0.2-graalce
-mvn -Dmaven.test.skip package
 
 echo Starting JAR with the native-image-agent...
+mvn -Dmaven.test.skip package
 MONGODB_DATABASE=account MONGODB_URL=mongodb://host.docker.internal \
     java -agentlib:native-image-agent=config-output-dir=src/main/resources/META-INF/native-image \
     -Dmanagement.health.mongo.enabled=false \
@@ -15,5 +15,7 @@ until [ "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/accounts
 done
 kill $pid
 
+echo Building the native-image...
 mvn -Dmaven.test.skip -Pnative package
 mv target/accounts-user-api target/app
+echo Done!
