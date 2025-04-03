@@ -26,37 +26,34 @@ public class TestDataManager {
         return instance;
     }
 
-    private final LocalDateTime now = LocalDateTime.now();
-
     private Map<String, Supplier<Users>> usersDaoSuppliers = new HashMap<>();
 
     public void instantiateUsersDaoSuppliers(){
-
-        final Supplier<Users> elonMuskSupplier = () -> {
+        final Supplier<Users> tonyStarkSupplier = () -> {
             final var oneloginDataDao = new OneLoginDataDao();
             oneloginDataDao.setOneLoginUserId( "CEOONELOGINUSER001" );
 
             final var usersDao = new Users();
             usersDao.setId( "CEOUSER001" );
-            usersDao.setEmail( "admin.elon.musk@tesla.com" );
-            usersDao.setForename( "Elon" );
-            usersDao.setSurname( "Musk" );
-            usersDao.setDisplayName( "Elon Musk" );
+            usersDao.setEmail( "admin.tony.stark@ironman.com" );
+            usersDao.setForename( "Tony" );
+            usersDao.setSurname( "Stark" );
+            usersDao.setDisplayName( "Tony Stark" );
             usersDao.setLocale( "GB_en" );
             usersDao.setRoles( List.of( "admin-role-1" ) );
             usersDao.setOneLoginData( oneloginDataDao );
 
             return usersDao;
         };
-        usersDaoSuppliers.put( "CEOUSER001", elonMuskSupplier );
+        usersDaoSuppliers.put( "CEOUSER001", tonyStarkSupplier );
 
-        final Supplier<Users> markZuckerbergSupplier = () -> {
+        final Supplier<Users> bruceWayneSupplier = () -> {
             final var usersDao = new Users();
             usersDao.setId( "CEOUSER002" );
-            usersDao.setEmail( "admin.mark.zuckerberg@facebook.com" );
-            usersDao.setForename( "Mark" );
-            usersDao.setSurname( "Zuckerberg" );
-            usersDao.setDisplayName( "Mark Zuckerberg" );
+            usersDao.setEmail( "admin.bruce.wayne@gotham.city" );
+            usersDao.setForename( "Bruce" );
+            usersDao.setSurname( "Wayne" );
+            usersDao.setDisplayName( "Bruce Wayne" );
             usersDao.setLocale( "GB_en" );
             usersDao.setRoles( List.of( "admin-role-1" ) );
             usersDao.setOneLoginLinkRemovedBy( "CEOUSER001" );
@@ -64,24 +61,24 @@ public class TestDataManager {
 
             return usersDao;
         };
-        usersDaoSuppliers.put( "CEOUSER002", markZuckerbergSupplier );
+        usersDaoSuppliers.put( "CEOUSER002", bruceWayneSupplier );
 
-        final Supplier<Users> susanWojcickiSupplier = () -> {
+        final Supplier<Users> mrBurnsSupplier = () -> {
             final var oneloginDataDao = new OneLoginDataDao();
             oneloginDataDao.setOneLoginUserId( "CEOONELOGINUSER003" );
 
             final var usersDao = new Users();
             usersDao.setId( "CEOUSER003" );
-            usersDao.setEmail( "susan.wojcicki@youtube.com" );
-            usersDao.setForename( "Susan" );
-            usersDao.setSurname( "Wojcicki" );
-            usersDao.setDisplayName( "Susan Wojcicki" );
+            usersDao.setEmail( "mr.burns@springfield.com" );
+            usersDao.setForename( "Montgomery" );
+            usersDao.setSurname( "Burns" );
+            usersDao.setDisplayName( "Montgomery Burns" );
             usersDao.setLocale( "GB_en" );
             usersDao.setOneLoginData( oneloginDataDao );
 
             return usersDao;
         };
-        usersDaoSuppliers.put( "CEOUSER003", susanWojcickiSupplier );
+        usersDaoSuppliers.put( "CEOUSER003", mrBurnsSupplier );
     }
 
     private TestDataManager(){
