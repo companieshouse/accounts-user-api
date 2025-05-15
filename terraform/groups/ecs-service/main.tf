@@ -49,8 +49,8 @@ module "ecs-service" {
       load_balancer_arn       = data.aws_lb.secondary_lb.arn
     }
     "pub-api-lb": {
-      listener_arn           = data.aws_lb_listener.filing_maintain_lb_listener.arn
-      load_balancer_arn      = data.aws_lb.filing_maintain_lb.arn
+      listener_arn           = data.aws_lb_listener.service_lb_listener.arn
+      load_balancer_arn      = data.aws_lb.service_lb.arn
     }
   }
 
