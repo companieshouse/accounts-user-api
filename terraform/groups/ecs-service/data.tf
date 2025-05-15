@@ -42,7 +42,7 @@ data "aws_lb_listener" "service_lb_listener" {
 }
 
 data "aws_lb" "secondary_lb" {
-  name = "${var.environment}-chs-accountchgovuk-private"
+  name = "${var.environment}-chs-account-priv"
 }
 
 data "aws_lb_listener" "secondary_lb_listener" {
