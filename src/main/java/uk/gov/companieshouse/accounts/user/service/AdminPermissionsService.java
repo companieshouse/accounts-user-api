@@ -41,7 +41,7 @@ public class AdminPermissionsService {
 
     public AdminPermissionsGroup addAdminPermissions(final AdminPermissionsGroup adminPermissionsGroup){
         AdminPermissions adminPermissions = adminPermissionsDtoDaoMapper.dtoToDao(adminPermissionsGroup);
-        if(adminPermissions.getId().isEmpty()) {
+        if(adminPermissions.getId() == null) {
             adminPermissions.setId(UUID.randomUUID().toString());
         }
         if (adminPermissionsRepository.findByEntraGroupId(adminPermissions.getEntraGroupId()) == null){
