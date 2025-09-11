@@ -46,7 +46,7 @@ public class AdminPermissionsService {
         }
         if (adminPermissionsRepository.findByEntraGroupId(adminPermissions.getEntraGroupId()) == null){
             var newAdminPermissions = adminPermissionsRepository.insert(adminPermissions);
-            if (adminPermissionsRepository.findByEntraGroupId(adminPermissions.getEntraGroupId()) != null){
+            if (newAdminPermissions.getEntraGroupId() != null){
                 return adminPermissionsDtoDaoMapper.daoToDto(newAdminPermissions);
             }
         }

@@ -13,6 +13,6 @@ public interface AdminPermissionsRepository extends MongoRepository<AdminPermiss
     int updateRole( String roleId, Update update );
 
     @Query( "{ 'entra_group_id': ?0 }" )
-    String findByEntraGroupId( String entraGroupId );
+    AdminPermissions findByEntraGroupId( String entraGroupId );
 }
 
