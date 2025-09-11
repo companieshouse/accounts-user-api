@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.accounts.user.service;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -17,8 +16,8 @@ import uk.gov.companieshouse.api.accounts.user.model.AdminPermissionsGroups;
 import uk.gov.companieshouse.api.accounts.user.model.PermissionsList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
