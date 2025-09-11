@@ -18,6 +18,7 @@ import uk.gov.companieshouse.api.accounts.user.model.PermissionsList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -121,7 +122,7 @@ public class AdminPermissionsServiceTest {
         when(adminPermissionsRepository.findByEntraGroupId(admin.getEntraGroupId())).thenReturn(admin);
 
         var response = adminPermissionsService.addAdminPermissions(adminPermissionsGroup);
-        Assertions.assertNull(response);
+        assertNull(response);
         verify(adminPermissionsRepository,times(0)).insert(admin);
     }
 

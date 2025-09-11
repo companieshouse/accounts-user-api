@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.accounts.user.models;
 
-import org.hibernate.validator.constraints.UUID;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
