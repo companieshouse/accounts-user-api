@@ -23,11 +23,20 @@
         <common-web-java.version>3.0.0</common-web-java.version>
         <encryption-java-library.version>2.0.3</encryption-java-library.version>
         <rest-service-common-library-version>2.0.4</rest-service-common-library-version>
-        <private-api-sdk-java.version>4.0.355</private-api-sdk-java.version>
+        <private-api-sdk-java.version>4.0.361</private-api-sdk-java.version>
         <api-sdk-manager-java-library.version>3.0.5</api-sdk-manager-java-library.version>
         <api-security-java-version>2.0.4</api-security-java-version>
         <org.mapstruct.version>1.6.0.Beta1</org.mapstruct.version>
         <flapdoodle.version>4.16.1</flapdoodle.version>
+        <!-- Sonar -->
+        <sonar.projectName>accounts-user-api</sonar.projectName>
+        <!--suppress UnresolvedMavenProperty -->
+        <sonar.host.url>${CODE_ANALYSIS_HOST_URL}</sonar.host.url>
+        <!--suppress UnresolvedMavenProperty -->
+        <sonar.token>${CODE_ANALYSIS_TOKEN}</sonar.token>
+        <sonar.login/>
+        <sonar.password/>
+        <sonar.projectKey>uk.gov.companieshouse:accounts-user-api</sonar.projectKey>
     </properties>
     <profiles>
         <profile>
