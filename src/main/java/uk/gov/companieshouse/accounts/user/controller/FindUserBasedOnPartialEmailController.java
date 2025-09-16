@@ -31,7 +31,7 @@ public class FindUserBasedOnPartialEmailController implements FindUsersBasedOnAP
     @Override
     public ResponseEntity<UsersList> searchUsersDetailsUsingPartialEmail( final String xRequestId, final String partialEmail ) {
 
-        LOG.debug("LOGDUMP - FindUserBasedOnPartialEmailController: Emails received: " + emails);
+        LOG.debug("LOGDUMP - FindUserBasedOnPartialEmailController: Emails received: " + partialEmail);
 
         if(Objects.isNull(partialEmail) || partialEmail.isEmpty()){
             LOG.error(String.format("%s: No partial email was provided.", xRequestId));
