@@ -29,6 +29,7 @@ public class FindUserBasedOnEmailController implements FindUserBasedOnEmailInter
     @Override
     public ResponseEntity<UsersList> searchUserDetails( final String xRequestId, final List<String> emails ) {
 
+        LOG.debug("LOGDUMP - FindUserBasedOnEmailController: Emails received: " + emails);
         if(Objects.isNull(emails) || emails.isEmpty()){
             LOG.error(String.format("%s: No emails were provided.", xRequestId));
             throw new BadRequestRuntimeException("Please check the request and try again");
