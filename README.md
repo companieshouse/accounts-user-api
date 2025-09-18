@@ -1,6 +1,7 @@
 # Accounts User API
 
 ### Overview
+
 This API grants access to user account information and associated functionalities. It streamlines interactions with user resources within the system. 
 
 For more detailed information and related Confluence pages, refer to the following:
@@ -11,6 +12,7 @@ For more detailed information and related Confluence pages, refer to the followi
 - [API Specification](https://companieshouse.atlassian.net/wiki/spaces/IDV/pages/4441571350/accounts-user-api+API+HLD)
 
 ### Prerequisites
+
 To build the service and execute unit tests, ensure you have the following:
 - Java 21
 - Maven
@@ -50,9 +52,8 @@ To set up and build the service using Docker, follow these steps:
    - `./bin/chs-dev services enable accounts-user-api`
    - `./bin/chs-dev development enable accounts-user-api` 
 3. Ensure you're using Java 21 
-4. Start Docker using `tilt up` in the docker-chs-development directory.
-5.  Open the tilt window and wait for `accounts-user-api` to become green.
-6. Open your browser and navigate to http://api.chs.local/users/healthcheck.
+4. Start Docker using `chs-dev up` in the docker-chs-development directory.
+5. Open your browser and navigate to http://api.chs.local/users/healthcheck.
 
 Note: These instructions are tailored for a local Docker environment.
 
