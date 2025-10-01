@@ -19,7 +19,7 @@
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>3.2.2</maven-surefire-plugin.version>
-        <structured-logging.version>3.0.41</structured-logging.version>
+        <structured-logging.version>3.0.42</structured-logging.version>
         <common-web-java.version>3.0.0</common-web-java.version>
         <encryption-java-library.version>2.0.3</encryption-java-library.version>
         <rest-service-common-library-version>2.0.8</rest-service-common-library-version>
