@@ -5,7 +5,7 @@ import static uk.gov.companieshouse.accounts.user.util.StaticPropertyUtil.APPLIC
 import java.io.IOException;
 import java.util.Optional;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -32,7 +32,7 @@ public class EricAuthorisedKeyPrivilegesInterceptor extends InternalUserIntercep
             Optional.ofNullable( request.getHeader("ERIC-Authorised-Key-Privileges") )
                     .map(s -> s.split(","))
                     .orElse(new String[]{});
-        
+
             final var hasInternalPrivilege = ArrayUtils.contains(privileges, "internal-app");
             final var hasUserDataPrivilege = ArrayUtils.contains(privileges, "user-data");
 
