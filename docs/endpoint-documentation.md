@@ -191,7 +191,7 @@ This API provides access to user account information and related functionalities
 - **Method:** GET
 - **Description:** Healthcheck.
 - **Responses:**
-    - `200`: Success. Returns the user resource.
+    - `200`: Success.
 
 ## Data Models
 - **User:** Represents user information including roles.
