@@ -28,7 +28,7 @@
         <api-security-java-version>2.0.15</api-security-java-version>
         <org.mapstruct.version>1.6.3</org.mapstruct.version>
         <flapdoodle.version>4.21.0</flapdoodle.version>
-        <!-- Force 3.19 as currently picking up 3.17 -->
+        <!-- Force 3.19 as currently picking up 3.17 with CVE-2025-48924 -->
         <commons-lang3.version>3.19.0</commons-lang3.version>
         <sonar-maven-plugin.version>5.2.0.4988</sonar-maven-plugin.version>
         <!-- Sonar -->
