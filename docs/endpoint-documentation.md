@@ -36,10 +36,10 @@ This API provides access to user account information and related functionalities
     - `200`: Success. Returns an array of user resources.
     - `400`: Bad request. The request body has errors.
     - `401`: Unauthorized. OAuth token not used.
-    - `403`: Forbidden. User does not have the required permission.    
+    - `403`: Forbidden. User does not have the required permission.
     - `500`: Internal Server Error.
 - **Security:**
-    - API Key authentication is required for accessing the endpoints. Provide the API Key in the `Authorization` header.    
+    - API Key authentication is required for accessing the endpoints. Provide the API Key in the `Authorization` header.
 
 ### 3. Get All User Roles
 - **Endpoint:** `/users/{user_id}/roles`
@@ -52,7 +52,7 @@ This API provides access to user account information and related functionalities
     - `200`: Success. Returns an array of user roles.
     - `400`: Bad request. The request body has errors.
     - `401`: Unauthorized. OAuth token not used.
-    - `403`: Forbidden. User does not have the required permission.    
+    - `403`: Forbidden. User does not have the required permission.
     - `500`: Internal Server Error.
 - **Security:**
     - API Key authentication is required for accessing the endpoints. Provide the API Key in the `Authorization` header.
@@ -70,7 +70,7 @@ This API provides access to user account information and related functionalities
     - `201`: Success. User roles have been set.
     - `400`: Bad request. The request body has errors.
     - `401`: Unauthorized. OAuth token not used.
-     - `403`: Forbidden. User does not have the required permission.   
+     - `403`: Forbidden. User does not have the required permission.
     - `500`: Internal Server Error.
 - **Security:**
     - API Key authentication is required for accessing the endpoints. Provide the API Key in the `Authorization` header.
@@ -87,12 +87,12 @@ This API provides access to user account information and related functionalities
     - `200`: Success. Returns an array of user resources.
     - `400`: Bad request. The request body has errors.
     - `401`: Unauthorized. OAuth token not used.
-    - `403`: Forbidden. User does not have the required permission.    
+    - `403`: Forbidden. User does not have the required permission.
     - `500`: Internal Server Error.
 - **Security:**
     - OAuth2 authentication is required for accessing the endpoints.
 
-### 6. Get All Roles 
+### 6. Get All Roles
 - **Endpoint:** `/internal/admin/roles`
 - **Method:** GET
 - **Description:** Returns a list of all the roles and the associated permissions.
@@ -102,7 +102,7 @@ This API provides access to user account information and related functionalities
     - `200`: Success. Returns an array of Roles resources.
     - `400`: Bad request. The request body has errors.
     - `401`: Unauthorized. OAuth token not used.
-    - `403`: Forbidden. User does not have the required permission.    
+    - `403`: Forbidden. User does not have the required permission.
     - `500`: Internal Server Error.
 - **Security:**
     - OAuth2 authentication is required for accessing the endpoints.
@@ -119,12 +119,12 @@ This API provides access to user account information and related functionalities
     - `201`: Success. Adds the new Role to the database.
     - `400`: Bad request. The request body has errors.
     - `401`: Unauthorized. OAuth token not used.
-    - `403`: Forbidden. User does not have the required permission.    
+    - `403`: Forbidden. User does not have the required permission.
     - `500`: Internal Server Error.
 - **Security:**
     - OAuth2 authentication is required for accessing the endpoints.
 
-### 7. Edit an Existing Role
+### 8. Edit an Existing Role
 - **Endpoint:** `/internal/admin/{role_id}/edit`
 - **Method:** POST
 - **Description:** Edits an existing Role.
@@ -140,7 +140,7 @@ This API provides access to user account information and related functionalities
 - **Security:**
     - OAuth2 authentication is required for accessing the endpoints.
 
-### 7. delete a Role
+### 9. delete a Role
 - **Endpoint:** `/internal/admin/{role_id}/delete`
 - **Method:** DELETE
 - **Description:** Deletes a Role from the database.
@@ -151,12 +151,12 @@ This API provides access to user account information and related functionalities
     - `204`: Success. Role is successfully deleted.
     - `400`: Bad request. The request body has errors.
     - `401`: Unauthorized. OAuth token not used.
-    - `403`: Forbidden. User does not have the required permission.    
+    - `403`: Forbidden. User does not have the required permission.
     - `500`: Internal Server Error.
 - **Security:**
     - OAuth2 authentication is required for accessing the endpoints.
 
-### 6. Get a user based on there UserId
+### 10. Get a user based on their UserId
 - **Endpoint:** `/internal/users/{user_id}`
 - **Method:** GET
 - **Description:** Searches for the user with the matching user_id.
@@ -167,10 +167,31 @@ This API provides access to user account information and related functionalities
     - `200`: Success. Returns the matched user resource.
     - `400`: Bad request. The request body has errors.
     - `401`: Unauthorized. OAuth token not used.
-    - `403`: Forbidden. User does not have the required permission.    
+    - `403`: Forbidden. User does not have the required permission.
     - `500`: Internal Server Error.
 - **Security:**
     - OAuth2 authentication is required for accessing the endpoints.
+
+### 11. Get Current User Profile
+- **Endpoint:** `/user/profile`
+- **Method:** GET
+- **Description:** Retrieves details of current user.
+- **Parameters:**
+    - `X-Request-Id` (header): A unique identifier for the request.
+- **Responses:**
+    - `200`: Success. Returns the user resource.
+    - `401`: Unauthorized. OAuth token not used.
+    - `403`: Forbidden. User does not have the required permission.
+    - `500`: Internal Server Error.
+- **Security:**
+    - OAuth2 authentication is required for accessing the endpoints.
+
+### 12. Healthcheck
+- **Endpoint:** `accounts-user-api/healthcheck`
+- **Method:** GET
+- **Description:** Healthcheck.
+- **Responses:**
+    - `200`: Success.
 
 ## Data Models
 - **User:** Represents user information including roles.

@@ -14,20 +14,23 @@
     <description> User Account access: Owner api of the account.user resource. </description>
     <properties>
         <java.version>21</java.version>
-        <spring-boot.version>3.4.5</spring-boot.version>
-        <jib-maven-plugin.version>3.4.0</jib-maven-plugin.version>
+        <spring-boot.version>3.5.5</spring-boot.version>
+        <jib-maven-plugin.version>3.4.6</jib-maven-plugin.version>
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
-        <maven-surefire-plugin.version>3.2.2</maven-surefire-plugin.version>
-        <structured-logging.version>3.0.7</structured-logging.version>
-        <common-web-java.version>3.0.0</common-web-java.version>
+        <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
+        <structured-logging.version>3.0.42</structured-logging.version>
+        <common-web-java.version>3.0.43</common-web-java.version>
         <encryption-java-library.version>2.0.3</encryption-java-library.version>
-        <rest-service-common-library-version>2.0.4</rest-service-common-library-version>
-        <private-api-sdk-java.version>4.0.361</private-api-sdk-java.version>
-        <api-sdk-manager-java-library.version>3.0.5</api-sdk-manager-java-library.version>
-        <api-security-java-version>2.0.4</api-security-java-version>
-        <org.mapstruct.version>1.6.0.Beta1</org.mapstruct.version>
-        <flapdoodle.version>4.16.1</flapdoodle.version>
+        <rest-service-common-library-version>2.0.8</rest-service-common-library-version>
+        <private-api-sdk-java.version>4.0.379</private-api-sdk-java.version>
+        <api-sdk-manager-java-library.version>3.0.12</api-sdk-manager-java-library.version>
+        <api-security-java-version>2.0.15</api-security-java-version>
+        <org.mapstruct.version>1.6.3</org.mapstruct.version>
+        <flapdoodle.version>4.21.0</flapdoodle.version>
+        <!-- Force 3.19 as currently picking up 3.17 with CVE-2025-48924 from structured-logging -->
+        <commons-lang3.version>3.19.0</commons-lang3.version>
+        <sonar-maven-plugin.version>5.2.0.4988</sonar-maven-plugin.version>
         <!-- Sonar -->
         <sonar.projectName>accounts-user-api</sonar.projectName>
         <!--suppress UnresolvedMavenProperty -->
@@ -71,12 +74,12 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.5.15</version>
+            <version>1.5.19</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
-            <version>1.5.15</version>
+            <version>1.5.19</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -169,6 +172,13 @@
             <version>${flapdoodle.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <!-- Force 3.19 as currently picking up 3.17 with CVE-2025-48924 from structured-logging -->
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
