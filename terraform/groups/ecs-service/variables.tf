@@ -63,7 +63,13 @@ variable "service_autoscale_enabled" {
 variable "service_autoscale_target_value_cpu" {
   type        = number
   description = "Target CPU percentage for the ECS Service to autoscale on"
-  default     = 80 # 100 disables autoscaling using CPU as a metric
+  default     = 70 # 100 disables autoscaling using CPU as a metric
+}
+
+variable "service_autoscale_target_value_memory" {
+  type        = number
+  description = "Target Memory percentage for the ECS Service to autoscale on"
+  default     = 80
 }
 
 variable "service_scaledown_schedule" {
