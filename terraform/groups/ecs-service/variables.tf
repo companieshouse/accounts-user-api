@@ -78,6 +78,12 @@ variable "service_scaleup_schedule" {
   default     = ""
 }
 
+variable "min_task_count" {
+  type        = number
+  description = "The minimum number of tasks for this service."
+  default     = 1
+}
+
 variable "max_task_count" {
   type        = number
   description = "The maximum number of tasks for this service."
