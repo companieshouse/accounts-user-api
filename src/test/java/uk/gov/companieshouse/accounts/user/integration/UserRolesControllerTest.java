@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
 @Tag("integration-test")
-class UserRolesControllerTest {
+class UserRolesControllerTest extends BaseMongoIntegration {
 
     @Autowired
     MongoTemplate mongoTemplate;

@@ -32,7 +32,7 @@ import uk.gov.companieshouse.api.accounts.user.model.User;
 @SpringBootTest
 @ExtendWith( MockitoExtension.class )
 @Tag( "integration-test" )
-class OneloginControllerTest {
+class OneloginControllerTest extends BaseMongoIntegration {
 
     @Autowired
     private MongoTemplate mongoTemplate;
