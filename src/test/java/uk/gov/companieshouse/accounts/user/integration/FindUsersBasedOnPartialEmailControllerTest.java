@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
 @Tag("integration-test")
-public class FindUsersBasedOnPartialEmailControllerTest extends BaseMongoIntegration {
+class FindUsersBasedOnPartialEmailControllerTest extends BaseMongoIntegration {
 
     @Autowired
     MongoTemplate mongoTemplate;

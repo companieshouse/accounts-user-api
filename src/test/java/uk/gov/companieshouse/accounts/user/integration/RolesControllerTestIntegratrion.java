@@ -37,7 +37,7 @@ import uk.gov.companieshouse.api.accounts.user.model.Role;
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
 @Tag("integration-test")
-public class RolesControllerTestIntegratrion extends BaseMongoIntegration {
+class RolesControllerTest extends BaseMongoIntegration {
 
     @Autowired
     MongoTemplate mongoTemplate;

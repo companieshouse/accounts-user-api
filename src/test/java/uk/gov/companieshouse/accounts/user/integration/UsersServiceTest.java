@@ -26,7 +26,7 @@ import java.util.Objects;
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
 @Tag("integration-test")
-public class UsersServiceTest extends BaseMongoIntegration {
+class UsersServiceTest extends BaseMongoIntegration {
 
     @Autowired
     MongoTemplate mongoTemplate;
