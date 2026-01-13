@@ -25,6 +25,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
     private static final String USERS_ENDPOINTS = "/users/**";
     private static final String INTERNAL_USERS_ENDPOINTS = "/internal/users/**";
     private static final String ADMIN_ROLE_ENDPOINTS = "/internal/admin/roles/**";
+    private static final String ADMIN_PERMISSION_ENDPOINTS = "/internal/admin/permissions/**";
     private static final String INTERNAL_ADMIN_USERS_ENDPOINTS = "/internal/admin/users/**";
     private static final String ADMIN_USER_SEARCH_PERMISSION = "/admin/user/search";
 
@@ -45,7 +46,9 @@ public class InterceptorConfig implements WebMvcConfigurer {
         addLoggingInterceptor(registry);
         addEricInterceptors(registry);
         addRolePermissionInterceptor(registry, INTERNAL_USERS_ENDPOINTS, ADMIN_USER_SEARCH_PERMISSION);
+        // Add role permission interceptor for admin role management endpoints
         addRolePermissionInterceptor(registry, ADMIN_ROLE_ENDPOINTS, "/admin/roles");
+        addRolePermissionInterceptor(registry, ADMIN_PERMISSION_ENDPOINTS, "/admin/permissions");
         addTokenPermissionsInterceptor(registry);
     }
 
