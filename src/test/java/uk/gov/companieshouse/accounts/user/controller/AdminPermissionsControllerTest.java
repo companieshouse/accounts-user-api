@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -24,7 +23,6 @@ import uk.gov.companieshouse.api.accounts.user.model.PermissionsList;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -46,7 +44,7 @@ class AdminPermissionsControllerTest {
     @MockitoBean
     private AdminPermissionsService adminPermissionsService;
 
-    @Mock
+    @MockitoBean
     private InterceptorConfig interceptorConfig;
 
 
