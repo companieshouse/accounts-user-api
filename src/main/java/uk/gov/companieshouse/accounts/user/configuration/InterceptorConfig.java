@@ -46,7 +46,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
         addLoggingInterceptor(registry);
         addEricInterceptors(registry);
         addRolePermissionInterceptor(registry, INTERNAL_USERS_ENDPOINTS, ADMIN_USER_SEARCH_PERMISSION);
-        // remove role endpoints
+        // Add role permission interceptor for admin role management endpoints
         addRolePermissionInterceptor(registry, ADMIN_ROLE_ENDPOINTS, "/admin/roles");
         addRolePermissionInterceptor(registry, ADMIN_PERMISSION_ENDPOINTS, "/admin/permissions");
         addTokenPermissionsInterceptor(registry);
