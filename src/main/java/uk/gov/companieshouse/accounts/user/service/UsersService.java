@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Limit;
 import org.springframework.data.mongodb.core.query.Update;
@@ -70,7 +69,7 @@ public class UsersService {
             }
         });
         if(!errors.isEmpty()){
-            throw new BadRequestRuntimeException(String.format("%s not valid role(s)",Strings.join(errors, ',')));
+            throw new BadRequestRuntimeException(String.format("%s not valid role(s)", String.join(",", errors)));
         }
         final var rolesSet = new HashSet<>( roles );
         final var update = new Update().set( "roles", rolesSet );
