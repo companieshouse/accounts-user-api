@@ -25,7 +25,6 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import jakarta.servlet.http.HttpServletResponse;
-import uk.gov.companieshouse.accounts.user.configuration.InterceptorConfig;
 import uk.gov.companieshouse.accounts.user.models.Users;
 import uk.gov.companieshouse.accounts.user.repositories.UsersRepository;
 import uk.gov.companieshouse.api.accounts.user.model.User;
@@ -35,7 +34,7 @@ import uk.gov.companieshouse.api.accounts.user.model.User;
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
 @Tag("integration-test")
-class InterceptorTests {
+class InterceptorTests extends uk.gov.companieshouse.accounts.user.integration.BaseMongoIntegration {
 
     @Autowired
     MongoTemplate mongoTemplate;
@@ -45,9 +44,6 @@ class InterceptorTests {
 
     @Autowired
     UsersRepository usersRepository;
-
-    @Autowired
-    InterceptorConfig interceptorConfig;
 
     @BeforeEach
     public void setup() {
@@ -95,7 +91,7 @@ class InterceptorTests {
             .andReturn()
             .getResponse()
             .getContentAsString();
-        assertEquals("{\"status\":\"UP\"}", healthStatus);
+        Assertions.assertEquals("{\"status\":\"UP\"}", healthStatus);
     }
 
     @Test

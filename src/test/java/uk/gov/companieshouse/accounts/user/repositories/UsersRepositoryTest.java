@@ -22,7 +22,7 @@ import java.util.Objects;
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
 @Tag("integration-test")
-public class UsersRepositoryTest {
+class UsersRepositoryTest extends uk.gov.companieshouse.accounts.user.integration.BaseMongoIntegration {
 
     @Autowired
     MongoTemplate mongoTemplate;
@@ -143,9 +143,9 @@ public class UsersRepositoryTest {
         usersRepository.updateUser( "$", update );
         usersRepository.updateUser( "999", update );
 
-        final var users = usersRepository.findAll();
-        Assertions.assertEquals( 4, users.size());
-        for ( Users user: users ){
+        final var localUsers = usersRepository.findAll();
+        Assertions.assertEquals( 4, localUsers.size());
+        for ( Users user: localUsers ){
             final var roles = user.getRoles();
             Assertions.assertTrue( Objects.isNull( roles ) || !roles.contains( "support_member" ) );
         }
