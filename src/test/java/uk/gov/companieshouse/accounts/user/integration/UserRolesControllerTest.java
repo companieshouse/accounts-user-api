@@ -259,7 +259,7 @@ class UserRolesControllerTest extends BaseMongoIntegration {
     void setUserRolesWithDummyRolesSetsShouldThrowBadRequest() throws Exception {
         final var objectMapper = new ObjectMapper();
         final var roles = objectMapper.writeValueAsString( List.of("dummy", "support-member" ) );
-        final String error = "{\"errors\":[{\"error\":\"dummy not valid role(s)\",\"location\":\"accounts_user_api\",\"location_type\":\"request-body\",\"type\":\"ch:validation\"}]}";
+        final String error = "{\"errors\":[{\"error\":\"dummy not valid role(s)\",\"error_values\":{},\"location\":\"accounts_user_api\",\"location_type\":\"request-body\",\"type\":\"ch:validation\"}]}";
         var response = mockMvc.perform( put( "/users/{user_id}/roles", "333" )
                         .header( "X-Request-Id", "theId123" )
                         .contentType( "application/json" )
