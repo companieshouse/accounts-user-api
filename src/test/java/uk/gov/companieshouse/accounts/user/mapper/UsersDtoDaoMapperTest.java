@@ -92,7 +92,13 @@ public class UsersDtoDaoMapperTest {
         Assertions.assertNull( users.getEmail() );
         Assertions.assertNull( users.getId() );
         Assertions.assertNull( users.getDisplayName() );
-        Assertions.assertNull( users.getRoles() );
+        // private-api-sdk-java's User() no-arg constructor eagerly initialises its
+        // roles field to an empty RolesList (rather than leaving it null, as older SDK
+        // versions did), so an unset roles field maps through as an empty collection,
+        // not null. dtoToDao(User) itself is not called anywhere in production code
+        // (only daoToDto(Users) is), so this is a test-only assertion update with no
+        // runtime behaviour impact.
+        Assertions.assertTrue( users.getRoles().isEmpty() );
     }
 
     @Test
