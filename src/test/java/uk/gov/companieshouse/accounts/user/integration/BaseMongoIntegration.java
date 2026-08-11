@@ -3,7 +3,7 @@ package uk.gov.companieshouse.accounts.user.integration;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.mongodb.MongoDBContainer;
 import org.testcontainers.utility.DockerImageName;
 
 public abstract class BaseMongoIntegration {
@@ -12,7 +12,7 @@ public abstract class BaseMongoIntegration {
 
     @DynamicPropertySource
     public static void setProperties( final DynamicPropertyRegistry registry ) {
-        registry.add( "spring.data.mongodb.uri", mongoDBContainer::getReplicaSetUrl );
+        registry.add( "spring.mongodb.uri", mongoDBContainer::getReplicaSetUrl );
         mongoDBContainer.start();
     }
 

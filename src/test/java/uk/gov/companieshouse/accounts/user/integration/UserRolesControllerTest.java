@@ -7,9 +7,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.companieshouse.accounts.user.configuration.InterceptorConfig;
@@ -49,7 +49,7 @@ class UserRolesControllerTest extends BaseMongoIntegration {
     @Autowired
     RolesRepository userRolesRepository;
 
-    @MockBean
+    @MockitoBean
     InterceptorConfig interceptorConfig;
 
     @BeforeEach

@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import uk.gov.companieshouse.accounts.user.models.OneLoginDataDao;
 import uk.gov.companieshouse.accounts.user.models.Users;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
