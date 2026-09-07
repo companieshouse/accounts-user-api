@@ -18,6 +18,16 @@ To build the service and execute unit tests, ensure you have the following:
 - Maven
 - Git
 
+### Environment Variables
+
+| Name | Description | Required |
+|------|-------------|----------|
+| `MONGODB_URL` | MongoDB connection URI | Yes |
+| `MONGODB_DATABASE` | MongoDB database name | Yes |
+| `DATABASE_LIMIT` | Max results returned for partial email search (default: `50`) | No |
+| `OTEL_LOG_ENABLED` | Enables OpenTelemetry log/trace/metric export (default: `false`) | No |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | OTLP collector base URL | Only if `OTEL_LOG_ENABLED=true` |
+
 ## Adding a new API Endpoint:
 ### Specification for API: Private Java and Controllers
 In this section, we will enhance the specification file to encompass:
